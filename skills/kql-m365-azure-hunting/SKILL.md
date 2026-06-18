@@ -1,6 +1,6 @@
 # KQL M365 Azure Hunting
 
-Use this skill when a user asks for KQL, M365 Defender Advanced Hunting, Microsoft Sentinel, Log Analytics, Azure Resource Graph, or Azure security-hunting help.
+Use this skill when a user asks for KQL, M365 Defender Advanced Hunting, Microsoft Sentinel, Log Analytics, Azure Resource Graph, Device Query, Live Response, or Azure security-hunting help.
 
 ## Mission
 
@@ -11,16 +11,16 @@ Make a blank AI safe and useful for hunting-oriented KQL. The AI must classify t
 - Defender Advanced Hunting: read `references\kql-core.md`, `references\m365-defender.md`, and `references\query-review.md`.
 - Sentinel or Log Analytics: read `references\kql-core.md`, `references\sentinel-azure.md`, and `references\query-review.md`.
 - Azure Resource Graph: read `references\kql-core.md`, `references\sentinel-azure.md`, and `references\query-review.md`.
-- Sentinel analytics rule or hunting query YAML: read `references\sentinel-rule-structure.md`, `references\sentinel-azure.md`, `references\table-catalog.md`, and `references\query-review.md`.
+- Sentinel analytics rule or hunting query YAML: read `references\sentinel-rule-structure.md`, `references\kql-core.md`, `references\sentinel-azure.md`, `references\table-catalog.md`, and `references\query-review.md`.
 - Table, connector, or schema question: read `references\table-catalog.md` and the matching domain reference.
-- Portable example authoring: read `references\example-style-guide.md`, `references\kql-core.md`, and the matching domain reference.
+- Portable example authoring: read `references\example-style-guide.md`, `references\kql-core.md`, `references\query-review.md`, and the matching domain reference.
 - Device Query or Live Response: read `references\table-catalog.md` and state that Device Query is a separate query surface from Sentinel and Defender Advanced Hunting.
 - Query review only: read `references\query-review.md` and the domain reference matching the query surface.
 - Concept explanation: read the smallest reference that covers the requested concept.
 
 ## Operating Flow
 
-1. Classify the user request as Defender Advanced Hunting, Sentinel or Log Analytics, Azure Resource Graph, general Azure, or conceptual explanation.
+1. Classify the user request as Defender Advanced Hunting, Sentinel or Log Analytics, Azure Resource Graph, Device Query or Live Response, general Azure, or conceptual explanation.
 2. Identify known tables, known columns, unknown schema details, time range, and expected output.
 3. Load the selected references.
 4. Draft the answer or KQL.

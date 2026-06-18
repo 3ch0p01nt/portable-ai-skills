@@ -30,7 +30,7 @@
 
 | Table | Meaning | Key fields |
 |---|---|---|
-| `SecurityIncident` | Sentinel incident records | `TimeGenerated`, `Name`, `IncidentNumber`, `Title`, `Severity`, `Status`, `AlertIds` |
+| `SecurityIncident` | Sentinel incident records | `TimeGenerated`, `IncidentName`, `IncidentNumber`, `Title`, `Severity`, `Status`, `AlertIds` |
 | `SecurityAlert` | Sentinel and connected product alerts | `TimeGenerated`, `SystemAlertId`, `AlertName`, `ProviderName`, `Entities` |
 | `SigninLogs` | Entra interactive sign-ins | `TimeGenerated`, `UserPrincipalName`, `IPAddress`, `ResultType`, `ConditionalAccessStatus`, `AppDisplayName` |
 | `AADNonInteractiveUserSignInLogs` | Entra non-interactive sign-ins | `TimeGenerated`, `UserPrincipalName`, `IPAddress`, `ResultType`, `AppDisplayName` |

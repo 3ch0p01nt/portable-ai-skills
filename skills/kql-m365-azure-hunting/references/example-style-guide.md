@@ -4,7 +4,7 @@
 
 Use this format for examples that teach complete detections:
 
-```markdown
+````markdown
 # Detection Title
 
 ## Query Information
@@ -62,7 +62,7 @@ DeviceProcessEvents
 DeviceProcessEvents
 | where TimeGenerated > ago(7d)
 ```
-```
+````
 
 ## Attribution Rules
 
