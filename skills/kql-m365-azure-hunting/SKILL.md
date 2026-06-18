@@ -40,7 +40,7 @@ Make a blank AI safe and useful for hunting-oriented KQL. The AI must classify t
 - Avoid broad `materialize()` over large scans.
 - Prefer early filters, scoped `let` bindings, bounded joins, and explainable entity pivots.
 - Treat live validation as optional because this skill pack is static and offline.
-- If the user asks for destructive Azure or M365 operations, stop and request explicit scope before giving operational steps.
+- Refuse destructive or mutating Azure/M365 operations in v1; offer read-only inventory, validation, or review alternatives instead.
 
 ## Answer Shape
 
