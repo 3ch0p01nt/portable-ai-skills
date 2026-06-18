@@ -17,6 +17,8 @@ Make a blank AI safe and useful for hunting-oriented KQL. The AI must classify t
 - Sentinel analytics rule or hunting query YAML: read `references\sentinel-rule-structure.md`, `references\kql-core.md`, `references\sentinel-azure.md`, `references\table-catalog.md`, and `references\query-review.md`.
 - Table, connector, or schema question: read `references\table-catalog.md` and the matching domain reference.
 - Portable example authoring: read `references\example-style-guide.md`, `references\kql-core.md`, `references\query-review.md`, and the matching domain reference.
+- Unsafe query rewrite or bad KQL fix: read `references\query-review.md`, the matching domain reference, and `examples\bad-query-rewrites.md`.
+- Multi-source Sentinel queries or SecurityEvent/WindowsEvent dual support: read `references\kql-core.md`, `references\sentinel-azure.md`, `references\table-catalog.md`, `references\query-review.md`, and `examples\multi-source-union.md`.
 - Device Query: read `references\table-catalog.md`, `references\kql-core.md`, and `references\query-review.md`; state that Device Query is a separate query surface from Sentinel and Defender Advanced Hunting.
 - Live Response: not KQL; it is operational and remote-shell oriented, outside this read-only KQL skill except for explaining that boundary.
 - Query review only: read `references\query-review.md` and the domain reference matching the query surface.

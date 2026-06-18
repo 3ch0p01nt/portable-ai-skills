@@ -253,7 +253,7 @@ Make a blank AI safe and useful for hunting-oriented KQL. The AI must classify t
 - Avoid broad `materialize()` over large scans.
 - Prefer early filters, scoped `let` bindings, bounded joins, and explainable entity pivots.
 - Treat live validation as optional because this skill pack is static and offline.
-- If the user asks for destructive Azure or M365 operations, stop and request explicit scope before giving operational steps.
+- Refuse destructive or mutating Azure/M365 operations in v1; offer read-only inventory, validation, or review alternatives instead.
 
 ## Answer Shape
 
@@ -352,13 +352,13 @@ let lookback = 7d;
 let network =
     DeviceNetworkEvents
     | where Timestamp > ago(lookback)
-    | project NetworkTime=Timestamp, DeviceId, RemoteIP, RemotePort, InitiatingProcessFileName;
+    | project NetworkTime=Timestamp, DeviceId, RemoteIP, RemotePort, InitiatingProcessUniqueId, InitiatingProcessFileName;
 let process =
     DeviceProcessEvents
     | where Timestamp > ago(lookback)
-    | project ProcessTime=Timestamp, DeviceId, InitiatingProcessFileName, ProcessCommandLine;
+    | project ProcessTime=Timestamp, DeviceId, ProcessUniqueId, FileName, ProcessCommandLine;
 network
-| join kind=inner process on DeviceId, InitiatingProcessFileName
+| join kind=inner process on DeviceId, $left.InitiatingProcessUniqueId == $right.ProcessUniqueId
 | where abs(datetime_diff('minute', NetworkTime, ProcessTime)) <= 5
 ```
 
@@ -1147,15 +1147,15 @@ let network =
     DeviceNetworkEvents
     | where Timestamp > ago(lookback)
     | where isnotempty(RemoteUrl)
-    | project NetworkTime=Timestamp, DeviceId, RemoteUrl, RemoteIP, RemotePort, InitiatingProcessFileName;
+    | project NetworkTime=Timestamp, DeviceId, RemoteUrl, RemoteIP, RemotePort, InitiatingProcessUniqueId, InitiatingProcessFileName;
 let process =
     DeviceProcessEvents
     | where Timestamp > ago(lookback)
-    | project ProcessTime=Timestamp, DeviceId, InitiatingProcessFileName, ProcessCommandLine;
+    | project ProcessTime=Timestamp, DeviceId, ProcessUniqueId, FileName, ProcessCommandLine;
 network
-| join kind=inner process on DeviceId, InitiatingProcessFileName
+| join kind=inner process on DeviceId, $left.InitiatingProcessUniqueId == $right.ProcessUniqueId
 | where abs(datetime_diff('minute', NetworkTime, ProcessTime)) <= 5
-| summarize ConnectionCount=count(), FirstSeen=min(NetworkTime), LastSeen=max(NetworkTime) by DeviceId, InitiatingProcessFileName, ProcessCommandLine, RemoteUrl, RemoteIP, RemotePort
+| summarize ConnectionCount=count(), FirstSeen=min(NetworkTime), LastSeen=max(NetworkTime) by DeviceId, FileName, ProcessCommandLine, RemoteUrl, RemoteIP, RemotePort
 | order by ConnectionCount desc
 ```
 ```
@@ -1549,7 +1549,7 @@ Get-AzOperationalInsightsTable -ResourceGroupName '<resource-group>' -WorkspaceN
     Select-Object Name, Plan, RetentionInDays, TotalRetentionInDays
 
 Get-AzOperationalInsightsSchema -ResourceGroupName '<resource-group>' -WorkspaceName '<workspace-name>' |
-    Select-Object -ExpandProperty Tables |
+    Select-Object -ExpandProperty Value |
     Select-Object Name
 ```
 
@@ -1699,7 +1699,7 @@ Get-AzOperationalInsightsTable -ResourceGroupName '<resource-group>' -WorkspaceN
     Select-Object Name, Plan, RetentionInDays, TotalRetentionInDays
 
 Get-AzOperationalInsightsSchema -ResourceGroupName '<resource-group>' -WorkspaceName '<workspace-name>' |
-    Select-Object -ExpandProperty Tables |
+    Select-Object -ExpandProperty Value |
     Select-Object Name
 ```
 
@@ -2025,10 +2025,10 @@ Fixture 2 maps to kql-core, sentinel-azure, query-review.
 Fixture 3 maps to query-review and bad-query-rewrites.
 Fixture 4 maps to schema discipline guardrails.
 Fixture 5 maps to sentinel-azure Resource Graph boundary rules.
-Fixture 6 maps to sentinel-rule-structure and table-catalog.
+Fixture 6 maps to sentinel-rule-structure, kql-core, sentinel-azure, table-catalog, and query-review.
 Fixture 7 maps to table-catalog, kql-core, and multi-source-union.
-Fixture 8 maps to Device Query boundary rules.
-Fixture 9 maps to example-style-guide.
+Fixture 8 maps to Device Query boundary rules and Live Response non-KQL boundary rules.
+Fixture 9 maps to example-style-guide, kql-core, query-review, and matching domain reference.
 Fixture 10 maps to azure-powershell-az context and workspace validation.
 Fixture 11 maps to azure-powershell-az read-only Log Analytics query execution.
 Fixture 12 maps to azure-powershell-az Sentinel inventory.

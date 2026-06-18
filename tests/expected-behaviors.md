@@ -19,6 +19,7 @@
 ## Fixture 3: Bad KQL rewrite
 
 - Flags the original query as unsafe because it has no time filter and joins high-volume tables directly.
+- Uses `examples\bad-query-rewrites.md` as the rewrite pattern.
 - Rewrites with scoped `let` bindings and bounded join keys.
 - Explains why early filtering and cardinality control matter.
 
@@ -47,6 +48,7 @@
 ## Fixture 7: SecurityEvent and WindowsEvent dual support
 
 - Uses `union isfuzzy=true`.
+- Uses `examples\multi-source-union.md` for the dual-table union pattern.
 - Handles flat `SecurityEvent` columns and dynamic `WindowsEvent.EventData` fields separately.
 - Normalizes account and IP fields before summarizing or mapping entities.
 
