@@ -38,6 +38,10 @@
 
 - Loads `references\sentinel-rule-structure.md`, `references\kql-core.md`, `references\sentinel-azure.md`, `references\table-catalog.md`, and `references\query-review.md`.
 - Includes `requiredDataConnectors`, `queryFrequency`, `queryPeriod`, `triggerOperator`, `triggerThreshold`, `entityMappings`, `tactics`, `relevantTechniques`, and `version`.
+- Aligns connector and table requirements to `AzureActiveDirectory` / `SigninLogs`.
+- Preserves the supplied `SigninLogs`, `UserPrincipalName`, `IPAddress`, `AppDisplayName`, and `FailureCount` semantics without inventing alternate schema.
+- Maps MITRE `CredentialAccess` and `T1110`.
+- Maps Account and IP entities only to projected or derived columns.
 - Projects every column referenced by entity mappings.
 
 ## Fixture 7: SecurityEvent and WindowsEvent dual support
@@ -58,3 +62,6 @@
 - Uses the metadata wrapper from `references\example-style-guide.md`.
 - Loads `references\example-style-guide.md`, `references\kql-core.md`, `references\query-review.md`, and the matching domain reference.
 - Includes platform label, MITRE mapping, description, false positives, blind spots, response actions, references, version history, and KQL.
+- Preserves the supplied `SecurityEvent` RDP semantics, including `EventID == 4624`, `LogonType == 10`, `Account`, `Computer`, and `IpAddress`.
+- Avoids unsupported tables or columns instead of inventing schema.
+- Maps MITRE Remote Services / RDP, such as `T1021` or `T1021.001`.

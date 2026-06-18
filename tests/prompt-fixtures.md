@@ -53,7 +53,7 @@ Turn this Sentinel hunt into a scheduled analytics rule YAML with connector requ
 let lookback = 1h;
 SigninLogs
 | where TimeGenerated > ago(lookback)
-| where ResultType != 0
+| where ResultType != "0"
 | summarize FailureCount=count(), FirstSeen=min(TimeGenerated), LastSeen=max(TimeGenerated) by UserPrincipalName, IPAddress, AppDisplayName
 | where FailureCount >= 5
 ```
