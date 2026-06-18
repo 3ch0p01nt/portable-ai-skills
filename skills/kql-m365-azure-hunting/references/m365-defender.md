@@ -36,7 +36,7 @@ AlertInfo
 | join kind=leftouter (
     AlertEvidence
     | where Timestamp > ago(lookback)
-    | project AlertId, EntityType, EvidenceRole, DeviceId, DeviceName, AccountName, RemoteIP, FileName, SHA256
+    | project AlertId, EntityType, EvidenceRole, DeviceId, DeviceName, AccountName, RemoteIP, FileName, SHA1, SHA256
 ) on AlertId
 ```
 
@@ -45,3 +45,4 @@ AlertInfo
 - If a table or column is custom, ask for schema or provide a discovery query shape.
 - Do not assume `AdditionalFields` is dynamic; parse it with `todynamic()` when accessing nested properties.
 - If process fields are empty on network sensor events, pivot by `DeviceId`, `RemoteIP`, `RemotePort`, and time proximity to process or connection rows that carry process context.
+- When pivoting Defender file evidence, include `SHA1`; treat `SHA256` as optional and use it when populated.
