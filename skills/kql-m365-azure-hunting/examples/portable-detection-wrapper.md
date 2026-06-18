@@ -32,9 +32,27 @@ Validate source IP, account owner, device role, and whether the logon follows ex
 
 ```kql
 let lookback = 1d;
-SecurityEvent
-| where TimeGenerated > ago(lookback)
-| where EventID == 4624 and LogonType == 10
-| extend AccountName = tostring(split(Account, "\\")[1])
-| project TimeGenerated, Account, AccountName, Computer, IpAddress
+union isfuzzy=true
+    (
+    SecurityEvent
+    | where TimeGenerated > ago(lookback)
+    | where EventID == 4624 and LogonType == 10
+    | extend AccountName = tostring(split(Account, "\\")[1])
+    | extend SourceTable = "SecurityEvent"
+    | project TimeGenerated, Account, AccountName, Computer, IpAddress, SourceTable
+    ),
+    (
+    WindowsEvent
+    | where TimeGenerated > ago(lookback)
+    | where EventID == 4624
+    | extend LogonType = toint(EventData.LogonType),
+             TargetDomainName = tostring(EventData.TargetDomainName),
+             TargetUserName = tostring(EventData.TargetUserName),
+             IpAddress = tostring(EventData.IpAddress)
+    | where LogonType == 10
+    | extend AccountName = TargetUserName
+    | extend Account = iff(isempty(TargetDomainName), AccountName, strcat(TargetDomainName, "\\", AccountName))
+    | extend SourceTable = "WindowsEvent"
+    | project TimeGenerated, Account, AccountName, Computer, IpAddress, SourceTable
+    )
 ```

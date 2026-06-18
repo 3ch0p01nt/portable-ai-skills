@@ -10,7 +10,7 @@ Find rare outbound TLS connections by process over the last 7 days.
 let lookback = 7d;
 DeviceNetworkEvents
 | where Timestamp > ago(lookback)
-| where ActionType in ("ConnectionSuccess", "SslConnectionInspected")
+| where ActionType == "SslConnectionInspected"
 | where isnotempty(RemoteIP) or isnotempty(RemoteUrl)
 | summarize HostCount=dcount(DeviceId), ConnectionCount=count(), FirstSeen=min(Timestamp), LastSeen=max(Timestamp) by InitiatingProcessFileName, RemoteIP, RemoteUrl, RemotePort
 | where HostCount <= 2

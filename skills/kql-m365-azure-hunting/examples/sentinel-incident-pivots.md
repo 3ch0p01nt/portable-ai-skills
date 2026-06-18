@@ -10,6 +10,7 @@ Start from recent Sentinel incidents and pivot to related alerts.
 let lookback = 14d;
 SecurityIncident
 | where TimeGenerated > ago(lookback)
+| summarize arg_max(TimeGenerated, *) by IncidentNumber
 | project IncidentTime=TimeGenerated, IncidentNumber, Title, Severity, Status, AlertIds
 | mv-expand AlertId = AlertIds to typeof(string)
 | join kind=leftouter (
