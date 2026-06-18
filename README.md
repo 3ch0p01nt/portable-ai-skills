@@ -1,14 +1,17 @@
 # KQL M365 Azure Hunting Skill Pack
 
-This repository contains a portable Superpowers-compatible skill pack for teaching an AI assistant how to write and review KQL for M365 Defender Advanced Hunting, Microsoft Sentinel, Log Analytics, Azure, and Azure Resource Graph workflows.
+Portable Superpowers-compatible skill pack for KQL, M365 Defender Advanced Hunting, Microsoft Sentinel, Log Analytics, Azure Resource Graph, and read-only Azure PowerShell Az validation workflows.
 
-## Scope
+## What It Does
 
-- Static offline skill content.
-- No tenant credentials.
-- No Azure or M365 live validation scripts.
-- Commercial `.com` cloud terminology by default.
-- `.us` cloud guidance only when the user asks for it or provides tenant evidence.
+This skill teaches an AI assistant to:
+
+- Classify the correct Microsoft query surface.
+- Write bounded and explainable KQL.
+- Review unsafe KQL before returning it.
+- Use Az PowerShell read-only validation patterns for Azure, Log Analytics, and Sentinel context.
+- Avoid invented schema, tenant facts, and live-validation claims.
+- Default to commercial `.com` Microsoft cloud terminology.
 
 ## Install from Git
 
@@ -18,12 +21,37 @@ Clone the repository:
 git clone <repository-url>
 ```
 
-Copy `skills\kql-m365-azure-hunting` into the local Superpowers skills directory used by the target AI tool.
+Copy the skill folder into the local Superpowers skills directory:
 
-## Use
+```powershell
+Copy-Item -Recurse '.\skills\kql-m365-azure-hunting' '<superpowers-skills-directory>\kql-m365-azure-hunting'
+```
 
-Ask the AI to use the `kql-m365-azure-hunting` skill before writing or reviewing KQL that touches M365 Defender, Sentinel, Log Analytics, Azure, or Azure Resource Graph.
+Restart or reload the AI tool so it can discover the skill.
 
-## Offline Validation
+## Skill Entry Point
 
-Use `tests\prompt-fixtures.md` and `tests\expected-behaviors.md` to check whether the skill selects the right references, avoids invented schema, writes bounded KQL, and applies the query-review checklist.
+The root skill is:
+
+```text
+skills\kql-m365-azure-hunting\SKILL.md
+```
+
+## Offline Test Fixtures
+
+Use these files to check behavior after installation:
+
+```text
+tests\prompt-fixtures.md
+tests\expected-behaviors.md
+```
+
+## Constraints
+
+- No credentials are included.
+- No tenant-specific IDs are included.
+- No live Azure or M365 validation scripts are included in v1.
+- The AI must state assumptions when schema or connector context is missing.
+- Sentinel tables depend on enabled connectors.
+- Device Query / Live Response is a separate query surface from Sentinel and Defender Advanced Hunting.
+- Az module guidance is read-only in v1; mutating `New-Az*`, `Set-Az*`, `Update-Az*`, and `Remove-Az*` workflows are out of scope unless explicitly redesigned.
