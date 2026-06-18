@@ -5,13 +5,13 @@ Run this checklist before returning KQL or reviewing user-provided KQL.
 ## Syntax
 
 - Query has a valid table or query root.
-- Pipes are ordered so filters happen before summarization and joins.
+- Pipes apply base-table filters before expensive `summarize` and `join` operations; filters that depend on aggregate or joined columns may follow those operations.
 - `let` names are descriptive and referenced correctly.
 - Dynamic fields are parsed before property access.
 
 ## Scope and Performance
 
-- High-volume tables have a bounded time filter.
+- High-volume telemetry tables have bounded time filters; inventory surfaces such as Azure Resource Graph use selective non-temporal predicates like `type`, subscription, resource group, or resource provider.
 - Each join side is filtered and projected before joining.
 - Join keys are explicit and stable.
 - Broad `materialize()` over a large base scan is avoided.
