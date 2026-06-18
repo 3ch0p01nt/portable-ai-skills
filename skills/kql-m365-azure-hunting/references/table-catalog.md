@@ -8,7 +8,8 @@
 | Sentinel / Log Analytics | `TimeGenerated` | Workspace tables generally use `TimeGenerated`. |
 | Azure Resource Graph | none required | Resource inventory is current-state unless a resource property contains time. |
 | ADX custom data | schema-dependent | Confirm the table schema before writing time filters. |
-| Device Query / Live Response | device-query specific | Do not assume Sentinel or Defender Advanced Hunting schema. |
+| Device Query | device-query specific schema | KQL-like query surface. Do not assume Sentinel or Defender Advanced Hunting schema; confirm the Device Query schema before writing time filters. |
+| Live Response | no KQL time field | Non-KQL remote shell and remediation workflow, not a query surface. |
 
 ## Defender XDR Tables
 
