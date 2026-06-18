@@ -13,7 +13,7 @@ let lookback = 14d;
 let incidents =
     SecurityIncident
     | where TimeGenerated > ago(lookback)
-    | project IncidentTime=TimeGenerated, IncidentName=Name, IncidentNumber, Title, Severity, Status, AlertIds;
+    | project IncidentTime=TimeGenerated, IncidentName, IncidentNumber, Title, Severity, Status, AlertIds;
 incidents
 | mv-expand AlertId = AlertIds to typeof(string)
 | join kind=leftouter (
