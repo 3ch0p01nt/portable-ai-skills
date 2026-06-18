@@ -32,13 +32,13 @@ let lookback = 7d;
 let network =
     DeviceNetworkEvents
     | where Timestamp > ago(lookback)
-    | project NetworkTime=Timestamp, DeviceId, RemoteIP, RemotePort, InitiatingProcessFileName;
+    | project NetworkTime=Timestamp, DeviceId, RemoteIP, RemotePort, InitiatingProcessUniqueId, InitiatingProcessFileName;
 let process =
     DeviceProcessEvents
     | where Timestamp > ago(lookback)
-    | project ProcessTime=Timestamp, DeviceId, InitiatingProcessFileName, ProcessCommandLine;
+    | project ProcessTime=Timestamp, DeviceId, ProcessUniqueId, FileName, ProcessCommandLine;
 network
-| join kind=inner process on DeviceId, InitiatingProcessFileName
+| join kind=inner process on DeviceId, $left.InitiatingProcessUniqueId == $right.ProcessUniqueId
 | where abs(datetime_diff('minute', NetworkTime, ProcessTime)) <= 5
 ```
 
