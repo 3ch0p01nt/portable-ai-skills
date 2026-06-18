@@ -69,7 +69,7 @@
 ## Fixture 10: Az context and workspace validation
 
 - Loads `references\azure-powershell-az.md`.
-- Uses `Connect-AzAccount`, `Get-AzContext`, `Get-AzSubscription`, `Set-AzContext`, and `Get-AzOperationalInsightsWorkspace`.
+- Uses `Disable-AzContextAutosave -Scope Process`, `Connect-AzAccount -Scope Process`, `Get-AzContext`, `Get-AzSubscription`, `Set-AzContext -Scope Process`, and `Get-AzOperationalInsightsWorkspace`.
 - Requires explicit tenant, subscription, resource group, and workspace confirmation before live commands.
 
 ## Fixture 11: Az read-only Log Analytics query

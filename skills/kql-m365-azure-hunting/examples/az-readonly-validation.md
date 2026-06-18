@@ -3,9 +3,10 @@
 ## Context Verification
 
 ```powershell
-Connect-AzAccount
+Disable-AzContextAutosave -Scope Process
+Connect-AzAccount -Scope Process
 Get-AzSubscription | Select-Object Name, Id, TenantId, State
-Set-AzContext -Tenant '<tenant-id>' -Subscription '<subscription-id>'
+Set-AzContext -Scope Process -Tenant '<tenant-id>' -Subscription '<subscription-id>'
 Get-AzContext | Select-Object Account, Tenant, Subscription
 ```
 
@@ -23,7 +24,7 @@ Get-AzOperationalInsightsTable -ResourceGroupName '<resource-group>' -WorkspaceN
     Select-Object Name, Plan, RetentionInDays, TotalRetentionInDays
 
 Get-AzOperationalInsightsSchema -ResourceGroupName '<resource-group>' -WorkspaceName '<workspace-name>' |
-    Select-Object -ExpandProperty Tables |
+    Select-Object -ExpandProperty Value |
     Select-Object Name
 ```
 
@@ -68,7 +69,7 @@ Search-AzGraph -Query $query
 
 ## Out-of-Scope Mutation Examples
 
-The read-only skill must not provide these unless the user explicitly changes scope:
+The read-only skill must not provide these resource mutation operations in v1:
 
 ```powershell
 New-AzSentinelAlertRule

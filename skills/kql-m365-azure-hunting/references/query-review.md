@@ -40,7 +40,10 @@ Apply these checks before returning Az module commands:
 
 - The answer verifies context with `Get-AzContext` before live commands.
 - The answer requires explicit tenant, subscription, resource group, and workspace when needed.
+- The answer disables Az context autosave with `Disable-AzContextAutosave -Scope Process` before authentication examples.
+- The answer uses `Connect-AzAccount -Scope Process` for interactive authentication examples.
+- The answer treats `Set-AzContext -Scope Process` and `Select-AzContext -Scope Process` as process-scoped context management exceptions only.
 - The answer uses read-only cmdlets by default: `Get-Az*`, `Search-AzGraph`, or `Invoke-AzOperationalInsightsQuery`.
-- The answer avoids `New-Az*`, `Set-Az*`, `Update-Az*`, and `Remove-Az*` unless the user explicitly changes scope.
+- The answer refuses resource mutation operations such as `New-Az*`, `Set-Az*`, `Update-Az*`, and `Remove-Az*` in read-only v1.
 - The answer does not print tokens, credentials, shared keys, or connection strings.
 - The answer distinguishes Az PowerShell resource/workspace operations from KQL query text and Defender Advanced Hunting.

@@ -4,7 +4,7 @@ Use this reference when a user asks how to use Az modules, validate Azure/Sentin
 
 ## Scope
 
-This skill version is read-only. Prefer `Get-Az*`, `Search-AzGraph`, and read-only `Invoke-AzOperationalInsightsQuery` workflows. Do not use `New-Az*`, `Set-Az*`, `Update-Az*`, or `Remove-Az*` unless the user explicitly changes scope away from read-only validation.
+This skill version is read-only. Prefer `Get-Az*`, `Search-AzGraph`, and read-only `Invoke-AzOperationalInsightsQuery` workflows. Resource mutation operations such as `New-Az*`, `Set-Az*`, `Update-Az*`, and `Remove-Az*` are refusals/out of scope for v1. `Set-AzContext` and `Select-AzContext` are allowed only as process-scoped context-management exceptions.
 
 ## What Az Is
 
@@ -31,16 +31,20 @@ If installation is blocked by policy, use Azure Cloud Shell or ask the user how 
 Never assume the current Az context is safe. Start by showing context verification.
 
 ```powershell
-Connect-AzAccount
+Disable-AzContextAutosave -Scope Process
+Connect-AzAccount -Scope Process
 Get-AzContext
 Get-AzSubscription | Select-Object Name, Id, TenantId, State
-Set-AzContext -Tenant '<tenant-id>' -Subscription '<subscription-id>'
+Set-AzContext -Scope Process -Tenant '<tenant-id>' -Subscription '<subscription-id>'
 Get-AzContext | Select-Object Account, Tenant, Subscription
 ```
+
+Use `Set-AzContext -Scope Process` or `Select-AzContext -Scope Process` only to select the current process context. These context-management commands do not allow resource mutation cmdlets in this read-only version.
 
 Use managed identity only when running inside an Azure resource configured for it:
 
 ```powershell
+Disable-AzContextAutosave -Scope Process
 Connect-AzAccount -Identity
 Get-AzContext
 ```
@@ -79,7 +83,7 @@ Get-AzOperationalInsightsTable -ResourceGroupName '<resource-group>' -WorkspaceN
     Select-Object Name, Plan, RetentionInDays, TotalRetentionInDays
 
 Get-AzOperationalInsightsSchema -ResourceGroupName '<resource-group>' -WorkspaceName '<workspace-name>' |
-    Select-Object -ExpandProperty Tables |
+    Select-Object -ExpandProperty Value |
     Select-Object Name
 ```
 
@@ -142,7 +146,7 @@ Search-AzGraph -Query $query
 
 - Confirm tenant and subscription with `Get-AzContext`.
 - Confirm resource group and workspace name before Sentinel or Log Analytics commands.
-- Keep commands read-only unless the user explicitly changes scope.
+- Keep resource operations read-only. `Set-AzContext` and `Select-AzContext` are allowed only with `-Scope Process` for context management.
 - Do not output tokens, credentials, shared keys, or connection strings.
 - Default to commercial Azure. Do not switch to `.us` or sovereign cloud assumptions unless the user asks or tenant evidence requires it.
 - Explain when a request belongs to KQL, Az PowerShell, Defender Advanced Hunting, Sentinel, Log Analytics, or Azure Resource Graph.
