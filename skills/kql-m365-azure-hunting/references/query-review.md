@@ -33,3 +33,14 @@ Run this checklist before returning KQL or reviewing user-provided KQL.
 ## Final Answer Gate
 
 If any required item fails, revise the KQL before answering. If revision requires tenant schema details, ask for schema or provide a safe schema-discovery query shape.
+
+## Az PowerShell Operational Review
+
+Apply these checks before returning Az module commands:
+
+- The answer verifies context with `Get-AzContext` before live commands.
+- The answer requires explicit tenant, subscription, resource group, and workspace when needed.
+- The answer uses read-only cmdlets by default: `Get-Az*`, `Search-AzGraph`, or `Invoke-AzOperationalInsightsQuery`.
+- The answer avoids `New-Az*`, `Set-Az*`, `Update-Az*`, and `Remove-Az*` unless the user explicitly changes scope.
+- The answer does not print tokens, credentials, shared keys, or connection strings.
+- The answer distinguishes Az PowerShell resource/workspace operations from KQL query text and Defender Advanced Hunting.

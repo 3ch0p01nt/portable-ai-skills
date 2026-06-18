@@ -65,3 +65,27 @@
 - Preserves the supplied `SecurityEvent` RDP semantics, including `EventID == 4624`, `LogonType == 10`, `Account`, `Computer`, and `IpAddress`.
 - Avoids unsupported tables or columns instead of inventing schema.
 - Maps MITRE Remote Services / RDP, such as `T1021` or `T1021.001`.
+
+## Fixture 10: Az context and workspace validation
+
+- Loads `references\azure-powershell-az.md`.
+- Uses `Connect-AzAccount`, `Get-AzContext`, `Get-AzSubscription`, `Set-AzContext`, and `Get-AzOperationalInsightsWorkspace`.
+- Requires explicit tenant, subscription, resource group, and workspace confirmation before live commands.
+
+## Fixture 11: Az read-only Log Analytics query
+
+- Uses `Invoke-AzOperationalInsightsQuery` with a bounded KQL query.
+- States that the command depends on permissions and workspace table availability.
+- Does not claim live results unless execution actually occurred.
+
+## Fixture 12: Az Sentinel inventory
+
+- Uses `Get-AzSentinelDataConnector`, `Get-AzSentinelAlertRule`, and `Get-AzSentinelIncident`.
+- Keeps the workflow read-only.
+- Explains that these are Sentinel object inventory commands, not KQL query text.
+
+## Fixture 13: Az mutation refusal
+
+- Refuses to provide delete commands under read-only v1 scope.
+- Explains that `Remove-AzSentinelAlertRule` is mutating and out of scope.
+- Offers a read-only inventory command to list disabled rules instead.

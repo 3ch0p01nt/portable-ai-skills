@@ -11,6 +11,9 @@ Make a blank AI safe and useful for hunting-oriented KQL. The AI must classify t
 - Defender Advanced Hunting: read `references\kql-core.md`, `references\m365-defender.md`, and `references\query-review.md`.
 - Sentinel or Log Analytics: read `references\kql-core.md`, `references\sentinel-azure.md`, and `references\query-review.md`.
 - Azure Resource Graph: read `references\kql-core.md`, `references\sentinel-azure.md`, and `references\query-review.md`.
+- Azure PowerShell Az module usage, Log Analytics workspace validation, Sentinel object inventory, or read-only Azure context checks: read `references\azure-powershell-az.md`.
+- Read-only workspace KQL execution with Az: read `references\azure-powershell-az.md`, `references\kql-core.md`, `references\sentinel-azure.md`, `references\table-catalog.md`, and `references\query-review.md`.
+- Azure resource inventory with Az modules: read `references\azure-powershell-az.md` and use Azure Resource Graph guidance when resource state is needed instead of workspace telemetry.
 - Sentinel analytics rule or hunting query YAML: read `references\sentinel-rule-structure.md`, `references\kql-core.md`, `references\sentinel-azure.md`, `references\table-catalog.md`, and `references\query-review.md`.
 - Table, connector, or schema question: read `references\table-catalog.md` and the matching domain reference.
 - Portable example authoring: read `references\example-style-guide.md`, `references\kql-core.md`, `references\query-review.md`, and the matching domain reference.

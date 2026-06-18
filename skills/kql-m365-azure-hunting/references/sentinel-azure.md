@@ -51,3 +51,13 @@ Resources
 - Use Azure Resource Graph for resource inventory and configuration posture.
 - Do not assume Defender tables exist in Sentinel unless the connector or workspace context is known.
 - If cloud environment is unclear, use commercial `.com` assumptions and state that sovereign cloud endpoints may differ.
+
+## Live Validation with Az PowerShell
+
+For read-only live validation, use `references\azure-powershell-az.md`.
+
+- Use `Get-AzOperationalInsightsWorkspace` to discover Log Analytics workspaces.
+- Use `Get-AzOperationalInsightsTable` and `Get-AzOperationalInsightsSchema` to inspect table availability before writing KQL for custom or uncertain schemas.
+- Use `Invoke-AzOperationalInsightsQuery` to run bounded KQL against a workspace when the user explicitly wants live validation.
+- Use `Get-AzSentinelDataConnector`, `Get-AzSentinelAlertRule`, `Get-AzSentinelAlertRuleTemplate`, and `Get-AzSentinelIncident` for read-only Sentinel inventory.
+- Use `Search-AzGraph` when the user asks about Azure resource inventory or configuration state.
