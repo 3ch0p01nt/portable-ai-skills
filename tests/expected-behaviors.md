@@ -36,7 +36,7 @@
 
 ## Fixture 6: Sentinel analytics rule YAML
 
-- Loads `references\sentinel-rule-structure.md`, `references\table-catalog.md`, and `references\query-review.md`.
+- Loads `references\sentinel-rule-structure.md`, `references\kql-core.md`, `references\sentinel-azure.md`, `references\table-catalog.md`, and `references\query-review.md`.
 - Includes `requiredDataConnectors`, `queryFrequency`, `queryPeriod`, `triggerOperator`, `triggerThreshold`, `entityMappings`, `tactics`, `relevantTechniques`, and `version`.
 - Projects every column referenced by entity mappings.
 
@@ -48,11 +48,13 @@
 
 ## Fixture 8: Query surface boundary
 
-- Explains that Device Query / Live Response is a separate query surface.
+- Explains that Device Query is a separate KQL-like surface from Sentinel and Defender Advanced Hunting.
+- Treats Live Response as a non-KQL operational/remote-shell boundary, not a query surface.
 - Does not claim the query can run unchanged in Sentinel.
 - Offers a Sentinel translation only after identifying equivalent Sentinel tables.
 
 ## Fixture 9: Portable detection wrapper
 
 - Uses the metadata wrapper from `references\example-style-guide.md`.
+- Loads `references\example-style-guide.md`, `references\kql-core.md`, `references\query-review.md`, and the matching domain reference.
 - Includes platform label, MITRE mapping, description, false positives, blind spots, response actions, references, version history, and KQL.
