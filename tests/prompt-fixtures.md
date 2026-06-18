@@ -46,9 +46,18 @@ Write a query to find public IP resources in Azure and explain whether it belong
 
 User prompt:
 
-```text
-Turn this hunt into a Sentinel scheduled analytics rule YAML with connector requirements, entity mappings, MITRE tactics, and trigger settings.
+````text
+Turn this Sentinel hunt into a scheduled analytics rule YAML with connector requirements, entity mappings, MITRE tactics, and trigger settings. Treat it as Credential Access / T1110 password guessing context.
+
+```kql
+let lookback = 1h;
+SigninLogs
+| where TimeGenerated > ago(lookback)
+| where ResultType != 0
+| summarize FailureCount=count(), FirstSeen=min(TimeGenerated), LastSeen=max(TimeGenerated) by UserPrincipalName, IPAddress, AppDisplayName
+| where FailureCount >= 5
 ```
+````
 
 ## Fixture 7: SecurityEvent and WindowsEvent dual support
 
@@ -70,6 +79,15 @@ This query came from Intune Device Query. Can I run it unchanged in Sentinel?
 
 User prompt:
 
-```text
-Package this KQL as a portable detection example with MITRE mapping, false positives, blind spots, and response actions.
+````text
+Package this Sentinel KQL as a portable detection example with MITRE mapping, false positives, blind spots, and response actions.
+
+```kql
+let lookback = 1d;
+SecurityEvent
+| where TimeGenerated > ago(lookback)
+| where EventID == 4624 and LogonType == 10
+| extend AccountName = tostring(split(Account, "\\")[1])
+| project TimeGenerated, Account, AccountName, Computer, IpAddress
 ```
+````
