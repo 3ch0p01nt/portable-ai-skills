@@ -15,10 +15,11 @@ This skill teaches an AI assistant to:
 
 ## Install from Git
 
-Clone the repository:
+Clone the repository into a named folder and enter it:
 
 ```powershell
-git clone <repository-url>
+git clone <repository-url> kql-m365-azure-hunting-skill-pack
+Set-Location .\kql-m365-azure-hunting-skill-pack
 ```
 
 Copy the skill folder into the local Superpowers skills directory:
@@ -53,5 +54,6 @@ tests\expected-behaviors.md
 - No live Azure or M365 validation scripts are included in v1.
 - The AI must state assumptions when schema or connector context is missing.
 - Sentinel tables depend on enabled connectors.
-- Device Query / Live Response is a separate query surface from Sentinel and Defender Advanced Hunting.
+- Device Query is a separate KQL-like surface from Sentinel and Defender Advanced Hunting.
+- Live Response is non-KQL operational remote-shell functionality and is out of scope except when explaining its boundary from query surfaces.
 - Az module guidance is read-only in v1; mutating `New-Az*`, `Set-Az*`, `Update-Az*`, and `Remove-Az*` workflows are out of scope unless explicitly redesigned.
