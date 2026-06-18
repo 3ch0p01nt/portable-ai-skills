@@ -39,6 +39,7 @@ let process =
     | project ProcessTime=Timestamp, DeviceId, ProcessUniqueId, FileName, ProcessCommandLine;
 network
 | join kind=inner process on DeviceId, $left.InitiatingProcessUniqueId == $right.ProcessUniqueId
+// Near-start filter: omit or widen for general long-lived process enrichment.
 | where abs(datetime_diff('minute', NetworkTime, ProcessTime)) <= 5
 ```
 
