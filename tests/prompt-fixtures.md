@@ -41,3 +41,35 @@ User prompt:
 ```text
 Write a query to find public IP resources in Azure and explain whether it belongs in Sentinel or Azure Resource Graph.
 ```
+
+## Fixture 6: Sentinel analytics rule YAML
+
+User prompt:
+
+```text
+Turn this hunt into a Sentinel scheduled analytics rule YAML with connector requirements, entity mappings, MITRE tactics, and trigger settings.
+```
+
+## Fixture 7: SecurityEvent and WindowsEvent dual support
+
+User prompt:
+
+```text
+Write Sentinel KQL for RDP lateral movement that works with both SecurityEvent and AMA WindowsEvent.
+```
+
+## Fixture 8: Query surface boundary
+
+User prompt:
+
+```text
+This query came from Intune Device Query. Can I run it unchanged in Sentinel?
+```
+
+## Fixture 9: Portable detection wrapper
+
+User prompt:
+
+```text
+Package this KQL as a portable detection example with MITRE mapping, false positives, blind spots, and response actions.
+```

@@ -33,3 +33,26 @@
 - Identifies Azure Resource Graph as the correct query surface for resource inventory.
 - Explains that Resource Graph uses KQL-like syntax but is not the same execution surface as Sentinel Log Analytics.
 - Provides an Azure Resource Graph query and notes when Sentinel would be appropriate.
+
+## Fixture 6: Sentinel analytics rule YAML
+
+- Loads `references\sentinel-rule-structure.md`, `references\table-catalog.md`, and `references\query-review.md`.
+- Includes `requiredDataConnectors`, `queryFrequency`, `queryPeriod`, `triggerOperator`, `triggerThreshold`, `entityMappings`, `tactics`, `relevantTechniques`, and `version`.
+- Projects every column referenced by entity mappings.
+
+## Fixture 7: SecurityEvent and WindowsEvent dual support
+
+- Uses `union isfuzzy=true`.
+- Handles flat `SecurityEvent` columns and dynamic `WindowsEvent.EventData` fields separately.
+- Normalizes account and IP fields before summarizing or mapping entities.
+
+## Fixture 8: Query surface boundary
+
+- Explains that Device Query / Live Response is a separate query surface.
+- Does not claim the query can run unchanged in Sentinel.
+- Offers a Sentinel translation only after identifying equivalent Sentinel tables.
+
+## Fixture 9: Portable detection wrapper
+
+- Uses the metadata wrapper from `references\example-style-guide.md`.
+- Includes platform label, MITRE mapping, description, false positives, blind spots, response actions, references, version history, and KQL.
