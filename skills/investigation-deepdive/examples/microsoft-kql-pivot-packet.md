@@ -6,7 +6,7 @@ This example is synthetic and offline. Use `kql-m365-azure-hunting` to review KQ
 
 Purpose: Find process activity around the suspicious PowerShell seed.
 
-Data source: Defender Advanced Hunting or Sentinel `DeviceProcessEvents`.
+Data source: Defender Advanced Hunting `DeviceProcessEvents`.
 
 Time range: T-24h to T+24h around `2026-06-18T14:22:11Z`.
 
@@ -34,7 +34,7 @@ Execution status: not executed.
 
 Purpose: Check whether other hosts contacted the same domain.
 
-Data source: Defender Advanced Hunting or Sentinel `DeviceNetworkEvents`.
+Data source: Defender Advanced Hunting `DeviceNetworkEvents`.
 
 Time range: T-30d.
 
