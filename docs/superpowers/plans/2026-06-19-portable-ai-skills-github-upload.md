@@ -298,7 +298,7 @@ $joined = $text -join "`n"
 $patterns = @(
   'api[_-]?key\s*[:=]\s*["''][^"'']+',
   'client[_-]?secret\s*[:=]\s*["''][^"'']+',
-  'AZURE_OPENAI_API_KEY',
+  ('AZURE_' + 'OPENAI_API_KEY'),
   'https://[^\\s]+\\.openai\\.azure\\.com'
 )
 foreach ($pattern in $patterns) {
