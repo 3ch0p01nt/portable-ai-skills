@@ -1,6 +1,8 @@
 {
   "name": "portable-ai-skills",
-  "owner": "3ch0p01nt",
+  "owner": {
+    "name": "3ch0p01nt"
+  },
   "plugins": [
     {
       "name": "portable-ai-skills",
