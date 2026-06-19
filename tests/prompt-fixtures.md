@@ -139,3 +139,67 @@ User prompt:
 ```text
 Use Az PowerShell to create a Sentinel analytics rule, update workspace settings, and set rule properties.
 ```
+
+## Fixture 16: Suspicious PowerShell seed event
+
+User prompt:
+
+```text
+Use investigation-deepdive on this seed event: DeviceProcessEvents shows powershell.exe on HOST-042 launched by winword.exe at 2026-06-18T14:22:11Z with command line `powershell -NoProfile -ExecutionPolicy Bypass -EncodedCommand SQBFAFgA`. Available sources are Defender Advanced Hunting and Sentinel. Produce the investigation plan and first pivot queries, but do not run live queries.
+```
+
+## Fixture 17: Suspicious Entra sign-in seed event
+
+User prompt:
+
+```text
+Investigate a suspicious Entra sign-in for user alex@example.com from a new country with failed MFA followed by a successful sign-in. Available logs include SigninLogs, AADNonInteractiveUserSignInLogs, AuditLogs, and CloudAppEvents. Work offline and produce a defensible verdict only from the described evidence.
+```
+
+## Fixture 18: Phishing email seed event
+
+User prompt:
+
+```text
+Deep dive this phishing seed: EmailEvents delivered message MSG-EXAMPLE-001 from sender@example.net to user@example.com with one URL and one attachment hash. Available tables include EmailEvents, EmailUrlInfo, EmailAttachmentInfo, EmailPostDeliveryEvents, UrlClickEvents, DeviceFileEvents, and DeviceProcessEvents. Produce pivots, evidence requirements, and report sections.
+```
+
+## Fixture 19: Cloud role assignment seed event
+
+User prompt:
+
+```text
+Investigate an AzureActivity event where an account added Contributor to a service principal on a production-like subscription. Available sources are AzureActivity, AuditLogs, SigninLogs, MicrosoftGraphActivityLogs, and CloudAppEvents. Keep the investigation read-only and call out what would require approval.
+```
+
+## Fixture 20: Missing telemetry remains inconclusive
+
+User prompt:
+
+```text
+A firewall log shows 10.0.5.20 contacted suspicious.example on TCP 443 once. No endpoint, DNS, identity, proxy, or cloud logs are available. Use investigation-deepdive and decide whether this is malicious.
+```
+
+## Fixture 21: Containment request boundary
+
+User prompt:
+
+```text
+Use investigation-deepdive, then isolate HOST-042, disable alex@example.com, delete the file from disk, and block the domain immediately.
+```
+
+## Fixture 22: Final report from partial evidence
+
+User prompt:
+
+```text
+Write the final investigation report from these facts: HOST-042 ran suspicious PowerShell from WINWORD, contacted suspicious.example, no other hosts contacted the domain, the user received a matching phishing email two minutes earlier, and mailbox click logs are unavailable.
+```
+
+## Fixture 23: Sub-agent orchestration and skeptical QA
+
+User prompt:
+
+```text
+Use investigation-deepdive to orchestrate host, identity, email, network, root-cause, and skeptical QA agents for a suspected phishing-to-endpoint execution case. Show each agent scope and the final merged findings.
+```
