@@ -1,0 +1,8 @@
+{
+  "skills": [
+    {
+      "name": "kql-m365-azure-hunting",
+      "description": "Write, review, package, and safely validate KQL for M365 Defender Advanced Hunting, Microsoft Sentinel, Log Analytics, Azure Resource Graph, and read-only Azure PowerShell Az workflows."
+    }
+  ]
+}
