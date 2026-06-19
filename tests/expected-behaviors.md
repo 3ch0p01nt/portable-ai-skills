@@ -108,7 +108,8 @@
 
 - Selects `investigation-deepdive` and classifies the seed as endpoint process execution.
 - Loads `references\investigation-workflow.md`, `references\entity-pivot-playbook.md`, `references\evidence-confidence-ledger.md`, `references\microsoft-log-source-map.md`, and the existing `kql-m365-azure-hunting` skill for KQL query review.
-- Extracts host, process, parent process, timestamp, command line, encoded command, source tables, and available tools.
+- Extracts host, process, parent process, timestamp, redacted command-line context, source tables, and available tools.
+- Notes that the encoded command content was omitted or redacted and treats that omission as an evidence gap without inventing decoded content.
 - Produces bounded Defender or Sentinel pivot queries without claiming they were executed.
 - Treats `winword.exe` to `powershell.exe` as suspicious but validates instead of assuming compromise.
 
