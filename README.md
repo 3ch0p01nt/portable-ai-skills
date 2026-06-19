@@ -1,44 +1,78 @@
-# KQL M365 Azure Hunting Skill Pack
+# Portable AI Skills
 
-Portable Superpowers-compatible skill pack for KQL, M365 Defender Advanced Hunting, Microsoft Sentinel, Log Analytics, Azure Resource Graph, and read-only Azure PowerShell Az validation workflows.
+Portable technical AI skills for GitHub Copilot CLI and compatible skill loaders. This repository is designed for environments where Copilot CLI is connected to GPT 5.1, including direct GPT 5.1 API access hosted in Azure OpenAI, without embedding model endpoints, tenant identifiers, API keys, or deployment-specific secrets.
 
-## What It Does
+## Installed Skills
 
-This skill teaches an AI assistant to:
+### kql-m365-azure-hunting
 
-- Classify the correct Microsoft query surface.
-- Write bounded and explainable KQL.
-- Review unsafe KQL before returning it.
-- Use Az PowerShell read-only validation patterns for Azure, Log Analytics, and Sentinel context.
-- Avoid invented schema, tenant facts, and live-validation claims.
-- Default to commercial `.com` Microsoft cloud terminology.
+Write, review, package, and safely validate KQL for M365 Defender Advanced Hunting, Microsoft Sentinel, Log Analytics, Azure Resource Graph, and read-only Azure PowerShell Az workflows.
 
-## Install from Git
+Capabilities:
 
-Clone the repository into a named folder and enter it:
+- Classifies the correct Microsoft query surface.
+- Writes bounded and explainable KQL.
+- Reviews unsafe KQL before returning it.
+- Packages Sentinel analytics rule YAML and portable detection examples.
+- Documents table, connector, and entity-mapping expectations.
+- Uses read-only Az PowerShell validation patterns for Azure, Log Analytics, and Sentinel context.
+- Keeps Device Query separate from Sentinel and Defender Advanced Hunting.
+- Treats Live Response as non-KQL operational/remote-shell work and out of scope except for boundary explanation.
+
+## Install as a Copilot CLI Plugin
+
+Clone this repository into your Copilot CLI installed plugins directory:
 
 ```powershell
-git clone '<repository-url>' kql-m365-azure-hunting-skill-pack
-Set-Location .\kql-m365-azure-hunting-skill-pack
+git clone 'https://github.com/3ch0p01nt/portable-ai-skills.git' "$HOME\.copilot\installed-plugins\portable-ai-skills"
 ```
 
-Copy the skill folder into the local Superpowers skills directory:
+Restart or reload Copilot CLI, then use `/plugin` and `/skills` to confirm the plugin and skills are available.
+
+## Direct Skill Folder Install
+
+If an environment loads skills directly instead of using plugin metadata, copy the skill folder:
 
 ```powershell
-Copy-Item -Recurse '.\skills\kql-m365-azure-hunting' '<superpowers-skills-directory>\kql-m365-azure-hunting'
+git clone 'https://github.com/3ch0p01nt/portable-ai-skills.git' portable-ai-skills
+Set-Location .\portable-ai-skills
+Copy-Item -Recurse '.\skills\kql-m365-azure-hunting' '<skills-directory>\kql-m365-azure-hunting'
 ```
 
-Restart or reload the AI tool so it can discover the skill.
-
-## Skill Entry Point
-
-The root skill is:
+## Repository Structure
 
 ```text
-skills\kql-m365-azure-hunting\SKILL.md
+portable-ai-skills/
+  .claude-plugin/
+    plugin.json
+    marketplace.json
+  skills/
+    kql-m365-azure-hunting/
+      SKILL.md
+      references/
+      examples/
+  tests/
+    prompt-fixtures.md
+    expected-behaviors.md
+  docs/
+    superpowers/
+      specs/
+      plans/
 ```
 
-## Offline Test Fixtures
+## Adding Future Skills
+
+Add one folder per skill:
+
+```text
+skills/<skill-name>/SKILL.md
+skills/<skill-name>/references/
+skills/<skill-name>/examples/
+```
+
+Then add the skill to `.claude-plugin\marketplace.json` and update this README.
+
+## Offline Validation
 
 Use these files to check behavior after installation:
 
@@ -51,9 +85,14 @@ tests\expected-behaviors.md
 
 - No credentials are included.
 - No tenant-specific IDs are included.
+- No AOAI endpoints, API keys, deployment names, or model-host secrets are included.
 - No live Azure or M365 validation scripts are included in v1.
 - The AI must state assumptions when schema or connector context is missing.
 - Sentinel tables depend on enabled connectors.
 - Device Query is a separate KQL-like surface from Sentinel and Defender Advanced Hunting.
-- Live Response is non-KQL operational remote-shell functionality and is out of scope except when explaining its boundary from query surfaces.
-- Az module guidance is read-only in v1; mutating `New-Az*`, `Set-Az*`, `Update-Az*`, and `Remove-Az*` workflows are out of scope unless explicitly redesigned.
+- Live Response is non-KQL operational/remote-shell work and is out of scope except for boundary explanation.
+- Az module guidance is read-only in v1; mutating `New-Az*`, resource-changing `Set-Az*`, `Update-Az*`, and `Remove-Az*` workflows are out of scope unless explicitly redesigned.
+
+## License
+
+MIT
