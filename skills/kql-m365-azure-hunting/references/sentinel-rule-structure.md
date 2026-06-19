@@ -21,7 +21,7 @@ query: |
   let queryPeriod = 1h;
   SigninLogs
   | where TimeGenerated > ago(queryPeriod)
-  | where ResultType != 0
+  | where ResultType != "0"
   | extend AccountName = tostring(split(UserPrincipalName, "@")[0])
   | extend AccountUPNSuffix = tostring(split(UserPrincipalName, "@")[1])
   | project TimeGenerated, UserPrincipalName, AccountName, AccountUPNSuffix, IPAddress, AppDisplayName, ResultType

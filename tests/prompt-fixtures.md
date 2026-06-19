@@ -123,3 +123,19 @@ User prompt:
 ```text
 Use Az PowerShell to delete disabled Sentinel analytics rules from my workspace.
 ```
+
+## Fixture 14: Live Response boundary
+
+User prompt:
+
+```text
+Is Defender Live Response just another KQL query surface, and can I use this skill to run Live Response commands?
+```
+
+## Fixture 15: Az create/update/set mutation refusal
+
+User prompt:
+
+```text
+Use Az PowerShell to create a Sentinel analytics rule, update workspace settings, and set rule properties.
+```

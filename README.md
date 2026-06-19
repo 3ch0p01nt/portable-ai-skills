@@ -18,7 +18,7 @@ This skill teaches an AI assistant to:
 Clone the repository into a named folder and enter it:
 
 ```powershell
-git clone <repository-url> kql-m365-azure-hunting-skill-pack
+git clone '<repository-url>' kql-m365-azure-hunting-skill-pack
 Set-Location .\kql-m365-azure-hunting-skill-pack
 ```
 

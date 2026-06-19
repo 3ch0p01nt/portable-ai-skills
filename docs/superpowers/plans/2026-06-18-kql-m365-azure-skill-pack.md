@@ -174,7 +174,7 @@ This repository contains a portable Superpowers-compatible skill pack for teachi
 Clone the repository into a named folder and enter it:
 
 ```powershell
-git clone <repository-url> kql-m365-azure-hunting-skill-pack
+git clone '<repository-url>' kql-m365-azure-hunting-skill-pack
 Set-Location .\kql-m365-azure-hunting-skill-pack
 ```
 
@@ -735,7 +735,7 @@ query: |
   let queryPeriod = 1h;
   SigninLogs
   | where TimeGenerated > ago(queryPeriod)
-  | where ResultType != 0
+  | where ResultType != "0"
   | extend AccountName = tostring(split(UserPrincipalName, "@")[0])
   | extend AccountUPNSuffix = tostring(split(UserPrincipalName, "@")[1])
   | project TimeGenerated, UserPrincipalName, AccountName, AccountUPNSuffix, IPAddress, AppDisplayName, ResultType
@@ -1800,6 +1800,22 @@ User prompt:
 ```text
 Use Az PowerShell to delete disabled Sentinel analytics rules from my workspace.
 ```
+
+## Fixture 14: Live Response boundary
+
+User prompt:
+
+```text
+Is Defender Live Response just another KQL query surface, and can I use this skill to run Live Response commands?
+```
+
+## Fixture 15: Az create/update/set mutation refusal
+
+User prompt:
+
+```text
+Use Az PowerShell to create a Sentinel analytics rule, update workspace settings, and set rule properties.
+```
 ```
 
 - [ ] **Step 8: Add Az expected behaviors**
@@ -1831,6 +1847,18 @@ Append this content to `tests\expected-behaviors.md`:
 - Refuses to provide delete commands under read-only v1 scope.
 - Explains that `Remove-AzSentinelAlertRule` is mutating and out of scope.
 - Offers a read-only inventory command to list disabled rules instead.
+
+## Fixture 14: Live Response boundary
+
+- States that Live Response is non-KQL operational/remote-shell functionality, not a query surface.
+- Explains that Live Response is out of scope for this read-only KQL skill except for boundary explanation.
+- Does not provide remote-shell, remediation, or Live Response command sequences.
+
+## Fixture 15: Az create/update/set mutation refusal
+
+- Refuses `New-Az*`, `Set-Az*`, and `Update-Az*` resource mutations under read-only v1 scope.
+- Explains that creating analytics rules, setting workspace properties, and updating resources are out of scope unless the skill is explicitly redesigned for mutations.
+- Offers read-only validation and inventory alternatives such as `Get-AzSentinelAlertRule`, `Get-AzOperationalInsightsWorkspace`, or `Search-AzGraph`.
 ```
 
 - [ ] **Step 9: Verify Az coverage**
@@ -1846,7 +1874,7 @@ $expected = Get-Content '.\tests\expected-behaviors.md' -Raw
 @('azure-powershell-az.md','Invoke-AzOperationalInsightsQuery','Get-AzSentinelAlertRule','Search-AzGraph','read-only') | ForEach-Object {
   if (($root + $az + $example) -notmatch [regex]::Escape($_)) { throw "Az content missing $_" }
 }
-@('Fixture 10','Fixture 11','Fixture 12','Fixture 13') | ForEach-Object {
+@('Fixture 10','Fixture 11','Fixture 12','Fixture 13','Fixture 14','Fixture 15') | ForEach-Object {
   if ($fixtures -notmatch $_) { throw "Az prompt fixtures missing $_" }
   if ($expected -notmatch $_) { throw "Az expected behaviors missing $_" }
 }
@@ -1929,7 +1957,7 @@ This skill teaches an AI assistant to:
 Clone the repository into a named folder and enter it:
 
 ```powershell
-git clone <repository-url> kql-m365-azure-hunting-skill-pack
+git clone '<repository-url>' kql-m365-azure-hunting-skill-pack
 Set-Location .\kql-m365-azure-hunting-skill-pack
 ```
 
@@ -2038,12 +2066,14 @@ Fixture 4 maps to schema discipline guardrails.
 Fixture 5 maps to sentinel-azure Resource Graph boundary rules.
 Fixture 6 maps to sentinel-rule-structure, kql-core, sentinel-azure, table-catalog, and query-review.
 Fixture 7 maps to table-catalog, kql-core, and multi-source-union.
-Fixture 8 maps to Device Query boundary rules and Live Response non-KQL boundary rules.
+Fixture 8 maps to Device Query boundary rules.
 Fixture 9 maps to example-style-guide, kql-core, query-review, and matching domain reference.
 Fixture 10 maps to azure-powershell-az context and workspace validation.
 Fixture 11 maps to azure-powershell-az read-only Log Analytics query execution.
 Fixture 12 maps to azure-powershell-az Sentinel inventory.
-Fixture 13 maps to azure-powershell-az mutation refusal.
+Fixture 13 maps to azure-powershell-az Remove-Az* mutation refusal.
+Fixture 14 maps to Live Response non-KQL boundary rules.
+Fixture 15 maps to azure-powershell-az New-Az*/Set-Az*/Update-Az* mutation refusal.
 ```
 
 - [ ] **Step 4: Commit only if review changes were needed**
