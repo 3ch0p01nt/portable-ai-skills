@@ -95,7 +95,10 @@ if ($marketplace.name -ne 'portable-ai-skills') { throw 'marketplace name mismat
 if ($marketplace.metadata.description -notmatch 'Portable technical AI skills') { throw 'marketplace metadata description missing' }
 if ($marketplace.owner.name -ne '3ch0p01nt') { throw 'marketplace owner mismatch' }
 if ($marketplace.plugins[0].source -ne './') { throw 'marketplace source mismatch' }
-if (Get-Command claude -ErrorAction SilentlyContinue) { claude plugin validate --strict . }
+if (Get-Command claude -ErrorAction SilentlyContinue) {
+  claude plugin validate --strict .
+  if ($LASTEXITCODE -ne 0) { throw 'claude plugin strict validation failed' }
+}
 'Plugin metadata validated'
 ```
 
@@ -299,7 +302,7 @@ $patterns = @(
   'api[_-]?key\s*[:=]\s*["''][^"'']+',
   'client[_-]?secret\s*[:=]\s*["''][^"'']+',
   ('AZURE_' + 'OPENAI_API_KEY'),
-  'https://[^\\s]+\\.openai\\.azure\\.com'
+  ('https://[^\s]+\.openai\.' + 'azure\.com')
 )
 foreach ($pattern in $patterns) {
   if ($joined -match $pattern) { throw "Potential secret or endpoint pattern found: $pattern" }
@@ -321,7 +324,10 @@ if ($marketplace.name -ne 'portable-ai-skills') { throw 'marketplace name mismat
 if ($marketplace.metadata.description -notmatch 'Portable technical AI skills') { throw 'marketplace metadata description missing' }
 if ($marketplace.owner.name -ne '3ch0p01nt') { throw 'marketplace owner mismatch' }
 if ($marketplace.plugins[0].source -ne './') { throw 'marketplace source mismatch' }
-if (Get-Command claude -ErrorAction SilentlyContinue) { claude plugin validate --strict . }
+if (Get-Command claude -ErrorAction SilentlyContinue) {
+  claude plugin validate --strict .
+  if ($LASTEXITCODE -ne 0) { throw 'claude plugin strict validation failed' }
+}
 'Plugin metadata validated'
 ```
 
