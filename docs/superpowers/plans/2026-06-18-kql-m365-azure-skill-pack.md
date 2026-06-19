@@ -171,10 +171,11 @@ This repository contains a portable Superpowers-compatible skill pack for teachi
 
 ## Install from Git
 
-Clone the repository:
+Clone the repository into a named folder and enter it:
 
 ```powershell
-git clone <repository-url>
+git clone <repository-url> kql-m365-azure-hunting-skill-pack
+Set-Location .\kql-m365-azure-hunting-skill-pack
 ```
 
 Copy `skills\kql-m365-azure-hunting` into the local Superpowers skills directory used by the target AI tool.
@@ -825,7 +826,8 @@ Create `skills\kql-m365-azure-hunting\references\table-catalog.md` with this con
 | Sentinel / Log Analytics | `TimeGenerated` | Workspace tables generally use `TimeGenerated`. |
 | Azure Resource Graph | none required | Resource inventory is current-state unless a resource property contains time. |
 | ADX custom data | schema-dependent | Confirm the table schema before writing time filters. |
-| Device Query / Live Response | device-query specific | Do not assume Sentinel or Defender Advanced Hunting schema. |
+| Device Query | device-query specific schema | KQL-like query surface. Do not assume Sentinel or Defender Advanced Hunting schema; confirm the Device Query schema before writing time filters. |
+| Live Response | no KQL time field | Non-KQL remote shell and remediation workflow, not a query surface. |
 
 ## Defender XDR Tables
 
@@ -989,10 +991,11 @@ DeviceProcessEvents
 Modify `skills\kql-m365-azure-hunting\SKILL.md` so `Reference Selection` includes:
 
 ```markdown
-- Sentinel analytics rule or hunting query YAML: read `references\sentinel-rule-structure.md`, `references\sentinel-azure.md`, `references\table-catalog.md`, and `references\query-review.md`.
+- Sentinel analytics rule or hunting query YAML: read `references\sentinel-rule-structure.md`, `references\kql-core.md`, `references\sentinel-azure.md`, `references\table-catalog.md`, and `references\query-review.md`.
 - Table, connector, or schema question: read `references\table-catalog.md` and the matching domain reference.
-- Portable example authoring: read `references\example-style-guide.md`, `references\kql-core.md`, and the matching domain reference.
-- Device Query or Live Response: read `references\table-catalog.md` and state that Device Query is a separate query surface from Sentinel and Defender Advanced Hunting.
+- Portable example authoring: read `references\example-style-guide.md`, `references\kql-core.md`, `references\query-review.md`, and the matching domain reference.
+- Device Query: read `references\table-catalog.md`, `references\kql-core.md`, and `references\query-review.md`; state that Device Query is a separate query surface from Sentinel and Defender Advanced Hunting.
+- Live Response: not KQL; it is operational and remote-shell oriented, outside this read-only KQL skill except for explaining that boundary.
 ```
 
 Expected: root skill points to all three new source-derived references.
@@ -1405,7 +1408,8 @@ Append this content to `tests\expected-behaviors.md`:
 
 ## Fixture 8: Query surface boundary
 
-- Explains that Device Query / Live Response is a separate query surface.
+- Explains that Device Query is a separate KQL-like surface from Sentinel and Defender Advanced Hunting.
+- Treats Live Response as a non-KQL operational/remote-shell boundary, not a query surface.
 - Does not claim the query can run unchanged in Sentinel.
 - Offers a Sentinel translation only after identifying equivalent Sentinel tables.
 
@@ -1474,7 +1478,7 @@ Use this reference when a user asks how to use Az modules, validate Azure/Sentin
 
 ## Scope
 
-This skill version is read-only. Prefer `Get-Az*`, `Search-AzGraph`, and read-only `Invoke-AzOperationalInsightsQuery` workflows. Do not use `New-Az*`, `Set-Az*`, `Update-Az*`, or `Remove-Az*` unless the user explicitly changes scope away from read-only validation.
+This skill version is read-only. Prefer `Get-Az*`, `Search-AzGraph`, and read-only `Invoke-AzOperationalInsightsQuery` workflows. Resource mutation operations such as `New-Az*`, `Set-Az*`, `Update-Az*`, and `Remove-Az*` are refusals/out of scope for v1. `Set-AzContext` and `Select-AzContext` are allowed only as process-scoped context-management exceptions.
 
 ## What Az Is
 
@@ -1501,17 +1505,21 @@ If installation is blocked by policy, use Azure Cloud Shell or ask the user how 
 Never assume the current Az context is safe. Start by showing context verification.
 
 ```powershell
-Connect-AzAccount
+Disable-AzContextAutosave -Scope Process
+Connect-AzAccount -Scope Process
 Get-AzContext
 Get-AzSubscription | Select-Object Name, Id, TenantId, State
-Set-AzContext -Tenant '<tenant-id>' -Subscription '<subscription-id>'
+Set-AzContext -Scope Process -Tenant '<tenant-id>' -Subscription '<subscription-id>'
 Get-AzContext | Select-Object Account, Tenant, Subscription
 ```
+
+Use `Set-AzContext -Scope Process` or `Select-AzContext -Scope Process` only to select the current process context. These context-management commands do not allow resource mutation cmdlets in this read-only version.
 
 Use managed identity only when running inside an Azure resource configured for it:
 
 ```powershell
-Connect-AzAccount -Identity
+Disable-AzContextAutosave -Scope Process
+Connect-AzAccount -Identity -Scope Process
 Get-AzContext
 ```
 
@@ -1679,9 +1687,10 @@ Create `skills\kql-m365-azure-hunting\examples\az-readonly-validation.md` with t
 ## Context Verification
 
 ```powershell
-Connect-AzAccount
+Disable-AzContextAutosave -Scope Process
+Connect-AzAccount -Scope Process
 Get-AzSubscription | Select-Object Name, Id, TenantId, State
-Set-AzContext -Tenant '<tenant-id>' -Subscription '<subscription-id>'
+Set-AzContext -Scope Process -Tenant '<tenant-id>' -Subscription '<subscription-id>'
 Get-AzContext | Select-Object Account, Tenant, Subscription
 ```
 
@@ -1802,7 +1811,7 @@ Append this content to `tests\expected-behaviors.md`:
 ## Fixture 10: Az context and workspace validation
 
 - Loads `references\azure-powershell-az.md`.
-- Uses `Connect-AzAccount`, `Get-AzContext`, `Get-AzSubscription`, `Set-AzContext`, and `Get-AzOperationalInsightsWorkspace`.
+- Uses `Disable-AzContextAutosave -Scope Process`, `Connect-AzAccount -Scope Process`, `Get-AzContext`, `Get-AzSubscription`, `Set-AzContext -Scope Process`, and `Get-AzOperationalInsightsWorkspace`.
 - Requires explicit tenant, subscription, resource group, and workspace confirmation before live commands.
 
 ## Fixture 11: Az read-only Log Analytics query
@@ -1917,10 +1926,11 @@ This skill teaches an AI assistant to:
 
 ## Install from Git
 
-Clone the repository:
+Clone the repository into a named folder and enter it:
 
 ```powershell
-git clone <repository-url>
+git clone <repository-url> kql-m365-azure-hunting-skill-pack
+Set-Location .\kql-m365-azure-hunting-skill-pack
 ```
 
 Copy the skill folder into the local Superpowers skills directory:
@@ -1955,7 +1965,8 @@ tests\expected-behaviors.md
 - No live Azure or M365 validation scripts are included in v1.
 - The AI must state assumptions when schema or connector context is missing.
 - Sentinel tables depend on enabled connectors.
-- Device Query / Live Response is a separate query surface from Sentinel and Defender Advanced Hunting.
+- Device Query is a separate KQL-like surface from Sentinel and Defender Advanced Hunting.
+- Live Response is non-KQL operational remote-shell functionality and is out of scope except when explaining its boundary from query surfaces.
 - Az module guidance is read-only in v1; mutating `New-Az*`, `Set-Az*`, `Update-Az*`, and `Remove-Az*` workflows are out of scope unless explicitly redesigned.
 ```
 

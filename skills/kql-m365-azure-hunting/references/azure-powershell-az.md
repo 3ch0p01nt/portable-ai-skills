@@ -45,7 +45,7 @@ Use managed identity only when running inside an Azure resource configured for i
 
 ```powershell
 Disable-AzContextAutosave -Scope Process
-Connect-AzAccount -Identity
+Connect-AzAccount -Identity -Scope Process
 Get-AzContext
 ```
 
