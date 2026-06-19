@@ -283,7 +283,7 @@ Act like an experienced incident responder, not a log summarizer. Treat the seed
 10. Close each thread as confirmed malicious, suspicious but unconfirmed, likely benign, known-good or admin activity, duplicate, or dead end due to insufficient telemetry.
 11. Assess root cause and blast radius.
 12. Run skeptical QA before the final answer.
-13. Return the final report with verdict, severity, confidence, evidence, uncertainty, and next analyst actions.
+13. Return the requested answer shape. Use the final investigation report shape only when the user requests a final report or when enough evidence exists for defensible final findings.
 
 ## Safety Guardrails
 
@@ -319,6 +319,7 @@ For a query or pivot packet:
 4. `Query or pivot`
 5. `Expected result shape`
 6. `How to interpret results`
+7. `Execution status`
 
 For a sub-agent result:
 
@@ -768,7 +769,7 @@ If a query is drafted but not executed, say `not executed` in the result summary
 
 Create `skills\investigation-deepdive\references\agent-orchestration-and-qa.md` with this exact content:
 
-```markdown
+````markdown
 # Agent Orchestration and Skeptical QA
 
 ## Orchestrator Role
@@ -846,13 +847,13 @@ Before finalizing, ask:
 - Did every major claim cite evidence?
 
 Revise the final report when QA finds weak evidence, missing scope, unsupported claims, or unresolved contradictions.
-```
+````
 
 - [ ] **Step 3: Create `report-shapes.md`**
 
 Create `skills\investigation-deepdive\references\report-shapes.md` with this exact content:
 
-```markdown
+````markdown
 # Report Shapes
 
 ## Initial Investigation Plan
@@ -944,11 +945,13 @@ Use this shape for final reports:
 
 11. Evidence Ledger
    - Finding ID.
+   - Entity.
    - Claim.
    - Evidence.
    - Source.
    - Timestamp.
    - Confidence.
+   - MITRE ATT&CK mapping.
 
 12. Open Questions
    - What remains unknown.
@@ -964,7 +967,7 @@ Separate actions into:
 - Actions that may affect business operations.
 - Longer-term remediation.
 - Detection and logging improvements.
-```
+````
 
 - [ ] **Step 4: Create `public-source-notes.md`**
 
@@ -1127,7 +1130,7 @@ This example is synthetic and offline. Use `kql-m365-azure-hunting` to review KQ
 
 Purpose: Find process activity around the suspicious PowerShell seed.
 
-Data source: Defender Advanced Hunting or Sentinel `DeviceProcessEvents`.
+Data source: Defender Advanced Hunting `DeviceProcessEvents`.
 
 Time range: T-24h to T+24h around `2026-06-18T14:22:11Z`.
 
@@ -1155,7 +1158,7 @@ Execution status: not executed.
 
 Purpose: Check whether other hosts contacted the same domain.
 
-Data source: Defender Advanced Hunting or Sentinel `DeviceNetworkEvents`.
+Data source: Defender Advanced Hunting `DeviceNetworkEvents`.
 
 Time range: T-30d.
 
@@ -1203,7 +1206,7 @@ This example is synthetic and offline.
 
 Create `skills\investigation-deepdive\examples\sub-agent-result.md` with this exact content:
 
-```markdown
+````markdown
 # Example: Sub-Agent Result
 
 This example is synthetic and offline.
@@ -1220,7 +1223,7 @@ recommended next pivots: process tree, file writes after PowerShell, network pre
 dead ends: none yet
 open questions: Was the encoded command decoded safely by an analyst? Did the user receive a matching email? Did other hosts contact the same domain?
 ```
-```
+````
 
 - [ ] **Step 5: Create `final-report-skeleton.md`**
 
@@ -1285,9 +1288,9 @@ Threads investigated that did not produce meaningful evidence and why they were 
 
 ## 11. Evidence Ledger
 
-| Finding ID | Claim | Evidence | Source | Timestamp | Confidence |
-| --- | --- | --- | --- | --- | --- |
-| F1 | Office spawned encoded PowerShell. | Analyst-provided seed. | Seed event | 2026-06-18T14:22:11Z | Medium |
+| Finding ID | Entity | Claim | Evidence | Source | Timestamp | Confidence | MITRE ATT&CK |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| F1 | HOST-042, powershell.exe | Office spawned encoded PowerShell. | Analyst-provided seed. | Seed event | 2026-06-18T14:22:11Z | Medium | T1059.001 |
 
 ## 12. Open Questions
 
