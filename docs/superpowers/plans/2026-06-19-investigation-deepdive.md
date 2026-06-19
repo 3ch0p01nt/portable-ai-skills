@@ -1365,7 +1365,21 @@ Modify the tree in `README.md` so `skills/` includes:
 
 Expected: the tree shows both installed skills.
 
-- [ ] **Step 3: Update plugin JSON**
+- [ ] **Step 3: Remove the existing angle-bracket install placeholder**
+
+Modify the direct skill folder install snippet in `README.md` so it uses a PowerShell variable instead of the existing angle-bracket placeholder:
+
+```powershell
+git clone 'https://github.com/3ch0p01nt/portable-ai-skills.git' portable-ai-skills
+Set-Location .\portable-ai-skills
+$skillsDirectory = 'C:\Path\To\SkillsDirectory'
+Copy-Item -Recurse '.\skills\kql-m365-azure-hunting' "$skillsDirectory\kql-m365-azure-hunting"
+Copy-Item -Recurse '.\skills\investigation-deepdive' "$skillsDirectory\investigation-deepdive"
+```
+
+Expected: `README.md` no longer contains angle-bracket install placeholders.
+
+- [ ] **Step 4: Update plugin JSON**
 
 Modify `.claude-plugin\plugin.json` so it contains this exact JSON:
 
@@ -1394,7 +1408,7 @@ Modify `.claude-plugin\plugin.json` so it contains this exact JSON:
 }
 ```
 
-- [ ] **Step 4: Update marketplace JSON**
+- [ ] **Step 5: Update marketplace JSON**
 
 Modify `.claude-plugin\marketplace.json` so it contains this exact JSON:
 
@@ -1417,7 +1431,7 @@ Modify `.claude-plugin\marketplace.json` so it contains this exact JSON:
 }
 ```
 
-- [ ] **Step 5: Validate plugin metadata JSON**
+- [ ] **Step 6: Validate plugin metadata JSON**
 
 Run:
 
@@ -1430,7 +1444,7 @@ Get-Content '.\.claude-plugin\marketplace.json' -Raw | ConvertFrom-Json | Out-Nu
 
 Expected: command exits 0 and prints `Plugin metadata JSON parses`.
 
-- [ ] **Step 6: Validate README lists the new skill**
+- [ ] **Step 7: Validate README lists the new skill**
 
 Run:
 
@@ -1444,7 +1458,7 @@ if ($readme -notmatch 'investigation-deepdive/\s+\r?\n\s+SKILL.md\s+\r?\n\s+refe
 
 Expected: command exits 0 and prints `README lists investigation-deepdive`.
 
-- [ ] **Step 7: Commit README and plugin metadata**
+- [ ] **Step 8: Commit README and plugin metadata**
 
 Run:
 
