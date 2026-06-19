@@ -66,10 +66,18 @@ Create `.claude-plugin\marketplace.json` with this content:
 
 ```json
 {
-  "skills": [
+  "name": "portable-ai-skills",
+  "metadata": {
+    "description": "Portable technical AI skills for Copilot CLI and compatible skill loaders."
+  },
+  "owner": {
+    "name": "3ch0p01nt"
+  },
+  "plugins": [
     {
-      "name": "kql-m365-azure-hunting",
-      "description": "Write, review, package, and safely validate KQL for M365 Defender Advanced Hunting, Microsoft Sentinel, Log Analytics, Azure Resource Graph, and read-only Azure PowerShell Az workflows."
+      "name": "portable-ai-skills",
+      "description": "Portable technical AI skills for Copilot CLI and compatible skill loaders, including KQL, Microsoft Sentinel, Defender XDR, Azure, and AOAI-connected workflows.",
+      "source": "./"
     }
   ]
 }
@@ -83,8 +91,11 @@ Run:
 $plugin = Get-Content '.\.claude-plugin\plugin.json' -Raw | ConvertFrom-Json
 $marketplace = Get-Content '.\.claude-plugin\marketplace.json' -Raw | ConvertFrom-Json
 if ($plugin.name -ne 'portable-ai-skills') { throw 'plugin name mismatch' }
-if ($marketplace.skills[0].name -ne 'kql-m365-azure-hunting') { throw 'marketplace skill name mismatch' }
-if (-not (Test-Path ".\skills\$($marketplace.skills[0].name)\SKILL.md")) { throw 'marketplace skill folder missing' }
+if ($marketplace.name -ne 'portable-ai-skills') { throw 'marketplace name mismatch' }
+if ($marketplace.metadata.description -notmatch 'Portable technical AI skills') { throw 'marketplace metadata description missing' }
+if ($marketplace.owner.name -ne '3ch0p01nt') { throw 'marketplace owner mismatch' }
+if ($marketplace.plugins[0].source -ne './') { throw 'marketplace source mismatch' }
+if (Get-Command claude -ErrorAction SilentlyContinue) { claude plugin validate --strict . }
 'Plugin metadata validated'
 ```
 
@@ -298,7 +309,25 @@ foreach ($pattern in $patterns) {
 
 Expected: exits 0 and prints `Secret-pattern validation passed`.
 
-- [ ] **Step 3: Validate Git state**
+- [ ] **Step 3: Validate plugin metadata and strict validation**
+
+Run:
+
+```powershell
+$plugin = Get-Content '.\.claude-plugin\plugin.json' -Raw | ConvertFrom-Json
+$marketplace = Get-Content '.\.claude-plugin\marketplace.json' -Raw | ConvertFrom-Json
+if ($plugin.name -ne 'portable-ai-skills') { throw 'plugin name mismatch' }
+if ($marketplace.name -ne 'portable-ai-skills') { throw 'marketplace name mismatch' }
+if ($marketplace.metadata.description -notmatch 'Portable technical AI skills') { throw 'marketplace metadata description missing' }
+if ($marketplace.owner.name -ne '3ch0p01nt') { throw 'marketplace owner mismatch' }
+if ($marketplace.plugins[0].source -ne './') { throw 'marketplace source mismatch' }
+if (Get-Command claude -ErrorAction SilentlyContinue) { claude plugin validate --strict . }
+'Plugin metadata validated'
+```
+
+Expected: exits 0 and prints `Plugin metadata validated`.
+
+- [ ] **Step 4: Validate Git state**
 
 Run:
 
