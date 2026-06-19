@@ -35,7 +35,7 @@ Act like an experienced incident responder, not a log summarizer. Treat the seed
 10. Close each thread as confirmed malicious, suspicious but unconfirmed, likely benign, known-good or admin activity, duplicate, or dead end due to insufficient telemetry.
 11. Assess root cause and blast radius.
 12. Run skeptical QA before the final answer.
-13. Return the final report with verdict, severity, confidence, evidence, uncertainty, and next analyst actions.
+13. Return the requested answer shape. Use the final investigation report shape only when the user requests a final report or when enough evidence exists for defensible final findings.
 
 ## Safety Guardrails
 
