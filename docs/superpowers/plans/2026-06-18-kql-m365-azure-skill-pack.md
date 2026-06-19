@@ -1620,7 +1620,7 @@ Search-AzGraph -Query $query
 
 - Confirm tenant and subscription with `Get-AzContext`.
 - Confirm resource group and workspace name before Sentinel or Log Analytics commands.
-- Keep commands read-only unless the user explicitly changes scope.
+- Resource mutation operations are refusals/out of scope in v1 unless explicitly redesigned.
 - Do not output tokens, credentials, shared keys, or connection strings.
 - Default to commercial Azure. Do not switch to `.us` or sovereign cloud assumptions unless the user asks or tenant evidence requires it.
 - Explain when a request belongs to KQL, Az PowerShell, Defender Advanced Hunting, Sentinel, Log Analytics, or Azure Resource Graph.
@@ -1670,7 +1670,7 @@ Apply these checks before returning Az module commands:
 - The answer verifies context with `Get-AzContext` before live commands.
 - The answer requires explicit tenant, subscription, resource group, and workspace when needed.
 - The answer uses read-only cmdlets by default: `Get-Az*`, `Search-AzGraph`, or `Invoke-AzOperationalInsightsQuery`.
-- The answer avoids `New-Az*`, `Set-Az*`, `Update-Az*`, and `Remove-Az*` unless the user explicitly changes scope.
+- Resource mutation operations are refusals/out of scope in v1 unless explicitly redesigned.
 - The answer does not print tokens, credentials, shared keys, or connection strings.
 - The answer distinguishes Az PowerShell resource/workspace operations from KQL query text and Defender Advanced Hunting.
 ```
@@ -1753,7 +1753,7 @@ Search-AzGraph -Query $query
 
 ## Out-of-Scope Mutation Examples
 
-The read-only skill must not provide these unless the user explicitly changes scope:
+Resource mutation operations are refusals/out of scope in v1 unless explicitly redesigned:
 
 ```powershell
 New-AzSentinelAlertRule

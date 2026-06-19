@@ -8,7 +8,7 @@ Add read-only Azure PowerShell Az module guidance to the portable `kql-m365-azur
 
 Microsoft documents Azure PowerShell as the collection of official Microsoft PowerShell modules for managing Azure resources. The current Azure PowerShell module is `Az`, a cross-platform rollup module that wraps service-specific modules. PowerShell 7 or higher is recommended, and the deprecated `AzureRM` and legacy `Azure` modules should not be used for new work.
 
-Azure PowerShell authentication supports interactive sign-in, service principals, managed identities, Azure Cloud Shell, and Docker. For this skill, the safe default is interactive or already-authenticated Cloud Shell use, followed by explicit tenant and subscription selection with `Set-AzContext`.
+Azure PowerShell authentication supports interactive sign-in, service principals, managed identities, Azure Cloud Shell, and Docker. For this skill, the safe default is interactive or already-authenticated Cloud Shell use with process-scoped context handling: `Disable-AzContextAutosave -Scope Process`, `Connect-AzAccount -Scope Process`, and explicit tenant and subscription selection with `Set-AzContext -Scope Process`.
 
 The modules most relevant to this skill are:
 
@@ -26,8 +26,8 @@ Add `references\azure-powershell-az.md` as the Az module operating guide. It sho
 
 - When to use Az PowerShell versus KQL, Sentinel, Defender Advanced Hunting, Azure Resource Graph, or Azure CLI.
 - Installing/importing `Az` for local use and noting that Cloud Shell has Az preinstalled.
-- Authenticating with `Connect-AzAccount`.
-- Selecting and verifying context with `Get-AzContext`, `Get-AzSubscription`, and `Set-AzContext`.
+- Authenticating with `Disable-AzContextAutosave -Scope Process` and `Connect-AzAccount -Scope Process` when starting local sessions.
+- Selecting and verifying context with `Get-AzContext`, `Get-AzSubscription`, and `Set-AzContext -Scope Process`.
 - Discovering workspaces with `Get-AzOperationalInsightsWorkspace`.
 - Inspecting workspace tables/schema with `Get-AzOperationalInsightsTable` and `Get-AzOperationalInsightsSchema`.
 - Running read-only KQL with `Invoke-AzOperationalInsightsQuery`.
@@ -55,7 +55,7 @@ Add examples for:
 Add offline fixtures that require the AI to:
 
 - Choose the correct Az module for the task.
-- Refuse `New-*`, `Set-*`, `Update-*`, and `Remove-*` cmdlets in read-only mode unless the user explicitly changes scope.
+- Refuse resource mutation operations such as `New-Az*`, resource-changing `Set-Az*`, `Update-Az*`, and `Remove-Az*`; they are refusals/out of scope in v1 unless explicitly redesigned.
 - Confirm tenant, subscription, resource group, and workspace before live commands.
 - Avoid printing tokens, shared keys, or credentials.
 - Explain whether a request belongs in Az PowerShell, KQL, Defender Advanced Hunting, Sentinel, or Resource Graph.
