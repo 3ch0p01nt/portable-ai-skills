@@ -93,9 +93,9 @@ portable-ai-skills/
 Add one folder per skill:
 
 ```text
-skills/<skill-name>/SKILL.md
-skills/<skill-name>/references/
-skills/<skill-name>/examples/
+skills/your-skill-name/SKILL.md
+skills/your-skill-name/references/
+skills/your-skill-name/examples/
 ```
 
 Include YAML frontmatter in each `SKILL.md`, then update this README and any plugin metadata or registry files required by the chosen loader or distribution channel. Some loaders may use `.claude-plugin` metadata; update `.claude-plugin\plugin.json` or `.claude-plugin\marketplace.json` only when that loader requires it.
