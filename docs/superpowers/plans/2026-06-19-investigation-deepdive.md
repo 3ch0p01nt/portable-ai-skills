@@ -1372,7 +1372,7 @@ Modify the direct skill folder install snippet in `README.md` so it uses a Power
 ```powershell
 git clone 'https://github.com/3ch0p01nt/portable-ai-skills.git' portable-ai-skills
 Set-Location .\portable-ai-skills
-$skillsDirectory = 'C:\Path\To\SkillsDirectory'
+$skillsDirectory = Read-Host 'Enter the local skills directory path'
 Copy-Item -Recurse '.\skills\kql-m365-azure-hunting' "$skillsDirectory\kql-m365-azure-hunting"
 Copy-Item -Recurse '.\skills\investigation-deepdive' "$skillsDirectory\investigation-deepdive"
 ```
