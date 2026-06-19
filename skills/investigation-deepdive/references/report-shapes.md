@@ -89,11 +89,13 @@ Use this shape for final reports:
 
 11. Evidence Ledger
    - Finding ID.
+   - Entity.
    - Claim.
    - Evidence.
    - Source.
    - Timestamp.
    - Confidence.
+   - MITRE ATT&CK mapping.
 
 12. Open Questions
    - What remains unknown.

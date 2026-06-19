@@ -62,7 +62,7 @@ Append this exact content to `tests\prompt-fixtures.md`:
 User prompt:
 
 ```text
-Use investigation-deepdive on this seed event: DeviceProcessEvents shows powershell.exe on HOST-042 launched by winword.exe at 2026-06-18T14:22:11Z with command line `powershell -NoProfile -ExecutionPolicy Bypass -EncodedCommand SQBFAFgA`. Available sources are Defender Advanced Hunting and Sentinel. Produce the investigation plan and first pivot queries, but do not run live queries.
+Use investigation-deepdive on this seed event: DeviceProcessEvents shows powershell.exe on HOST-042 launched by winword.exe at 2026-06-18T14:22:11Z with command line `[encoded PowerShell command omitted]`. Available sources are Defender Advanced Hunting and Sentinel. Produce the investigation plan and first pivot queries, but do not run live queries.
 ```
 
 ## Fixture 17: Suspicious Entra sign-in seed event

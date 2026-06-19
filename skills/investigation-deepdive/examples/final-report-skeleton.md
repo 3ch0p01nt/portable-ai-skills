@@ -56,9 +56,9 @@ Threads investigated that did not produce meaningful evidence and why they were 
 
 ## 11. Evidence Ledger
 
-| Finding ID | Claim | Evidence | Source | Timestamp | Confidence |
-| --- | --- | --- | --- | --- | --- |
-| F1 | Office spawned encoded PowerShell. | Analyst-provided seed. | Seed event | 2026-06-18T14:22:11Z | Medium |
+| Finding ID | Entity | Claim | Evidence | Source | Timestamp | Confidence | MITRE ATT&CK |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| F1 | HOST-042, powershell.exe | Office spawned encoded PowerShell. | Analyst-provided seed. | Seed event | 2026-06-18T14:22:11Z | Medium | T1059.001 |
 
 ## 12. Open Questions
 

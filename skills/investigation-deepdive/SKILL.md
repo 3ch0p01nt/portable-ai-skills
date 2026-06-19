@@ -71,6 +71,7 @@ For a query or pivot packet:
 4. `Query or pivot`
 5. `Expected result shape`
 6. `How to interpret results`
+7. `Execution status`
 
 For a sub-agent result:
 
