@@ -1,5 +1,6 @@
 {
   "name": "portable-ai-skills",
+  "description": "Portable technical AI skills for Copilot CLI and compatible skill loaders.",
   "owner": {
     "name": "3ch0p01nt"
   },
