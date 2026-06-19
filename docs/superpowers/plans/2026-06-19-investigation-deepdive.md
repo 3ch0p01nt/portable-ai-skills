@@ -78,7 +78,7 @@ Investigate a suspicious Entra sign-in for user alex@example.com from a new coun
 User prompt:
 
 ```text
-Deep dive this phishing seed: EmailEvents delivered message MSG-EXAMPLE-001 from sender@example.net to user@example.com with one URL and one attachment hash. Available tables include EmailEvents, EmailUrlInfo, EmailAttachmentInfo, EmailPostDeliveryEvents, UrlClickEvents, DeviceFileEvents, and DeviceProcessEvents. Produce pivots, evidence requirements, and report sections.
+Deep dive this phishing seed: EmailEvents delivered message MSG-EXAMPLE-001 from sender@example.net to user@example.com with one URL `https://credential-review.example/login` and one attachment SHA256 hash `0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef`. Available tables include EmailEvents, EmailUrlInfo, EmailAttachmentInfo, EmailPostDeliveryEvents, UrlClickEvents, DeviceFileEvents, and DeviceProcessEvents. Produce pivots, evidence requirements, and report sections.
 ```
 
 ## Fixture 19: Cloud role assignment seed event
