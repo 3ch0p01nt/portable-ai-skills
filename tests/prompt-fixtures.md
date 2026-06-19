@@ -1,6 +1,6 @@
 # Prompt Fixtures
 
-These prompts are offline acceptance fixtures for the `kql-m365-azure-hunting` skill. A worker uses them to verify the skill can guide an AI with no prior KQL, M365 Defender, Sentinel, or Azure context.
+These prompts are shared offline acceptance fixtures for the portable skills in this repository, used to verify each skill can guide an AI through its intended workflow without relying on live systems or prior domain context.
 
 ## Fixture 1: Defender network hunt
 
