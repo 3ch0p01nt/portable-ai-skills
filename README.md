@@ -23,19 +23,19 @@ Capabilities:
 
 Use GitHub Copilot CLI plugin management instead of manually writing into the internal installed plugins directory.
 
-From inside Copilot CLI, run `/plugin`, choose the interactive install flow for a GitHub repository, and provide this repository URL:
-
-```text
-https://github.com/3ch0p01nt/portable-ai-skills
-```
-
-If your Copilot CLI version includes the non-interactive plugin command, you can install directly from PowerShell:
+Install directly from PowerShell:
 
 ```powershell
 copilot plugin install 3ch0p01nt/portable-ai-skills
 ```
 
-If that command is not available in your CLI version, prefer the `/plugin` interactive install flow above. Restart or reload Copilot CLI, then use `/plugin` and `/skills` to confirm the plugin and skills are available.
+The equivalent interactive command inside Copilot CLI is:
+
+```text
+/plugin install 3ch0p01nt/portable-ai-skills
+```
+
+You can also run `/plugin`, choose the interactive install flow, and provide `3ch0p01nt/portable-ai-skills` when prompted. Restart or reload Copilot CLI, then use `/plugin` and `/skills` to confirm the plugin and skills are available.
 
 ## Direct Skill Folder Install
 
