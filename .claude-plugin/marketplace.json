@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "portable-ai-skills",
-      "description": "Portable technical AI skills for Copilot CLI and compatible skill loaders, including KQL, Microsoft Sentinel, Defender XDR, Azure, and AOAI-connected workflows.",
+      "description": "Portable technical AI skills for Copilot CLI and compatible skill loaders, including KQL, Microsoft Sentinel, Defender XDR, Azure, AOAI-connected workflows, SOC investigation, and incident response.",
       "source": "./"
     }
   ]
