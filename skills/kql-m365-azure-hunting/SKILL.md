@@ -1,3 +1,8 @@
+---
+name: kql-m365-azure-hunting
+description: Use when writing, reviewing, packaging, or validating KQL for M365 Defender Advanced Hunting, Microsoft Sentinel, Log Analytics, Azure Resource Graph, Device Query boundaries, and read-only Azure PowerShell Az workflows.
+---
+
 # KQL M365 Azure Hunting
 
 Use this skill when a user asks for KQL, M365 Defender Advanced Hunting, Microsoft Sentinel, Log Analytics, Azure Resource Graph, Device Query, Live Response, or Azure security-hunting help.

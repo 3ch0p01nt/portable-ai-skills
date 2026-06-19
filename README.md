@@ -21,17 +21,25 @@ Capabilities:
 
 ## Install as a Copilot CLI Plugin
 
-Clone this repository into your Copilot CLI installed plugins directory:
+Use GitHub Copilot CLI plugin management instead of manually writing into the internal installed plugins directory.
 
-```powershell
-git clone 'https://github.com/3ch0p01nt/portable-ai-skills.git' "$HOME\.copilot\installed-plugins\portable-ai-skills"
+From inside Copilot CLI, run `/plugin`, choose the interactive install flow for a GitHub repository, and provide this repository URL:
+
+```text
+https://github.com/3ch0p01nt/portable-ai-skills
 ```
 
-Restart or reload Copilot CLI, then use `/plugin` and `/skills` to confirm the plugin and skills are available.
+If your Copilot CLI version includes the non-interactive plugin command, you can install directly from PowerShell:
+
+```powershell
+copilot plugin install 3ch0p01nt/portable-ai-skills
+```
+
+If that command is not available in your CLI version, prefer the `/plugin` interactive install flow above. Restart or reload Copilot CLI, then use `/plugin` and `/skills` to confirm the plugin and skills are available.
 
 ## Direct Skill Folder Install
 
-If an environment loads skills directly instead of using plugin metadata, copy the skill folder:
+If an environment loads skills directly instead of using plugin metadata, this skill folder can be copied for Copilot-compatible skill loaders because `SKILL.md` includes YAML frontmatter:
 
 ```powershell
 git clone 'https://github.com/3ch0p01nt/portable-ai-skills.git' portable-ai-skills
@@ -70,7 +78,7 @@ skills/<skill-name>/references/
 skills/<skill-name>/examples/
 ```
 
-Then add the skill to `.claude-plugin\marketplace.json` and update this README.
+Include YAML frontmatter in each `SKILL.md`, then update this README and any plugin metadata or registry files required by the chosen loader or distribution channel. Some loaders may use `.claude-plugin` metadata; update `.claude-plugin\plugin.json` or `.claude-plugin\marketplace.json` only when that loader requires it.
 
 ## Offline Validation
 
