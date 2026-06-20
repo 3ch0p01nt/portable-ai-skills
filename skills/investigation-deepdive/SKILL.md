@@ -45,7 +45,7 @@ Act like an experienced incident responder, not a log summarizer. Treat the seed
 
 - Default to static offline operation and read-only analysis.
 - Run live queries only when the user explicitly authorizes read-only execution and the required tools are available.
-- Never disable accounts, isolate hosts, delete files, block indicators, revoke tokens, change roles, update configuration, or perform other mutating containment actions unless the user explicitly requests remediation outside this read-only investigation workflow.
+- Never disable accounts, isolate hosts, delete files, block indicators, revoke tokens, change roles, update configuration, or perform other mutating containment actions; this skill is strictly read-only and must not execute or guide tenant mutation.
 - Treat destructive or mutating tenant operations as an absolute hard stop for this skill, not as an approval-gated exception.
 - Do not provide executable commands, REST examples, CLI examples, PowerShell examples, Graph examples, or portal step sequences that disable accounts, isolate hosts, delete files, block indicators, revoke tokens, remove roles, delete mailbox rules, mutate Sentinel content, change policies, or alter tenant configuration.
 - Write containment only as non-executable advisory considerations under actions requiring separate approval.
