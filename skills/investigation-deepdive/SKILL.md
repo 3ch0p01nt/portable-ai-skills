@@ -13,7 +13,7 @@ Act like an experienced incident responder, not a log summarizer. Treat the seed
 
 ## Reference Selection
 
-- Any seed-event investigation: read `references\investigation-workflow.md`, `references\entity-pivot-playbook.md`, and `references\evidence-confidence-ledger.md`.
+- Any seed-event investigation: read `references\investigation-workflow.md`, `references\entity-pivot-playbooks.md`, and `references\evidence-confidence-ledger.md`.
 - Microsoft Sentinel, Microsoft Defender XDR, Entra ID, Microsoft 365, Azure, or KQL-driven investigation: also read `references\microsoft-log-source-map.md`; invoke or apply `kql-m365-azure-hunting` for KQL syntax, query-surface selection, and query review.
 - Sub-agent orchestration, branch assignment, or skeptical review: read `references\agent-orchestration-and-qa.md`.
 - Final report, executive summary, query ledger, recommendations, or analyst handoff: read `references\report-shapes.md`.
@@ -102,6 +102,24 @@ For an entity pivot packet:
 6. `Benign alternatives`
 7. `Evidence gaps`
 8. `Stop conditions`
+
+For a false-positive review:
+
+1. `Candidate benign explanation`
+2. `Evidence supporting benign activity`
+3. `Evidence contradicting benign activity`
+4. `Scope checked before tuning`
+5. `Recommended tuning or no tuning`
+6. `Residual risk and blind spots`
+
+For an evidence collection plan:
+
+1. `Known facts`
+2. `Missing telemetry`
+3. `Entities still needed`
+4. `Read-only queries or pivots to run`
+5. `Expected result shape`
+6. `Confidence impact`
 
 For a sub-agent result:
 
