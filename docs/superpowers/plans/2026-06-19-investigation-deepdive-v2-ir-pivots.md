@@ -1061,23 +1061,18 @@ let successRows =
     | where UserPrincipalName =~ targetUser
     | where ResultType == "0"
     | project UserPrincipalName, SuccessTime=TimeGenerated, SuccessIP=IPAddress, SuccessLocation=Location, SuccessApp=AppDisplayName;
-let firstSuccessAfterFailure =
+let qualifyingSequences =
     failureRows
-    | summarize FirstFailure=min(FailureTime) by UserPrincipalName
-    | join kind=inner (successRows) on UserPrincipalName
-    | where SuccessTime > FirstFailure
-    | summarize FirstSuccessAfterFailure=min(SuccessTime) by UserPrincipalName;
-let firstSuccessDetails =
-    firstSuccessAfterFailure
-    | join kind=inner (successRows) on UserPrincipalName
-    | where SuccessTime == FirstSuccessAfterFailure
-    | project UserPrincipalName, FirstSuccessAfterFailure, SuccessIP, SuccessLocation, SuccessApp;
-failureRows
-| join kind=inner (firstSuccessAfterFailure) on UserPrincipalName
-| where FailureTime < FirstSuccessAfterFailure
-| summarize FailuresBeforeSuccess=count(), FirstFailure=min(FailureTime), LastFailureBeforeSuccess=max(FailureTime), FailureIPs=make_set(FailureIP, 20), FailureLocations=make_set(FailureLocation, 20) by UserPrincipalName, FirstSuccessAfterFailure
-| where FailuresBeforeSuccess >= failureThreshold
-| join kind=leftouter (firstSuccessDetails) on UserPrincipalName, FirstSuccessAfterFailure
+    | join kind=inner (
+        successRows
+        | project UserPrincipalName, CandidateSuccessTime=SuccessTime, SuccessIP, SuccessLocation, SuccessApp
+    ) on UserPrincipalName
+    | where FailureTime < CandidateSuccessTime
+    | summarize FailuresBeforeSuccess=count(), FirstFailure=min(FailureTime), LastFailureBeforeSuccess=max(FailureTime), FailureIPs=make_set(FailureIP, 20), FailureLocations=make_set(FailureLocation, 20), SuccessIP=take_any(SuccessIP), SuccessLocation=take_any(SuccessLocation), SuccessApp=take_any(SuccessApp) by UserPrincipalName, CandidateSuccessTime
+    | where FailuresBeforeSuccess >= failureThreshold
+    | extend FirstSuccessAfterFailure = CandidateSuccessTime
+    | summarize arg_min(FirstSuccessAfterFailure, *) by UserPrincipalName;
+qualifyingSequences
 | extend VerdictHint = "Failures followed by success"
 | project UserPrincipalName, FirstFailure, LastFailureBeforeSuccess, FirstSuccessAfterFailure, FailuresBeforeSuccess, SuccessIP, SuccessLocation, SuccessApp, FailureIPs, FailureLocations, VerdictHint
 | order by FirstSuccessAfterFailure asc
