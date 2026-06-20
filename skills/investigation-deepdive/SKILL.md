@@ -121,6 +121,15 @@ For an evidence collection plan:
 5. `Expected result shape`
 6. `Confidence impact`
 
+For a hard-safety refusal:
+
+1. `Refusal reason`
+2. `Read-only boundary`
+3. `Unsafe actions not provided`
+4. `Safe investigation alternatives`
+5. `Approval and business-impact note`
+6. `Evidence-preservation note`
+
 For a sub-agent result:
 
 1. `agent_name`
