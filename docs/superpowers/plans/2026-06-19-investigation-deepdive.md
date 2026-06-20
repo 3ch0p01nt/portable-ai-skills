@@ -579,74 +579,197 @@ Create `skills\investigation-deepdive\references\entity-pivot-playbooks.md` with
 ```markdown
 # Entity Pivot Playbooks
 
-## Host Pivots
+Use these playbooks after extracting entities from a seed event, incident, workbook row, or anomaly summary.
 
-Investigate process execution, parent and child process chains, command lines, PowerShell and script interpreters, living-off-the-land binaries, file writes, hashes, network connections, DNS requests, logons, remote sessions, scheduled tasks, services, registry changes, security detections, USB or removable media, local admin group changes, firewall changes, and RDP, SMB, WinRM, or WMI activity.
+## Domain or URL
 
-Ask:
+Minimum context: domain or URL, timestamp, source host or user when available, source table, and whether it came from email, browser, DNS, proxy, endpoint, or cloud logs.
 
-- What spawned the suspicious activity?
-- What did it spawn?
-- Which user context ran it?
-- Was it normal for this host?
-- Was the same activity seen elsewhere?
-- What happened before and after?
+Standard pivots:
 
-## User and Identity Pivots
+- Prevalence across hosts and users.
+- First seen and last seen.
+- Process or browser that contacted it.
+- Email delivery and click relationship.
+- DNS, proxy, firewall, and endpoint network correlation.
+- Same domain or URL in other alerts or incidents.
+- Related IPs and certificates when available.
 
-Investigate interactive sign-ins, non-interactive sign-ins, MFA results, failed logons, impossible travel, new device sign-ins, new locations, risky sign-ins, password resets, MFA registration changes, role assignments, group membership changes, mailbox rules, OAuth consent, cloud app activity, file access, and admin actions.
+Benign alternatives: marketing links, CDN, SSO redirect, security awareness simulation, vendor update, proxy prefetch, browser background traffic.
 
-Ask:
+Stop conditions: no host or user context, no DNS/proxy/endpoint telemetry, or only one low-context hit means low confidence.
 
-- Was this normal for the user?
-- Did authentication precede endpoint or cloud activity?
-- Did the user gain privileges or access new resources?
-- Did another entity use the same source IP, device, app, or user agent?
+## IP Address
 
-## Network Pivots
+Minimum context: IP, timestamp, direction, source host or user, port, protocol, and source table.
 
-Investigate source IP history, destination IP history, domain reputation, rare destinations, beaconing, unusual ports, large outbound transfers, cross-host connections, east-west movement, proxy logs, firewall logs, VPN logs, DNS logs, TLS inspection logs, and JA3, JA4, or JA4S fingerprints when available.
+Standard pivots:
 
-Ask:
+- Internal versus external classification.
+- Host and user prevalence.
+- Remote port and protocol patterns.
+- DNS names or URLs resolving to the IP.
+- Sign-ins from the IP.
+- Proxy, firewall, VPN, and endpoint network history.
+- Same IP in alerts, incidents, or threat intelligence when available.
 
-- Is the destination rare for the host, user, or environment?
-- Did other hosts contact the same destination?
-- Did traffic volume, timing, protocol, or TLS fingerprint suggest command and control or exfiltration?
-- Is there a benign business or infrastructure explanation?
+Benign alternatives: CDN, NAT gateway, VPN provider, scanner, update service, shared proxy, cloud provider endpoint.
 
-## File and Process Pivots
+Stop conditions: IP-only hits without process, user, DNS, or proxy context remain weak evidence.
 
-Investigate hash prevalence, first seen time, signer, path rarity, execution frequency, parent process, child processes, command-line flags, encoded content, script block logs, download source, file origin, Zone.Identifier, quarantine history, and threat-intelligence reputation when available.
+## Host or Device
 
-Ask:
+Minimum context: device name or ID, timestamp, source table, user context, and anomaly description.
 
-- Is the file signed and expected in this path?
-- Is the hash seen elsewhere?
-- Did it arrive by email, browser, script, remote copy, or admin tool?
-- Did it create persistence, connect outward, or spawn additional tools?
+Standard pivots:
 
-## Cloud Pivots
+- Process tree around the seed time.
+- File writes, hash prevalence, and image loads.
+- Network connections and DNS lookups.
+- Logons and remote sessions.
+- Registry, scheduled task, service, and startup persistence.
+- Alerts, AV detections, and quarantine events.
+- Peer baseline and first-seen activity.
 
-Investigate resource creation, role assignment, key or secret creation, service principal activity, managed identity use, storage access, Key Vault access, automation jobs, runbooks, Logic Apps, Functions, Defender alerts, conditional access results, audit logs, Graph activity, API calls, and unusual regions.
+Benign alternatives: software update, admin tooling, vulnerability scanner, monitoring agent, backup software, business application.
 
-Ask:
+Stop conditions: missing command line, process ancestry, or user context lowers confidence.
 
-- Who performed the action and from where?
-- Was the actor expected to manage that scope?
-- Was the action preceded by suspicious authentication?
-- Did the change grant persistence, privilege, data access, or external access?
+## User or Identity
 
-## Email Pivots
+Minimum context: UPN or SID, timestamp, sign-in context, source IP, device, app, and MFA/conditional access details when available.
 
-Investigate sender, SPF, DKIM, DMARC, URLs, attachments, recipient spread, click events, delivery location, quarantine status, post-delivery actions, mailbox rules, forwarding rules, similar messages, and campaign indicators.
+Standard pivots:
 
-Ask:
+- Successful and failed sign-ins.
+- MFA failures, changes, and success after failures.
+- New device, new country, new ASN, or new user agent.
+- Audit changes, role assignments, group changes, and app consent.
+- Mailbox rules and forwarding.
+- Cloud app activity and file access.
+- Endpoint activity under the same user.
 
-- Who received the message?
-- Who clicked or opened content?
-- Did the email precede endpoint execution or credential entry?
-- Were similar messages delivered to other users?
-- Were post-delivery actions taken?
+Benign alternatives: travel, VPN, device replacement, password reset, helpdesk action, approved automation, break-glass process.
+
+Stop conditions: single sign-in anomaly without post-authentication activity is suspicious or inconclusive, not confirmed compromise.
+
+## Process or Command Line
+
+Minimum context: process name, parent process, command line or redaction note, host, user, timestamp, and process ID when available.
+
+Standard pivots:
+
+- Parent and child process chain.
+- Command-line features and redacted suspicious content.
+- File path, signer, hash, and prevalence.
+- Network connections by the process.
+- File writes and persistence artifacts.
+- Same parent-child pair across peer hosts.
+
+Benign alternatives: installer, script automation, management tool, business macro, software updater, monitoring agent.
+
+Stop conditions: missing command line or parent process must be recorded as an evidence gap.
+
+## File Path or Hash
+
+Minimum context: file name, path, SHA1 or SHA256, host, user, timestamp, and action type.
+
+Standard pivots:
+
+- Hash prevalence across devices.
+- First seen and last seen.
+- File origin and download source.
+- Signer, path rarity, and execution count.
+- Process, network, and image-load follow-on.
+- AV alert, quarantine, or remediation evidence.
+
+Benign alternatives: signed software, common library, update artifact, installer cache, known admin tool.
+
+Stop conditions: hash reputation alone is not enough without local prevalence or execution evidence.
+
+## Email or Message
+
+Minimum context: sender, recipient, message ID, subject, URL, attachment hash, delivery action, and timestamp.
+
+Standard pivots:
+
+- Recipient spread and similar messages.
+- URL inventory and click events.
+- Attachment hash prevalence and endpoint execution.
+- Post-delivery actions.
+- Sender authentication and spoofing signals.
+- Mailbox rules or forwarding changes.
+
+Benign alternatives: marketing campaign, security simulation, mailing list, legitimate third-party sender, user-reported false positive.
+
+Stop conditions: missing click logs or endpoint logs must be a gap, not proof of no impact.
+
+## Cloud Resource
+
+Minimum context: resource ID or name, operation, actor, timestamp, scope, source IP, and result.
+
+Standard pivots:
+
+- Resource creation, update, and access history.
+- Actor sign-ins and audit activity.
+- Role assignments and permission changes.
+- Secret, key, storage, automation, or managed identity activity.
+- Related Graph or cloud app events.
+- Peer baseline for similar operations.
+
+Benign alternatives: infrastructure deployment, break-fix, automation pipeline, policy remediation, scheduled job.
+
+Stop conditions: resource-control anomalies require actor and scope context for meaningful confidence.
+
+## Service Principal or OAuth App
+
+Minimum context: app ID, service principal ID, display name, actor, consent or role operation, timestamp, and permissions when available.
+
+Standard pivots:
+
+- Consent grants and permission scopes.
+- App role assignments.
+- Service principal sign-ins.
+- Graph activity.
+- Ownership changes and credential additions.
+- Resource access and cloud app activity.
+
+Benign alternatives: approved enterprise app, deployment automation, managed identity, vendor integration, admin consent workflow.
+
+Stop conditions: app ID alone is weak without consent, role, sign-in, or resource access evidence.
+
+## Persistence Artifact
+
+Minimum context: artifact type, host, creating user or process, timestamp, target path or command, and source table.
+
+Standard pivots:
+
+- Creating process and parent process.
+- Target executable path and hash.
+- Logon context around creation.
+- Registry, service, task, startup folder, and WMI correlations.
+- Same artifact across hosts.
+- File prevalence and network follow-on.
+
+Benign alternatives: updater, backup agent, monitoring tool, IT management platform, scheduled business job.
+
+Stop conditions: artifact name alone is insufficient without target path or creator context.
+
+## Weak-Context Workbook Anomaly
+
+Minimum context: whatever the workbook provides.
+
+Standard pivots:
+
+- Identify primary entity candidate.
+- Identify missing fields that block confidence.
+- Draft table-availability checks.
+- Draft entity-specific pivots with assumptions.
+- Return low confidence until corroborated.
+
+Benign alternatives: workbook threshold drift, peer group mismatch, data freshness issue, connector outage, noisy baseline.
+
+Stop conditions: if only one metric exists and no entity can be extracted, return an evidence collection plan instead of a verdict.
 ```
 
 - [ ] **Step 3: Create legacy `entity-pivot-playbook.md` redirect**
