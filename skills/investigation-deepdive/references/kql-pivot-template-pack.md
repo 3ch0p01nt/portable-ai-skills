@@ -187,19 +187,22 @@ Required tables: `DeviceFileEvents`, `DeviceProcessEvents`.
 
 ```kql
 let lookback = 30d;
+let targetSha1 = "0123456789abcdef0123456789abcdef01234567";
 let targetSha256 = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 let fileHits =
     DeviceFileEvents
     | where Timestamp > ago(lookback)
-    | where SHA256 =~ targetSha256
-    | project Timestamp, DeviceName, AccountUpn=InitiatingProcessAccountUpn, FileName, FolderPath, SHA256, Source="DeviceFileEvents";
+    | where (isnotempty(targetSha1) and SHA1 =~ targetSha1) or (isnotempty(targetSha256) and SHA256 =~ targetSha256)
+    | extend SelectedHash = case(isnotempty(targetSha256) and SHA256 =~ targetSha256, SHA256, isnotempty(targetSha1) and SHA1 =~ targetSha1, SHA1, coalesce(SHA256, SHA1))
+    | project Timestamp, DeviceName, AccountUpn=InitiatingProcessAccountUpn, FileName, FolderPath, SHA1, SHA256, SelectedHash, Source="DeviceFileEvents";
 let processHits =
     DeviceProcessEvents
     | where Timestamp > ago(lookback)
-    | where SHA256 =~ targetSha256
-    | project Timestamp, DeviceName, AccountUpn, FileName, FolderPath, SHA256, Source="DeviceProcessEvents";
+    | where (isnotempty(targetSha1) and SHA1 =~ targetSha1) or (isnotempty(targetSha256) and SHA256 =~ targetSha256)
+    | extend SelectedHash = case(isnotempty(targetSha256) and SHA256 =~ targetSha256, SHA256, isnotempty(targetSha1) and SHA1 =~ targetSha1, SHA1, coalesce(SHA256, SHA1))
+    | project Timestamp, DeviceName, AccountUpn, FileName, FolderPath, SHA1, SHA256, SelectedHash, Source="DeviceProcessEvents";
 union fileHits, processHits
-| summarize FirstSeen=min(Timestamp), LastSeen=max(Timestamp), DeviceCount=dcount(DeviceName), UserCount=dcount(AccountUpn), Sources=make_set(Source), Devices=make_set(DeviceName, 20) by SHA256
+| summarize FirstSeen=min(Timestamp), LastSeen=max(Timestamp), DeviceCount=dcount(DeviceName), UserCount=dcount(AccountUpn), Sources=make_set(Source), Devices=make_set(DeviceName, 20), SHA1s=make_set(SHA1, 20), SHA256s=make_set(SHA256, 20) by SelectedHash
 ```
 
 Execution status: not executed.

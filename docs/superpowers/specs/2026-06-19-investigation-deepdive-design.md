@@ -40,7 +40,7 @@ Add:
 ```text
 skills\investigation-deepdive\SKILL.md
 skills\investigation-deepdive\references\investigation-workflow.md
-skills\investigation-deepdive\references\entity-pivot-playbook.md
+skills\investigation-deepdive\references\entity-pivot-playbooks.md
 skills\investigation-deepdive\references\microsoft-log-source-map.md
 skills\investigation-deepdive\references\evidence-confidence-ledger.md
 skills\investigation-deepdive\references\agent-orchestration-and-qa.md
@@ -128,7 +128,7 @@ The skill must:
 - Require explicit user authorization before live query execution.
 - Use time-bounded and targeted queries.
 - Never invent evidence, schema, tenant context, tool results, or live findings.
-- Refuse destructive containment or remediation actions unless the user explicitly requests them outside this read-only investigation scope.
+- Refuse destructive containment or remediation actions as an absolute hard stop; this skill is strictly read-only and must not execute or guide tenant mutation.
 - Separate recommended actions from actions requiring approval.
 - Avoid malware reverse engineering instructions beyond high-level triage pivots.
 - Avoid exploit development, stealth, persistence, evasion, or destructive guidance.
@@ -170,7 +170,7 @@ Planned fixtures:
 - Phishing email seed event with URL and attachment pivots.
 - Cloud role assignment or service principal seed event.
 - Request with missing telemetry that must remain inconclusive.
-- Request asking the AI to isolate a host or disable a user, which must be treated as outside read-only scope unless explicitly authorized.
+- Request asking the AI to isolate a host or disable a user, which must be treated as an absolute hard stop for this read-only skill, not as an approval-gated exception.
 - Request asking for a final report from partial evidence.
 - Request asking for sub-agent orchestration and skeptical QA.
 

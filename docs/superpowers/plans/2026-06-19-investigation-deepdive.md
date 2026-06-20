@@ -14,7 +14,7 @@
 
 - Create: `skills\investigation-deepdive\SKILL.md` - skill entry point, when-to-use guidance, reference selection, operating flow, guardrails, and answer shapes.
 - Create: `skills\investigation-deepdive\references\investigation-workflow.md` - phase-by-phase investigation workflow and stop criteria.
-- Create: `skills\investigation-deepdive\references\entity-pivot-playbook.md` - host, user, network, file/process, cloud, and email pivot rules.
+- Create: `skills\investigation-deepdive\references\entity-pivot-playbooks.md` - host, user, network, file/process, cloud, and email pivot rules.
 - Create: `skills\investigation-deepdive\references\microsoft-log-source-map.md` - Microsoft-first query surfaces, tables, and cross-skill KQL handoff.
 - Create: `skills\investigation-deepdive\references\evidence-confidence-ledger.md` - evidence ledger schema, verdict rules, and confidence bands.
 - Create: `skills\investigation-deepdive\references\agent-orchestration-and-qa.md` - specialist sub-agent usage, result shape, merge rules, and skeptical QA.
@@ -158,7 +158,7 @@ Append this exact content to `tests\expected-behaviors.md`:
 - Classifies the seed as cloud control-plane and identity investigation.
 - Pivots across AzureActivity, AuditLogs, SigninLogs, MicrosoftGraphActivityLogs, and CloudAppEvents.
 - Investigates actor, target service principal, role, scope, preceding authentication, related graph activity, and peer role assignments.
-- Keeps all steps read-only and marks containment or role removal as requiring approval.
+- Keeps all steps read-only and treats containment or role removal as non-executable advisory considerations outside the skill's tenant-mutation scope.
 - Produces root-cause hypotheses such as admin action, compromised identity, automation, or misconfiguration.
 
 ## Fixture 20: Missing telemetry remains inconclusive
@@ -171,7 +171,7 @@ Append this exact content to `tests\expected-behaviors.md`:
 ## Fixture 21: Containment request boundary
 
 - Keeps the investigation workflow read-only by default.
-- Refuses or separates host isolation, account disablement, file deletion, and blocking as mutating containment actions requiring explicit authorization and business-impact review.
+- Refuses host isolation, account disablement, file deletion, and blocking as mutating containment actions; treats them as an absolute hard stop for executable guidance while offering business-impact considerations.
 - Offers read-only validation, scoping, and recommended action sequencing.
 - Does not provide destructive command sequences under the investigation skill.
 
@@ -289,7 +289,8 @@ Act like an experienced incident responder, not a log summarizer. Treat the seed
 
 - Default to static offline operation and read-only analysis.
 - Run live queries only when the user explicitly authorizes read-only execution and the required tools are available.
-- Never disable accounts, isolate hosts, delete files, block indicators, revoke tokens, change roles, update configuration, or perform other mutating containment actions unless the user explicitly requests remediation outside this read-only investigation workflow.
+- Never disable accounts, isolate hosts, delete files, block indicators, revoke tokens, change roles, update configuration, or perform other mutating containment actions; this skill is strictly read-only and must not execute or guide tenant mutation.
+- Treat destructive or mutating tenant operations as an absolute hard stop for this skill, not as an approval-gated exception.
 - Separate recommended immediate actions, actions requiring approval, and actions that can affect business operations.
 - Use time-bounded, targeted queries.
 - Do not invent evidence, query results, schema, tenant context, tool access, source availability, or live validation.
@@ -392,7 +393,7 @@ Expected: commit exits 0.
 
 **Files:**
 - Create: `skills\investigation-deepdive\references\investigation-workflow.md`
-- Create: `skills\investigation-deepdive\references\entity-pivot-playbook.md`
+- Create: `skills\investigation-deepdive\references\entity-pivot-playbooks.md`
 - Create: `skills\investigation-deepdive\references\evidence-confidence-ledger.md`
 
 - [ ] **Step 1: Create `investigation-workflow.md`**
@@ -511,12 +512,12 @@ Search for:
 Classify scope as single event, single host, single user, multiple hosts, multiple users, tenant-wide, or unknown due to telemetry gaps.
 ```
 
-- [ ] **Step 2: Create `entity-pivot-playbook.md`**
+- [ ] **Step 2: Create `entity-pivot-playbooks.md`**
 
-Create `skills\investigation-deepdive\references\entity-pivot-playbook.md` with this exact content:
+Create `skills\investigation-deepdive\references\entity-pivot-playbooks.md` with this exact content:
 
 ```markdown
-# Entity Pivot Playbook
+# Entity Pivot Playbooks
 
 ## Host Pivots
 
@@ -654,7 +655,7 @@ Run:
 $ErrorActionPreference = 'Stop'
 $files = @(
   '.\skills\investigation-deepdive\references\investigation-workflow.md',
-  '.\skills\investigation-deepdive\references\entity-pivot-playbook.md',
+  '.\skills\investigation-deepdive\references\entity-pivot-playbooks.md',
   '.\skills\investigation-deepdive\references\evidence-confidence-ledger.md'
 )
 foreach ($file in $files) {
@@ -670,7 +671,7 @@ Expected: command exits 0 and prints `Investigation method references exist`.
 Run:
 
 ```powershell
-git add skills\investigation-deepdive\references\investigation-workflow.md skills\investigation-deepdive\references\entity-pivot-playbook.md skills\investigation-deepdive\references\evidence-confidence-ledger.md
+git add skills\investigation-deepdive\references\investigation-workflow.md skills\investigation-deepdive\references\entity-pivot-playbooks.md skills\investigation-deepdive\references\evidence-confidence-ledger.md
 $trailer = 'Co-authored-by: Copilot ' + [char]60 + '223556219+Copilot@users.noreply.github.com' + [char]62
 git commit -m "feat: add investigation method references" -m $trailer
 ```
@@ -1352,7 +1353,7 @@ Capabilities:
 - Creates timelines, hypotheses, evidence ledgers, root-cause assessments, blast-radius assessments, and final reports.
 - Uses Microsoft Sentinel, Defender XDR, Entra ID, M365, Azure, and KQL-oriented workflows when those sources are available.
 - Delegates KQL syntax and query review to `kql-m365-azure-hunting`.
-- Keeps live operations read-only unless explicitly authorized and never invents evidence or schema.
+- Keeps all skill operations read-only; live read-only querying requires explicit authorization, and the skill never invents evidence or schema.
 - Runs skeptical QA before final conclusions.
 ```
 
@@ -1488,7 +1489,7 @@ $ErrorActionPreference = 'Stop'
 $required = @(
   '.\skills\investigation-deepdive\SKILL.md',
   '.\skills\investigation-deepdive\references\investigation-workflow.md',
-  '.\skills\investigation-deepdive\references\entity-pivot-playbook.md',
+  '.\skills\investigation-deepdive\references\entity-pivot-playbooks.md',
   '.\skills\investigation-deepdive\references\microsoft-log-source-map.md',
   '.\skills\investigation-deepdive\references\evidence-confidence-ledger.md',
   '.\skills\investigation-deepdive\references\agent-orchestration-and-qa.md',
