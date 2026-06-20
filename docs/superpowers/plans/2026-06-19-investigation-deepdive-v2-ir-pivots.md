@@ -2,7 +2,7 @@
 
 > **Execution-state note:** This plan has been completed on this branch. Its precondition and expected-failing TDD checks are historical red checks from the original execution, not current validation commands. Do not re-execute those checks for current branch validation.
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
+> **Archive-only note:** This plan has already been executed on this branch. Retained task blocks are historical/non-executable for traceability only; agents should not re-run append/create steps from this archived plan.
 
 **Goal:** Expand `investigation-deepdive` into an entity-first, read-only IR pivot skill that handles specific incidents, single observables, and vague workbook anomalies with KQL pivot packets and hard tenant-safety controls.
 
@@ -1192,19 +1192,22 @@ Required tables: `DeviceFileEvents`, `DeviceProcessEvents`.
 let lookback = 30d;
 let targetSha1 = "";
 let targetSha256 = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-let InvestigationHash = case(isnotempty(targetSha256), targetSha256, targetSha1);
 let fileHits =
     DeviceFileEvents
     | where Timestamp > ago(lookback)
     | where (isnotempty(targetSha1) and SHA1 =~ targetSha1) or (isnotempty(targetSha256) and SHA256 =~ targetSha256)
-    | project Timestamp, DeviceName, AccountUpn=InitiatingProcessAccountUpn, FileName, FolderPath, SHA1, SHA256, InvestigationHash, Source="DeviceFileEvents";
+    | extend MatchedHash = case(isnotempty(targetSha256) and SHA256 =~ targetSha256, SHA256, isnotempty(targetSha1) and SHA1 =~ targetSha1, SHA1, "")
+    | where isnotempty(MatchedHash)
+    | project Timestamp, DeviceName, AccountUpn=InitiatingProcessAccountUpn, FileName, FolderPath, SHA1, SHA256, MatchedHash, Source="DeviceFileEvents";
 let processHits =
     DeviceProcessEvents
     | where Timestamp > ago(lookback)
     | where (isnotempty(targetSha1) and SHA1 =~ targetSha1) or (isnotempty(targetSha256) and SHA256 =~ targetSha256)
-    | project Timestamp, DeviceName, AccountUpn, FileName, FolderPath, SHA1, SHA256, InvestigationHash, Source="DeviceProcessEvents";
+    | extend MatchedHash = case(isnotempty(targetSha256) and SHA256 =~ targetSha256, SHA256, isnotempty(targetSha1) and SHA1 =~ targetSha1, SHA1, "")
+    | where isnotempty(MatchedHash)
+    | project Timestamp, DeviceName, AccountUpn, FileName, FolderPath, SHA1, SHA256, MatchedHash, Source="DeviceProcessEvents";
 union fileHits, processHits
-| summarize FirstSeen=min(Timestamp), LastSeen=max(Timestamp), DeviceCount=dcount(DeviceName), UserCount=dcount(AccountUpn), Sources=make_set(Source), Devices=make_set(DeviceName, 20), ObservedSHA1s=make_set(SHA1, 20), ObservedSHA256s=make_set(SHA256, 20) by InvestigationHash
+| summarize FirstSeen=min(Timestamp), LastSeen=max(Timestamp), DeviceCount=dcount(DeviceName), UserCount=dcount(AccountUpn), Sources=make_set(Source), Devices=make_set(DeviceName, 20), ObservedSHA1s=make_set(SHA1, 20), ObservedSHA256s=make_set(SHA256, 20) by MatchedHash
 ```
 
 Execution status: not executed.
