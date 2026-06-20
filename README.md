@@ -34,7 +34,7 @@ Capabilities:
 - Creates timelines, hypotheses, evidence ledgers, root-cause assessments, blast-radius assessments, and final reports.
 - Uses Microsoft Sentinel, Defender XDR, Entra ID, M365, Azure, and KQL-oriented workflows when those sources are available.
 - Delegates KQL syntax and query review to `kql-m365-azure-hunting`.
-- Keeps live operations read-only unless explicitly authorized and never invents evidence or schema.
+- Requires explicit authorization for read-only live query execution, refuses mutating or destructive tenant actions, and never invents evidence or schema.
 - Runs skeptical QA before final conclusions.
 
 ## Install as a Copilot CLI Plugin
