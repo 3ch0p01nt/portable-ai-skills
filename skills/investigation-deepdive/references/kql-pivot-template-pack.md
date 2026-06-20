@@ -95,11 +95,13 @@ Required table: `SigninLogs`.
 ```kql
 let lookback = 7d;
 let targetUser = "alex@example.com";
+let failureThreshold = 5;
 SigninLogs
 | where TimeGenerated > ago(lookback)
 | where UserPrincipalName =~ targetUser
-| summarize Failures=countif(ResultType != "0"), Successes=countif(ResultType == "0"), FirstSeen=min(TimeGenerated), LastSeen=max(TimeGenerated), IPs=make_set(IPAddress, 20), Locations=make_set(Location, 20), Apps=make_set(AppDisplayName, 20) by UserPrincipalName
-| extend VerdictHint = case(Failures >= 5 and Successes > 0, "Failures followed by success", Failures >= 5, "Repeated failures", "Low signal")
+| summarize Failures=countif(ResultType != "0"), Successes=countif(ResultType == "0"), FirstFailure=minif(TimeGenerated, ResultType != "0"), LastFailure=maxif(TimeGenerated, ResultType != "0"), FirstSuccess=minif(TimeGenerated, ResultType == "0"), LastSuccess=maxif(TimeGenerated, ResultType == "0"), FirstSeen=min(TimeGenerated), LastSeen=max(TimeGenerated), IPs=make_set(IPAddress, 20), Locations=make_set(Location, 20), Apps=make_set(AppDisplayName, 20) by UserPrincipalName
+| extend SuccessAfterFailure = isnotempty(LastSuccess) and isnotempty(FirstFailure) and LastSuccess > FirstFailure
+| extend VerdictHint = case(Failures >= failureThreshold and SuccessAfterFailure, "Failures followed by success", Failures >= failureThreshold, "Repeated failures", "Low signal")
 ```
 
 Execution status: not executed.
@@ -138,7 +140,7 @@ let delivered =
     EmailEvents
     | where Timestamp > ago(lookback)
     | where NetworkMessageId == targetMessageId
-    | project NetworkMessageId, RecipientEmailAddress, SenderFromAddress, SenderMailFromAddress, Subject, DeliveryAction, DeliveryLocation;
+    | project NetworkMessageId, RecipientEmailAddress, DeliveryTime=Timestamp, SenderFromAddress, SenderMailFromAddress, Subject, DeliveryAction, DeliveryLocation;
 delivered
 | join kind=leftouter (
     EmailUrlInfo
@@ -148,9 +150,10 @@ delivered
 | join kind=leftouter (
     UrlClickEvents
     | where Timestamp > ago(lookback)
-    | project Url, UrlClickTime=Timestamp, AccountUpn, ActionType, IsClickedThrough
-) on Url
-| project NetworkMessageId, RecipientEmailAddress, SenderFromAddress, Subject, DeliveryAction, DeliveryLocation, Url, UrlClickTime, AccountUpn, ActionType, IsClickedThrough
+    | project Url, ClickAccountUpn=AccountUpn, UrlClickTime=Timestamp, ActionType, IsClickedThrough
+) on Url, $left.RecipientEmailAddress == $right.ClickAccountUpn
+| extend ClickAfterDelivery = isnotempty(UrlClickTime) and UrlClickTime >= DeliveryTime
+| project NetworkMessageId, RecipientEmailAddress, DeliveryTime, SenderFromAddress, Subject, DeliveryAction, DeliveryLocation, Url, UrlClickTime, ClickAccountUpn, ClickAfterDelivery, ActionType, IsClickedThrough
 ```
 
 Execution status: not executed.
