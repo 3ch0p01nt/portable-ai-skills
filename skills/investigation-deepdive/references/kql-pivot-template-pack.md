@@ -96,12 +96,38 @@ Required table: `SigninLogs`.
 let lookback = 7d;
 let targetUser = "alex@example.com";
 let failureThreshold = 5;
-SigninLogs
-| where TimeGenerated > ago(lookback)
-| where UserPrincipalName =~ targetUser
-| summarize Failures=countif(ResultType != "0"), Successes=countif(ResultType == "0"), FirstFailure=minif(TimeGenerated, ResultType != "0"), LastFailure=maxif(TimeGenerated, ResultType != "0"), FirstSuccess=minif(TimeGenerated, ResultType == "0"), LastSuccess=maxif(TimeGenerated, ResultType == "0"), FirstSeen=min(TimeGenerated), LastSeen=max(TimeGenerated), IPs=make_set(IPAddress, 20), Locations=make_set(Location, 20), Apps=make_set(AppDisplayName, 20) by UserPrincipalName
-| extend SuccessAfterFailure = isnotempty(LastSuccess) and isnotempty(FirstFailure) and LastSuccess > FirstFailure
-| extend VerdictHint = case(Failures >= failureThreshold and SuccessAfterFailure, "Failures followed by success", Failures >= failureThreshold, "Repeated failures", "Low signal")
+let failureRows =
+    SigninLogs
+    | where TimeGenerated > ago(lookback)
+    | where UserPrincipalName =~ targetUser
+    | where ResultType != "0"
+    | project UserPrincipalName, FailureTime=TimeGenerated, FailureIP=IPAddress, FailureLocation=Location;
+let successRows =
+    SigninLogs
+    | where TimeGenerated > ago(lookback)
+    | where UserPrincipalName =~ targetUser
+    | where ResultType == "0"
+    | project UserPrincipalName, SuccessTime=TimeGenerated, SuccessIP=IPAddress, SuccessLocation=Location, SuccessApp=AppDisplayName;
+let firstSuccessAfterFailure =
+    failureRows
+    | summarize FirstFailure=min(FailureTime) by UserPrincipalName
+    | join kind=inner (successRows) on UserPrincipalName
+    | where SuccessTime > FirstFailure
+    | summarize FirstSuccessAfterFailure=min(SuccessTime) by UserPrincipalName;
+let firstSuccessDetails =
+    firstSuccessAfterFailure
+    | join kind=inner (successRows) on UserPrincipalName
+    | where SuccessTime == FirstSuccessAfterFailure
+    | project UserPrincipalName, FirstSuccessAfterFailure, SuccessIP, SuccessLocation, SuccessApp;
+failureRows
+| join kind=inner (firstSuccessAfterFailure) on UserPrincipalName
+| where FailureTime < FirstSuccessAfterFailure
+| summarize FailuresBeforeSuccess=count(), FirstFailure=min(FailureTime), LastFailureBeforeSuccess=max(FailureTime), FailureIPs=make_set(FailureIP, 20), FailureLocations=make_set(FailureLocation, 20) by UserPrincipalName, FirstSuccessAfterFailure
+| where FailuresBeforeSuccess >= failureThreshold
+| join kind=leftouter (firstSuccessDetails) on UserPrincipalName, FirstSuccessAfterFailure
+| extend VerdictHint = "Failures followed by success"
+| project UserPrincipalName, FirstFailure, LastFailureBeforeSuccess, FirstSuccessAfterFailure, FailuresBeforeSuccess, SuccessIP, SuccessLocation, SuccessApp, FailureIPs, FailureLocations, VerdictHint
+| order by FirstSuccessAfterFailure asc
 ```
 
 Execution status: not executed.
@@ -150,10 +176,10 @@ delivered
 | join kind=leftouter (
     UrlClickEvents
     | where Timestamp > ago(lookback)
-    | project Url, ClickAccountUpn=AccountUpn, UrlClickTime=Timestamp, ActionType, IsClickedThrough
-) on Url, $left.RecipientEmailAddress == $right.ClickAccountUpn
+    | project ClickNetworkMessageId=NetworkMessageId, Url, ClickAccountUpn=AccountUpn, UrlClickTime=Timestamp, ActionType, IsClickedThrough
+) on $left.NetworkMessageId == $right.ClickNetworkMessageId, $left.Url == $right.Url, $left.RecipientEmailAddress == $right.ClickAccountUpn
 | extend ClickAfterDelivery = isnotempty(UrlClickTime) and UrlClickTime >= DeliveryTime
-| project NetworkMessageId, RecipientEmailAddress, DeliveryTime, SenderFromAddress, Subject, DeliveryAction, DeliveryLocation, Url, UrlClickTime, ClickAccountUpn, ClickAfterDelivery, ActionType, IsClickedThrough
+| project NetworkMessageId, ClickNetworkMessageId, RecipientEmailAddress, DeliveryTime, SenderFromAddress, Subject, DeliveryAction, DeliveryLocation, Url, UrlClickTime, ClickAccountUpn, ClickAfterDelivery, ActionType, IsClickedThrough
 ```
 
 Execution status: not executed.
