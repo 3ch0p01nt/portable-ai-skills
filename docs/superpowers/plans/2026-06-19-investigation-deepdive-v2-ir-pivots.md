@@ -194,12 +194,14 @@ Append this exact content to `tests\expected-behaviors.md`:
 - Treats the domain as a starting entity and pivots to prevalence, hosts, users, processes, DNS/proxy/firewall, email, and identity context.
 - Produces both Defender and Sentinel query-surface options only when schema assumptions are stated.
 - Avoids declaring malicious based only on the domain.
+- Requires any read-only KQL or pivot packets to include `Execution status: not executed`.
 
 ## Fixture 27: IP seed pivot
 
 - Uses the IP playbook and records that IP-only evidence is weak unless correlated to host, user, process, DNS, proxy, firewall, or cloud activity.
 - Produces read-only pivots for endpoint network events, proxy/firewall logs, DNS logs, sign-ins, and peer prevalence when tables exist.
 - Uses documentation-safe IP handling and does not rely on unsupported live reputation claims.
+- Requires any read-only KQL or pivot packets to include `Execution status: not executed`.
 
 ## Fixture 28: Host seed pivot
 
@@ -207,6 +209,7 @@ Append this exact content to `tests\expected-behaviors.md`:
 - Treats missing command line as an evidence gap.
 - Builds pivots for process tree, file writes, network connections, logons, persistence artifacts, alerts, and peer baseline.
 - Avoids assuming `rundll32.exe` is malicious without command line, signer/path, parent process, or follow-on evidence.
+- Requires any read-only KQL or pivot packets to include `Execution status: not executed`.
 
 ## Fixture 29: User seed pivot
 
@@ -214,6 +217,7 @@ Append this exact content to `tests\expected-behaviors.md`:
 - Pivots across sign-ins, MFA results, new device/location, audit changes, mailbox activity, cloud app activity, and endpoint activity tied to the user.
 - Separates suspicious sign-in evidence from post-compromise evidence.
 - Produces confidence and gaps instead of overclaiming compromise.
+- Requires any read-only KQL or pivot packets to include `Execution status: not executed`.
 
 ## Fixture 30: File hash seed pivot
 
@@ -221,6 +225,7 @@ Append this exact content to `tests\expected-behaviors.md`:
 - Produces prevalence, origin, signer/path, execution, image load, network follow-on, and alert correlation pivots.
 - Treats the synthetic hash as an example indicator and avoids external malware-analysis claims unless evidence is supplied.
 - Keeps malware analysis high level and does not provide reverse-engineering instructions.
+- Requires any read-only KQL or pivot packets to include `Execution status: not executed`.
 
 ## Fixture 31: Service principal seed pivot
 
@@ -236,6 +241,7 @@ Append this exact content to `tests\expected-behaviors.md`:
 - Pivots from scheduled task fields to creating user, host process activity, target executable path, file/hash prevalence, logons, and registry/service correlations.
 - Tests benign updater and admin automation explanations before verdict.
 - Does not provide persistence creation instructions.
+- Requires any read-only KQL or pivot packets to include `Execution status: not executed`.
 
 ## Fixture 33: Benign scanner alternative
 
@@ -862,7 +868,7 @@ Use this reference when the investigation might be benign, approved, noisy, or i
 
 ## Rule
 
-Do not apply allowlists or known-good explanations before extracting entities and scoping the activity. A known-good explanation is a hypothesis that needs evidence.
+Do not apply allowlists or known-good explanations before extracting entities and scoping the activity. Known-good explanation is a hypothesis that needs evidence.
 
 ## Benign Hypotheses
 
@@ -1069,7 +1075,7 @@ let qualifyingSequences =
         successRows
         | project UserPrincipalName, CandidateSuccessTime=SuccessTime, SuccessIP, SuccessLocation, SuccessApp
     ) on UserPrincipalName
-    | where FailureTime < CandidateSuccessTime
+    | where CandidateSuccessTime > FailureTime
     | summarize FailuresBeforeSuccess=count(), FirstFailure=min(FailureTime), LastFailureBeforeSuccess=max(FailureTime), FailureIPs=make_set(FailureIP, 20), FailureLocations=make_set(FailureLocation, 20), SuccessIP=take_any(SuccessIP), SuccessLocation=take_any(SuccessLocation), SuccessApp=take_any(SuccessApp) by UserPrincipalName, CandidateSuccessTime
     | where FailuresBeforeSuccess >= failureThreshold
     | extend FirstSuccessAfterFailure = CandidateSuccessTime
