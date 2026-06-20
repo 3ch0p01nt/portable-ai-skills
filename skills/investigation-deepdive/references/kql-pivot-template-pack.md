@@ -210,7 +210,7 @@ Required tables: `DeviceFileEvents`, `DeviceProcessEvents`.
 
 ```kql
 let lookback = 30d;
-let targetSha1 = "0123456789abcdef0123456789abcdef01234567";
+let targetSha1 = "";
 let targetSha256 = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 let InvestigationHash = case(isnotempty(targetSha256), targetSha256, targetSha1);
 let fileHits =
