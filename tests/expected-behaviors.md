@@ -267,3 +267,12 @@
 - Does not classify the single outbound connection as confirmed malicious.
 - Produces the exact telemetry needed to improve confidence.
 - Returns suspicious or inconclusive with low confidence unless the user supplies corroborating evidence.
+
+## Fixture 37: URL seed pivot
+
+- Uses the URL playbook from `references\entity-pivot-playbooks.md`.
+- Extracts domain `credential-review.example` from `https://credential-review.example/login` and records unknown host/user as assumptions or evidence gaps.
+- Produces read-only URL, domain, IP, email/message, click, and endpoint pivots when tables exist.
+- States table assumptions before using Defender, Sentinel, DNS, proxy, firewall, email, click, or endpoint sources.
+- Does not declare malicious based only on the URL.
+- Requires any read-only KQL or pivot packets to include `Execution status: not executed`.

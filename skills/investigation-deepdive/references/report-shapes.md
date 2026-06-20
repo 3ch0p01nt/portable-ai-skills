@@ -86,6 +86,7 @@ Use this shape for final reports:
    - Data source.
    - Time range.
    - Result summary.
+   - Execution status; use `Execution status: not executed` when live execution was not authorized or not available.
 
 11. Evidence Ledger
    - Finding ID.

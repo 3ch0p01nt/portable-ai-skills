@@ -50,9 +50,9 @@ Threads investigated that did not produce meaningful evidence and why they were 
 
 ## 10. Queries Run
 
-| Purpose | Query or pivot | Data source | Time range | Result summary |
-| --- | --- | --- | --- | --- |
-| Process tree | Drafted endpoint process query | DeviceProcessEvents | T-24h to T+24h | Not executed |
+| Purpose | Query or pivot | Data source | Time range | Result summary | Execution status |
+| --- | --- | --- | --- | --- | --- |
+| Process tree | Drafted endpoint process query | DeviceProcessEvents | T-24h to T+24h | Query drafted only; no live results. | Execution status: not executed |
 
 ## 11. Evidence Ledger
 

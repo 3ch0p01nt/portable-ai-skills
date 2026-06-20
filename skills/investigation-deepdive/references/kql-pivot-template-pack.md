@@ -109,21 +109,27 @@ let successRows =
     | where UserPrincipalName =~ targetUser
     | where ResultType == "0"
     | project UserPrincipalName, SuccessTime=TimeGenerated, SuccessIP=IPAddress, SuccessLocation=Location, SuccessApp=AppDisplayName;
+let successBoundaries =
+    successRows
+    | sort by UserPrincipalName asc, SuccessTime asc
+    | serialize
+    | extend PreviousSuccessTime = iff(UserPrincipalName == prev(UserPrincipalName), prev(SuccessTime), datetime(null))
+    | project UserPrincipalName, CandidateSuccessTime=SuccessTime, PreviousSuccessTime, SuccessIP, SuccessLocation, SuccessApp;
 let qualifyingSequences =
     failureRows
     | join kind=inner (
-        successRows
-        | project UserPrincipalName, CandidateSuccessTime=SuccessTime, SuccessIP, SuccessLocation, SuccessApp
+        successBoundaries
     ) on UserPrincipalName
     | where FailureTime between ((CandidateSuccessTime - sequenceWindow) .. CandidateSuccessTime)
     | where FailureTime < CandidateSuccessTime
-    | summarize FailuresBeforeSuccess=count(), FirstFailure=min(FailureTime), LastFailureBeforeSuccess=max(FailureTime), FailureIPs=make_set(FailureIP, 20), FailureLocations=make_set(FailureLocation, 20), SuccessIP=take_any(SuccessIP), SuccessLocation=take_any(SuccessLocation), SuccessApp=take_any(SuccessApp) by UserPrincipalName, CandidateSuccessTime
+    | where isnull(PreviousSuccessTime) or FailureTime > PreviousSuccessTime
+    | summarize FailuresBeforeSuccess=count(), FirstFailure=min(FailureTime), LastFailureBeforeSuccess=max(FailureTime), FailureIPs=make_set(FailureIP, 20), FailureLocations=make_set(FailureLocation, 20), SuccessIP=take_any(SuccessIP), SuccessLocation=take_any(SuccessLocation), SuccessApp=take_any(SuccessApp) by UserPrincipalName, CandidateSuccessTime, PreviousSuccessTime
     | where FailuresBeforeSuccess >= failureThreshold
     | extend FirstSuccessAfterFailure = CandidateSuccessTime
     | summarize arg_min(FirstSuccessAfterFailure, *) by UserPrincipalName;
 qualifyingSequences
 | extend VerdictHint = "Failures followed by success"
-| project UserPrincipalName, FirstFailure, LastFailureBeforeSuccess, FirstSuccessAfterFailure, FailuresBeforeSuccess, SuccessIP, SuccessLocation, SuccessApp, FailureIPs, FailureLocations, VerdictHint
+| project UserPrincipalName, FirstFailure, LastFailureBeforeSuccess, FirstSuccessAfterFailure, PreviousSuccessTime, FailuresBeforeSuccess, SuccessIP, SuccessLocation, SuccessApp, FailureIPs, FailureLocations, VerdictHint
 | order by FirstSuccessAfterFailure asc
 ```
 
@@ -173,10 +179,10 @@ delivered
 | join kind=leftouter (
     UrlClickEvents
     | where Timestamp > ago(lookback)
-    | project ClickNetworkMessageId=NetworkMessageId, Url, ClickAccountUpn=AccountUpn, ClickAccountKey=tolower(AccountUpn), UrlClickTime=Timestamp, ActionType, IsClickedThrough
+    | project ClickNetworkMessageId=NetworkMessageId, Url, ReportId, ClickAccountUpn=AccountUpn, ClickAccountKey=tolower(AccountUpn), UrlClickTime=Timestamp, ActionType, IsClickedThrough
 ) on $left.NetworkMessageId == $right.ClickNetworkMessageId, $left.Url == $right.Url, $left.RecipientKey == $right.ClickAccountKey
 | extend ClickAfterDelivery = isnotempty(UrlClickTime) and UrlClickTime >= DeliveryTime
-| project NetworkMessageId, ClickNetworkMessageId, RecipientEmailAddress, RecipientKey, DeliveryTime, SenderFromAddress, Subject, DeliveryAction, DeliveryLocation, Url, UrlClickTime, ClickAccountUpn, ClickAccountKey, ClickAfterDelivery, ActionType, IsClickedThrough
+| project NetworkMessageId, ClickNetworkMessageId, ReportId, RecipientEmailAddress, RecipientKey, DeliveryTime, SenderFromAddress, Subject, DeliveryAction, DeliveryLocation, Url, UrlClickTime, ClickAccountUpn, ClickAccountKey, ClickAfterDelivery, ActionType, IsClickedThrough
 ```
 
 Execution status: not executed.

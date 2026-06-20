@@ -307,3 +307,11 @@ User prompt:
 ```text
 Workbook anomaly: Device HOST-042 made one outbound connection to 203.0.113.77. No process, DNS, identity, proxy, or firewall detail is available. Determine what can and cannot be concluded.
 ```
+
+## Fixture 37: URL seed pivot
+
+User prompt:
+
+```text
+Investigate https://credential-review.example/login as a URL-only seed with unknown host/user. I need read-only pivots, table assumptions, and evidence gaps without running live queries.
+```

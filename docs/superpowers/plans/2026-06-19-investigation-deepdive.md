@@ -1143,6 +1143,7 @@ Use this shape for final reports:
    - Data source.
    - Time range.
    - Result summary.
+   - Execution status; use `Execution status: not executed` when live execution was not authorized or not available.
 
 11. Evidence Ledger
    - Finding ID.
@@ -1345,7 +1346,7 @@ DeviceProcessEvents
 | where DeviceName =~ hostName
 | where FileName in~ ("winword.exe", "powershell.exe", "cmd.exe", "wscript.exe", "cscript.exe", "mshta.exe", "rundll32.exe", "regsvr32.exe")
    or InitiatingProcessFileName in~ ("winword.exe", "powershell.exe", "cmd.exe", "wscript.exe", "cscript.exe", "mshta.exe", "rundll32.exe", "regsvr32.exe")
-| project Timestamp, DeviceName, AccountName, InitiatingProcessFileName, InitiatingProcessCommandLine, FileName, ProcessCommandLine, SHA256
+| project Timestamp, DeviceName, AccountName, InitiatingProcessFileName, InitiatingProcessCommandLine, FileName, ProcessCommandLine, SHA1, SHA256
 | order by Timestamp asc
 ```
 
@@ -1483,9 +1484,9 @@ Threads investigated that did not produce meaningful evidence and why they were 
 
 ## 10. Queries Run
 
-| Purpose | Query or pivot | Data source | Time range | Result summary |
-| --- | --- | --- | --- | --- |
-| Process tree | Drafted endpoint process query | DeviceProcessEvents | T-24h to T+24h | Not executed |
+| Purpose | Query or pivot | Data source | Time range | Result summary | Execution status |
+| --- | --- | --- | --- | --- | --- |
+| Process tree | Drafted endpoint process query | DeviceProcessEvents | T-24h to T+24h | Query drafted only; no live results. | Execution status: not executed |
 
 ## 11. Evidence Ledger
 
@@ -1787,7 +1788,7 @@ $files = foreach ($path in $paths) {
 }
 $open = [char]60
 $close = [char]62
-$markerPattern = 'T' + 'BD|T' + 'ODO|\{\{[^}]+\}\}|' + [regex]::Escape([string]$open) + '[^' + [regex]::Escape([string]$close) + ']+' + [regex]::Escape([string]$close)
+$markerPattern = 'T' + 'BD|T' + 'ODO|\{\{[^}]+\}\}|' + [regex]::Escape([string]$open) + '[A-Za-z][A-Za-z0-9_-]*' + [regex]::Escape([string]$close)
 $sensitivePattern = '(?i)(api[_-]?key|client[_-]?secret|password\s*=|bearer\s+[a-z0-9._-]{20,}|tenant\s*id\s*[:=]\s*[0-9a-f-]{36}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'
 foreach ($file in $files) {
   $text = Get-Content $file.FullName -Raw

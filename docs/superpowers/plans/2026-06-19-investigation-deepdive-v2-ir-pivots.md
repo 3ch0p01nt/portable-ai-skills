@@ -165,6 +165,14 @@ User prompt:
 ```text
 Workbook anomaly: Device HOST-042 made one outbound connection to 203.0.113.77. No process, DNS, identity, proxy, or firewall detail is available. Determine what can and cannot be concluded.
 ```
+
+## Fixture 37: URL seed pivot
+
+User prompt:
+
+```text
+Investigate https://credential-review.example/login as a URL-only seed with unknown host/user. I need read-only pivots, table assumptions, and evidence gaps without running live queries.
+```
 ````
 
 - [ ] **Step 3: Append v2 expected behaviors**
@@ -272,6 +280,15 @@ Append this exact content to `tests\expected-behaviors.md`:
 - Does not classify the single outbound connection as confirmed malicious.
 - Produces the exact telemetry needed to improve confidence.
 - Returns suspicious or inconclusive with low confidence unless the user supplies corroborating evidence.
+
+## Fixture 37: URL seed pivot
+
+- Uses the URL playbook from `references\entity-pivot-playbooks.md`.
+- Extracts domain `credential-review.example` from `https://credential-review.example/login` and records unknown host/user as assumptions or evidence gaps.
+- Produces read-only URL, domain, IP, email/message, click, and endpoint pivots when tables exist.
+- States table assumptions before using Defender, Sentinel, DNS, proxy, firewall, email, click, or endpoint sources.
+- Does not declare malicious based only on the URL.
+- Requires any read-only KQL or pivot packets to include `Execution status: not executed`.
 ```
 
 - [ ] **Step 4: Verify v2 fixture headings match**
@@ -280,10 +297,10 @@ Run:
 
 ```powershell
 $ErrorActionPreference = 'Stop'
-$fixtures = Select-String -Path '.\tests\prompt-fixtures.md' -Pattern '^## Fixture 2[4-9]|^## Fixture 3[0-6]' | ForEach-Object { $_.Line.Trim() }
-$expected = Select-String -Path '.\tests\expected-behaviors.md' -Pattern '^## Fixture 2[4-9]|^## Fixture 3[0-6]' | ForEach-Object { $_.Line.Trim() }
-if ($fixtures.Count -ne 13) { throw "Expected 13 new v2 prompt fixtures, found $($fixtures.Count)" }
-if ($expected.Count -ne 13) { throw "Expected 13 new v2 expected behavior sections, found $($expected.Count)" }
+$fixtures = Select-String -Path '.\tests\prompt-fixtures.md' -Pattern '^## Fixture 2[4-9]|^## Fixture 3[0-7]' | ForEach-Object { $_.Line.Trim() }
+$expected = Select-String -Path '.\tests\expected-behaviors.md' -Pattern '^## Fixture 2[4-9]|^## Fixture 3[0-7]' | ForEach-Object { $_.Line.Trim() }
+if ($fixtures.Count -ne 14) { throw "Expected 14 new v2 prompt fixtures, found $($fixtures.Count)" }
+if ($expected.Count -ne 14) { throw "Expected 14 new v2 expected behavior sections, found $($expected.Count)" }
 for ($i = 0; $i -lt $fixtures.Count; $i++) {
   if ($fixtures[$i] -ne $expected[$i]) {
     throw "Fixture heading mismatch: '$($fixtures[$i])' vs '$($expected[$i])'"
@@ -1072,21 +1089,27 @@ let successRows =
     | where UserPrincipalName =~ targetUser
     | where ResultType == "0"
     | project UserPrincipalName, SuccessTime=TimeGenerated, SuccessIP=IPAddress, SuccessLocation=Location, SuccessApp=AppDisplayName;
+let successBoundaries =
+    successRows
+    | sort by UserPrincipalName asc, SuccessTime asc
+    | serialize
+    | extend PreviousSuccessTime = iff(UserPrincipalName == prev(UserPrincipalName), prev(SuccessTime), datetime(null))
+    | project UserPrincipalName, CandidateSuccessTime=SuccessTime, PreviousSuccessTime, SuccessIP, SuccessLocation, SuccessApp;
 let qualifyingSequences =
     failureRows
     | join kind=inner (
-        successRows
-        | project UserPrincipalName, CandidateSuccessTime=SuccessTime, SuccessIP, SuccessLocation, SuccessApp
+        successBoundaries
     ) on UserPrincipalName
     | where FailureTime between ((CandidateSuccessTime - sequenceWindow) .. CandidateSuccessTime)
     | where FailureTime < CandidateSuccessTime
-    | summarize FailuresBeforeSuccess=count(), FirstFailure=min(FailureTime), LastFailureBeforeSuccess=max(FailureTime), FailureIPs=make_set(FailureIP, 20), FailureLocations=make_set(FailureLocation, 20), SuccessIP=take_any(SuccessIP), SuccessLocation=take_any(SuccessLocation), SuccessApp=take_any(SuccessApp) by UserPrincipalName, CandidateSuccessTime
+    | where isnull(PreviousSuccessTime) or FailureTime > PreviousSuccessTime
+    | summarize FailuresBeforeSuccess=count(), FirstFailure=min(FailureTime), LastFailureBeforeSuccess=max(FailureTime), FailureIPs=make_set(FailureIP, 20), FailureLocations=make_set(FailureLocation, 20), SuccessIP=take_any(SuccessIP), SuccessLocation=take_any(SuccessLocation), SuccessApp=take_any(SuccessApp) by UserPrincipalName, CandidateSuccessTime, PreviousSuccessTime
     | where FailuresBeforeSuccess >= failureThreshold
     | extend FirstSuccessAfterFailure = CandidateSuccessTime
     | summarize arg_min(FirstSuccessAfterFailure, *) by UserPrincipalName;
 qualifyingSequences
 | extend VerdictHint = "Failures followed by success"
-| project UserPrincipalName, FirstFailure, LastFailureBeforeSuccess, FirstSuccessAfterFailure, FailuresBeforeSuccess, SuccessIP, SuccessLocation, SuccessApp, FailureIPs, FailureLocations, VerdictHint
+| project UserPrincipalName, FirstFailure, LastFailureBeforeSuccess, FirstSuccessAfterFailure, PreviousSuccessTime, FailuresBeforeSuccess, SuccessIP, SuccessLocation, SuccessApp, FailureIPs, FailureLocations, VerdictHint
 | order by FirstSuccessAfterFailure asc
 ```
 
@@ -1136,10 +1159,10 @@ delivered
 | join kind=leftouter (
     UrlClickEvents
     | where Timestamp > ago(lookback)
-    | project ClickNetworkMessageId=NetworkMessageId, Url, ClickAccountUpn=AccountUpn, ClickAccountKey=tolower(AccountUpn), UrlClickTime=Timestamp, ActionType, IsClickedThrough
+    | project ClickNetworkMessageId=NetworkMessageId, Url, ReportId, ClickAccountUpn=AccountUpn, ClickAccountKey=tolower(AccountUpn), UrlClickTime=Timestamp, ActionType, IsClickedThrough
 ) on $left.NetworkMessageId == $right.ClickNetworkMessageId, $left.Url == $right.Url, $left.RecipientKey == $right.ClickAccountKey
 | extend ClickAfterDelivery = isnotempty(UrlClickTime) and UrlClickTime >= DeliveryTime
-| project NetworkMessageId, ClickNetworkMessageId, RecipientEmailAddress, RecipientKey, DeliveryTime, SenderFromAddress, Subject, DeliveryAction, DeliveryLocation, Url, UrlClickTime, ClickAccountUpn, ClickAccountKey, ClickAfterDelivery, ActionType, IsClickedThrough
+| project NetworkMessageId, ClickNetworkMessageId, ReportId, RecipientEmailAddress, RecipientKey, DeliveryTime, SenderFromAddress, Subject, DeliveryAction, DeliveryLocation, Url, UrlClickTime, ClickAccountUpn, ClickAccountKey, ClickAfterDelivery, ActionType, IsClickedThrough
 ```
 
 Execution status: not executed.
@@ -1604,7 +1627,7 @@ $files = foreach ($path in $paths) {
 }
 $open = [char]60
 $close = [char]62
-$markerPattern = 'T' + 'BD|T' + 'ODO|\{\{[^}]+\}\}|' + [regex]::Escape([string]$open) + '[^' + [regex]::Escape([string]$close) + ']+' + [regex]::Escape([string]$close)
+$markerPattern = 'T' + 'BD|T' + 'ODO|\{\{[^}]+\}\}|' + [regex]::Escape([string]$open) + '[A-Za-z][A-Za-z0-9_-]*' + [regex]::Escape([string]$close)
 $sensitivePattern = '(?i)(api[_-]?key|client[_-]?secret|password\s*=|bearer\s+[a-z0-9._-]{20,}|tenant\s*id\s*[:=]\s*[0-9a-f-]{36})'
 foreach ($file in $files) {
   $text = Get-Content $file.FullName -Raw
