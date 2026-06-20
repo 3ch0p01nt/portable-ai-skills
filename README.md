@@ -27,6 +27,10 @@ Capabilities:
 
 - Treats the seed event as a starting clue rather than the whole story.
 - Extracts entities and builds recursive pivot plans.
+- Routes workbook anomaly rows and vague anomaly summaries into entity-specific investigation playbooks.
+- Provides repeatable domain, URL, IP, host, user, process, file/hash, email, cloud resource, OAuth app, and persistence pivots.
+- Includes static read-only KQL pivot templates with explicit execution status.
+- Enforces hard read-only tenant safety controls and refuses executable destructive actions.
 - Creates timelines, hypotheses, evidence ledgers, root-cause assessments, blast-radius assessments, and final reports.
 - Uses Microsoft Sentinel, Defender XDR, Entra ID, M365, Azure, and KQL-oriented workflows when those sources are available.
 - Delegates KQL syntax and query review to `kql-m365-azure-hunting`.
