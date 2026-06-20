@@ -123,7 +123,7 @@ tests\expected-behaviors.md
 - Sentinel tables depend on enabled connectors.
 - Device Query is a separate KQL-like surface from Sentinel and Defender Advanced Hunting.
 - Live Response is non-KQL operational/remote-shell work and is out of scope except for boundary explanation.
-- Az module guidance is read-only in v1; mutating `New-Az*`, resource-changing `Set-Az*`, `Update-Az*`, and `Remove-Az*` workflows are out of scope unless explicitly redesigned.
+- Az module guidance is read-only in v1; mutating create, resource-changing setter, updater, and removal workflows are out of scope unless explicitly redesigned.
 
 ## License
 

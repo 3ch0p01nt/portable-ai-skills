@@ -114,7 +114,7 @@ let qualifyingSequences =
         successRows
         | project UserPrincipalName, CandidateSuccessTime=SuccessTime, SuccessIP, SuccessLocation, SuccessApp
     ) on UserPrincipalName
-    | where FailureTime < CandidateSuccessTime
+    | where CandidateSuccessTime > FailureTime
     | summarize FailuresBeforeSuccess=count(), FirstFailure=min(FailureTime), LastFailureBeforeSuccess=max(FailureTime), FailureIPs=make_set(FailureIP, 20), FailureLocations=make_set(FailureLocation, 20), SuccessIP=take_any(SuccessIP), SuccessLocation=take_any(SuccessLocation), SuccessApp=take_any(SuccessApp) by UserPrincipalName, CandidateSuccessTime
     | where FailuresBeforeSuccess >= failureThreshold
     | extend FirstSuccessAfterFailure = CandidateSuccessTime

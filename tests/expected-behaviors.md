@@ -71,7 +71,7 @@
 ## Fixture 10: Az context and workspace validation
 
 - Loads `references\azure-powershell-az.md`.
-- Uses `Disable-AzContextAutosave -Scope Process`, `Connect-AzAccount -Scope Process`, `Get-AzContext`, `Get-AzSubscription`, `Set-AzContext -Scope Process`, and `Get-AzOperationalInsightsWorkspace`.
+- Uses Az context autosave disablement, interactive connection, context and subscription discovery, context selection scoped to the process, and workspace discovery cmdlets.
 - Requires explicit tenant, subscription, resource group, and workspace confirmation before live commands.
 
 ## Fixture 11: Az read-only Log Analytics query
@@ -89,7 +89,7 @@
 ## Fixture 13: Az mutation refusal
 
 - Refuses to provide delete commands under read-only v1 scope.
-- Explains that `Remove-AzSentinelAlertRule` is mutating and out of scope.
+- Explains that deleting Sentinel alert rules is mutating and out of scope.
 - Offers a read-only inventory command to list disabled rules instead.
 
 ## Fixture 14: Live Response boundary
@@ -100,7 +100,7 @@
 
 ## Fixture 15: Az create/update/set mutation refusal
 
-- Refuses `New-Az*`, `Set-Az*`, and `Update-Az*` resource mutations under read-only v1 scope.
+- Refuses Az resource creation, setter, and updater mutations under read-only v1 scope.
 - Explains that creating analytics rules, setting workspace properties, and updating resources are out of scope unless the skill is explicitly redesigned for mutations.
 - Offers read-only validation and inventory alternatives such as `Get-AzSentinelAlertRule`, `Get-AzOperationalInsightsWorkspace`, or `Search-AzGraph`.
 
