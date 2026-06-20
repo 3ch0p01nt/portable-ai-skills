@@ -111,6 +111,7 @@
 - Extracts host, process, parent process, timestamp, redacted command-line context, source tables, and available tools.
 - Notes that the encoded command content was omitted or redacted and treats that omission as an evidence gap without inventing decoded content.
 - Produces bounded Defender or Sentinel pivot queries without claiming they were executed.
+- Labels offline drafted queries with `Execution status: not executed`.
 - Treats `winword.exe` to `powershell.exe` as suspicious but validates instead of assuming compromise.
 
 ## Fixture 17: Suspicious Entra sign-in seed event
@@ -126,6 +127,7 @@
 - Classifies the seed as email investigation with URL, attachment, endpoint, and click pivots.
 - Extracts sender, recipient, message ID, URL, attachment hash, mailbox events, and endpoint follow-on entities.
 - Produces query or pivot packets for email spread, click activity, attachment prevalence, file execution, and post-delivery actions.
+- Labels offline drafted query or pivot packets with `Execution status: not executed`.
 - Tracks dead ends for missing or empty telemetry.
 - Produces report sections without using real customer data.
 
