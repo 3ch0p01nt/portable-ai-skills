@@ -141,7 +141,8 @@ The skill must:
 The root skill will define these answer shapes:
 
 - Initial investigation plan: seed summary, extracted entities, assumptions, time windows, hypotheses, pivots, expected evidence.
-- Query and pivot packet: purpose, data source, time range, query, expected results, interpretation notes.
+- Query and pivot packet: purpose, data source, time range, query, execution status, expected results, interpretation notes.
+  Drafted/offline queries use `Execution status: not executed`.
 - Sub-agent result: agent name, scope, entities, queries or data sources, key findings, evidence references, confidence, next pivots, dead ends, open questions.
 - Evidence ledger: finding ID, claim, evidence, source, timestamp, entity, confidence, MITRE mapping when applicable.
 - Skeptical QA review: over-trust check, benign explanation check, causation check, timestamp consistency, telemetry gap check, scope check, evidence citation check, required revisions.
