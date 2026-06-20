@@ -2,7 +2,7 @@
 
 > **Execution-state note:** This plan is a historical baseline retained for history after the v2 branch was completed. Do not re-execute this plan against the completed v2 branch; use the v2 plan and current files as the source of truth.
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Build the `investigation-deepdive` portable AI skill for Microsoft-first, evidence-driven SOC investigations from a single suspicious seed event or entity.
 
@@ -40,7 +40,7 @@
 - Modify: `tests\prompt-fixtures.md`
 - Modify: `tests\expected-behaviors.md`
 
-- [ ] **Step 1: Verify the skill does not exist before fixtures are added**
+- [x] **Step 1: Verify the skill does not exist before fixtures are added**
 
 Run:
 
@@ -54,7 +54,7 @@ if (Test-Path '.\skills\investigation-deepdive\SKILL.md') {
 
 Expected: command exits 0 and prints `Expected fail state: investigation-deepdive skill is not created yet`.
 
-- [ ] **Step 2: Append prompt fixtures**
+- [x] **Step 2: Append prompt fixtures**
 
 Append this exact content to `tests\prompt-fixtures.md`:
 
@@ -125,7 +125,7 @@ Use investigation-deepdive to orchestrate host, identity, email, network, root-c
 ```
 ````
 
-- [ ] **Step 3: Append expected behaviors**
+- [x] **Step 3: Append expected behaviors**
 
 Append this exact content to `tests\expected-behaviors.md`:
 
@@ -196,7 +196,7 @@ Append this exact content to `tests\expected-behaviors.md`:
 - Runs skeptical QA and revises or qualifies final conclusions when evidence is weak.
 ```
 
-- [ ] **Step 4: Verify fixture headings match expected behavior headings**
+- [x] **Step 4: Verify fixture headings match expected behavior headings**
 
 Run:
 
@@ -216,7 +216,7 @@ for ($i = 0; $i -lt $fixtures.Count; $i++) {
 
 Expected: command exits 0 and prints `Investigation fixture headings match expected behaviors`.
 
-- [ ] **Step 5: Commit acceptance fixtures**
+- [x] **Step 5: Commit acceptance fixtures**
 
 Run:
 
@@ -233,7 +233,7 @@ Expected: commit exits 0.
 **Files:**
 - Create: `skills\investigation-deepdive\SKILL.md`
 
-- [ ] **Step 1: Create skill directories**
+- [x] **Step 1: Create skill directories**
 
 Run:
 
@@ -246,7 +246,7 @@ Test-Path '.\skills\investigation-deepdive\examples'
 
 Expected: command exits 0 and prints `True` twice.
 
-- [ ] **Step 2: Create `SKILL.md`**
+- [x] **Step 2: Create `SKILL.md`**
 
 Create `skills\investigation-deepdive\SKILL.md` with this exact content:
 
@@ -423,7 +423,7 @@ For a final investigation report:
 Run skeptical QA. Ask whether the investigation over-trusted the alert, ignored benign explanations, confused correlation with causation, missed timestamp conflicts, lacked key logs, scoped too narrowly, failed to check before and after the seed event, missed the first known suspicious action, omitted dead ends, or made claims without evidence.
 ```
 
-- [ ] **Step 3: Validate root skill frontmatter**
+- [x] **Step 3: Validate root skill frontmatter**
 
 Run:
 
@@ -438,7 +438,7 @@ if ($skill -notmatch '(?s)^---\r?\nname:\s*investigation-deepdive\r?\ndescriptio
 
 Expected: command exits 0 and prints `SKILL.md frontmatter is valid`.
 
-- [ ] **Step 4: Commit root skill**
+- [x] **Step 4: Commit root skill**
 
 Run:
 
@@ -458,7 +458,7 @@ Expected: commit exits 0.
 - Create: `skills\investigation-deepdive\references\entity-pivot-playbook.md`
 - Create: `skills\investigation-deepdive\references\evidence-confidence-ledger.md`
 
-- [ ] **Step 1: Create `investigation-workflow.md`**
+- [x] **Step 1: Create `investigation-workflow.md`**
 
 Create `skills\investigation-deepdive\references\investigation-workflow.md` with this exact content:
 
@@ -574,7 +574,7 @@ Search for:
 Classify scope as single event, single host, single user, multiple hosts, multiple users, tenant-wide, or unknown due to telemetry gaps.
 ```
 
-- [ ] **Step 2: Create `entity-pivot-playbooks.md`**
+- [x] **Step 2: Create `entity-pivot-playbooks.md`**
 
 Create `skills\investigation-deepdive\references\entity-pivot-playbooks.md` with this exact content:
 
@@ -774,7 +774,7 @@ Benign alternatives: workbook threshold drift, peer group mismatch, data freshne
 Stop conditions: if only one metric exists and no entity can be extracted, return an evidence collection plan instead of a verdict.
 ```
 
-- [ ] **Step 3: Create legacy `entity-pivot-playbook.md` redirect**
+- [x] **Step 3: Create legacy `entity-pivot-playbook.md` redirect**
 
 Create `skills\investigation-deepdive\references\entity-pivot-playbook.md` with this exact content:
 
@@ -788,7 +788,7 @@ This singular playbook path is retained only for legacy references.
 Investigation Deepdive v2 uses `references\entity-pivot-playbooks.md` as the canonical entity pivot reference. Loaders and users should use `entity-pivot-playbooks.md` for entity-specific pivots, including domain/URL, IP, host/device, user/identity, process, file/hash, email/message, cloud resource, service principal, OAuth app, and persistence artifacts.
 ```
 
-- [ ] **Step 4: Create `evidence-confidence-ledger.md`**
+- [x] **Step 4: Create `evidence-confidence-ledger.md`**
 
 Create `skills\investigation-deepdive\references\evidence-confidence-ledger.md` with this exact content:
 
@@ -846,7 +846,7 @@ Before finalizing, each major claim must answer:
 - How much telemetry is missing?
 ```
 
-- [ ] **Step 5: Verify method references exist**
+- [x] **Step 5: Verify method references exist**
 
 Run:
 
@@ -866,7 +866,7 @@ foreach ($file in $files) {
 
 Expected: command exits 0 and prints `Investigation method references exist`.
 
-- [ ] **Step 6: Commit method references**
+- [x] **Step 6: Commit method references**
 
 Run:
 
@@ -886,7 +886,7 @@ Expected: commit exits 0.
 - Create: `skills\investigation-deepdive\references\report-shapes.md`
 - Create: `skills\investigation-deepdive\references\public-source-notes.md`
 
-- [ ] **Step 1: Create `microsoft-log-source-map.md`**
+- [x] **Step 1: Create `microsoft-log-source-map.md`**
 
 Create `skills\investigation-deepdive\references\microsoft-log-source-map.md` with this exact content:
 
@@ -966,7 +966,7 @@ For every query or analyst-run pivot, record purpose, query surface, source tabl
 If a query is drafted but not executed, say `not executed` in the result summary.
 ```
 
-- [ ] **Step 2: Create `agent-orchestration-and-qa.md`**
+- [x] **Step 2: Create `agent-orchestration-and-qa.md`**
 
 Create `skills\investigation-deepdive\references\agent-orchestration-and-qa.md` with this exact content:
 
@@ -1050,7 +1050,7 @@ Before finalizing, ask:
 Revise the final report when QA finds weak evidence, missing scope, unsupported claims, or unresolved contradictions.
 ````
 
-- [ ] **Step 3: Create `report-shapes.md`**
+- [x] **Step 3: Create `report-shapes.md`**
 
 Create `skills\investigation-deepdive\references\report-shapes.md` with this exact content:
 
@@ -1171,7 +1171,7 @@ Separate actions into:
 - Detection and logging improvements.
 ````
 
-- [ ] **Step 4: Create `public-source-notes.md`**
+- [x] **Step 4: Create `public-source-notes.md`**
 
 Create `skills\investigation-deepdive\references\public-source-notes.md` with this exact content:
 
@@ -1213,7 +1213,7 @@ Source: `https://learn.microsoft.com/en-us/defender-xdr/advanced-hunting-overvie
 Defender XDR advanced hunting is query-based threat hunting over raw data for known and potential threats. Use it for endpoint, identity, email, cloud app, and Sentinel-connected hunting when available. Query results must be time-bounded and interpreted as evidence, not as automatic verdicts.
 ```
 
-- [ ] **Step 5: Verify reference selection points to real files**
+- [x] **Step 5: Verify reference selection points to real files**
 
 Run:
 
@@ -1232,7 +1232,7 @@ foreach ($ref in $refs) {
 
 Expected: command exits 0 and prints `Root skill reference links resolve`.
 
-- [ ] **Step 6: Commit Microsoft, orchestration, QA, and report references**
+- [x] **Step 6: Commit Microsoft, orchestration, QA, and report references**
 
 Run:
 
@@ -1253,7 +1253,7 @@ Expected: commit exits 0.
 - Create: `skills\investigation-deepdive\examples\sub-agent-result.md`
 - Create: `skills\investigation-deepdive\examples\final-report-skeleton.md`
 
-- [ ] **Step 1: Create `seed-event-deep-dive.md`**
+- [x] **Step 1: Create `seed-event-deep-dive.md`**
 
 Create `skills\investigation-deepdive\examples\seed-event-deep-dive.md` with this exact content:
 
@@ -1319,7 +1319,7 @@ Endpoint process execution from an Office parent process to PowerShell with enco
 - File and registry rows after execution.
 ````
 
-- [ ] **Step 2: Create `microsoft-kql-pivot-packet.md`**
+- [x] **Step 2: Create `microsoft-kql-pivot-packet.md`**
 
 Create `skills\investigation-deepdive\examples\microsoft-kql-pivot-packet.md` with this exact content:
 
@@ -1358,7 +1358,7 @@ Execution status: not executed.
 
 ## Pivot 2: Destination prevalence
 
-Purpose: Check whether other hosts contacted the same domain.
+Purpose: Check whether other hosts contacted the same domain or URL host.
 
 Data source: Defender Advanced Hunting `DeviceNetworkEvents`.
 
@@ -1367,22 +1367,26 @@ Time range: T-30d.
 Query:
 
 ```kql
-let domain = "suspicious.example";
+let lookback = 30d;
+let targetUrlOrDomain = "https://suspicious.example/login";
+let parsedTarget = parse_url(targetUrlOrDomain);
+let targetHost = tolower(iff(isnotempty(tostring(parsedTarget.Host)), tostring(parsedTarget.Host), targetUrlOrDomain));
 DeviceNetworkEvents
-| where Timestamp > ago(30d)
-| where RemoteUrl =~ domain
-| summarize FirstSeen=min(Timestamp), LastSeen=max(Timestamp), EventCount=count(), Devices=dcount(DeviceName), Users=dcount(InitiatingProcessAccountUpn) by RemoteUrl, RemoteIP
+| where Timestamp > ago(lookback)
+| extend RemoteHost = tolower(iff(RemoteUrl startswith "http", tostring(parse_url(RemoteUrl).Host), RemoteUrl))
+| where tolower(RemoteUrl) =~ tolower(targetUrlOrDomain) or RemoteHost =~ targetHost or RemoteHost endswith strcat(".", targetHost)
+| summarize FirstSeen=min(Timestamp), LastSeen=max(Timestamp), EventCount=count(), Devices=dcount(DeviceName), Users=dcount(InitiatingProcessAccountUpn) by RemoteUrl, RemoteHost, RemoteIP
 | order by Devices desc, EventCount desc
 ```
 
-Expected result shape: prevalence summary by domain and remote IP.
+Expected result shape: prevalence summary by remote URL, extracted host, and remote IP.
 
 How to interpret results: single-host prevalence can support targeted compromise, while broad prevalence may indicate shared infrastructure, update behavior, or common browsing.
 
 Execution status: not executed.
 ````
 
-- [ ] **Step 3: Create `evidence-ledger.md`**
+- [x] **Step 3: Create `evidence-ledger.md`**
 
 Create `skills\investigation-deepdive\examples\evidence-ledger.md` with this exact content:
 
@@ -1404,7 +1408,7 @@ This example is synthetic and offline.
 - Missing telemetry is not negative proof.
 ```
 
-- [ ] **Step 4: Create `sub-agent-result.md`**
+- [x] **Step 4: Create `sub-agent-result.md`**
 
 Create `skills\investigation-deepdive\examples\sub-agent-result.md` with this exact content:
 
@@ -1427,7 +1431,7 @@ open questions: Was the encoded command decoded safely by an analyst? Did the us
 ```
 ````
 
-- [ ] **Step 5: Create `final-report-skeleton.md`**
+- [x] **Step 5: Create `final-report-skeleton.md`**
 
 Create `skills\investigation-deepdive\examples\final-report-skeleton.md` with this exact content:
 
@@ -1500,7 +1504,7 @@ Threads investigated that did not produce meaningful evidence and why they were 
 - What telemetry would resolve it?
 ```
 
-- [ ] **Step 6: Verify examples reference synthetic/offline status**
+- [x] **Step 6: Verify examples reference synthetic/offline status**
 
 Run:
 
@@ -1519,7 +1523,7 @@ foreach ($example in $examples) {
 
 Expected: command exits 0 and prints `Examples are marked synthetic and offline`.
 
-- [ ] **Step 7: Commit examples**
+- [x] **Step 7: Commit examples**
 
 Run:
 
@@ -1538,7 +1542,7 @@ Expected: commit exits 0.
 - Modify: `.claude-plugin\plugin.json`
 - Modify: `.claude-plugin\marketplace.json`
 
-- [ ] **Step 1: Update README Installed Skills**
+- [x] **Step 1: Update README Installed Skills**
 
 Modify `README.md` so `## Installed Skills` contains this new entry after the existing `kql-m365-azure-hunting` capability list:
 
@@ -1558,7 +1562,7 @@ Capabilities:
 - Runs skeptical QA before final conclusions.
 ```
 
-- [ ] **Step 2: Update README repository tree**
+- [x] **Step 2: Update README repository tree**
 
 Modify the tree in `README.md` so `skills/` includes:
 
@@ -1571,7 +1575,7 @@ Modify the tree in `README.md` so `skills/` includes:
 
 Expected: the tree shows both installed skills.
 
-- [ ] **Step 3: Remove the existing angle-bracket install placeholder**
+- [x] **Step 3: Remove the existing angle-bracket install placeholder**
 
 Modify the direct skill folder install snippet in `README.md` so it uses a PowerShell variable instead of the existing angle-bracket placeholder:
 
@@ -1585,7 +1589,7 @@ Copy-Item -Recurse '.\skills\investigation-deepdive' "$skillsDirectory\investiga
 
 Expected: `README.md` no longer contains angle-bracket install placeholders.
 
-- [ ] **Step 4: Update plugin JSON**
+- [x] **Step 4: Update plugin JSON**
 
 Modify `.claude-plugin\plugin.json` so it contains this exact JSON:
 
@@ -1614,7 +1618,7 @@ Modify `.claude-plugin\plugin.json` so it contains this exact JSON:
 }
 ```
 
-- [ ] **Step 5: Update marketplace JSON**
+- [x] **Step 5: Update marketplace JSON**
 
 Modify `.claude-plugin\marketplace.json` so it contains this exact JSON:
 
@@ -1637,7 +1641,7 @@ Modify `.claude-plugin\marketplace.json` so it contains this exact JSON:
 }
 ```
 
-- [ ] **Step 6: Validate plugin metadata JSON**
+- [x] **Step 6: Validate plugin metadata JSON**
 
 Run:
 
@@ -1650,7 +1654,7 @@ Get-Content '.\.claude-plugin\marketplace.json' -Raw | ConvertFrom-Json | Out-Nu
 
 Expected: command exits 0 and prints `Plugin metadata JSON parses`.
 
-- [ ] **Step 7: Validate README lists the new skill**
+- [x] **Step 7: Validate README lists the new skill**
 
 Run:
 
@@ -1664,7 +1668,7 @@ if ($readme -notmatch 'investigation-deepdive/\s+\r?\n\s+SKILL.md\s+\r?\n\s+refe
 
 Expected: command exits 0 and prints `README lists investigation-deepdive`.
 
-- [ ] **Step 8: Commit README and plugin metadata**
+- [x] **Step 8: Commit README and plugin metadata**
 
 Run:
 
@@ -1681,7 +1685,7 @@ Expected: commit exits 0.
 **Files:**
 - Inspect all added and modified files.
 
-- [ ] **Step 1: Validate required files exist**
+- [x] **Step 1: Validate required files exist**
 
 Run:
 
@@ -1715,7 +1719,7 @@ foreach ($file in $required) {
 
 Expected: command exits 0 and prints `All required files exist`.
 
-- [ ] **Step 2: Validate root skill frontmatter and answer shapes**
+- [x] **Step 2: Validate root skill frontmatter and answer shapes**
 
 Run:
 
@@ -1731,13 +1735,13 @@ foreach ($section in @('Reference Selection','Operating Flow','Safety Guardrails
 
 Expected: command exits 0 and prints `SKILL.md structure is valid`.
 
-- [ ] **Step 3: Validate fixtures match expected behaviors**
+- [x] **Step 3: Validate fixtures match expected behaviors**
 
 Run the same heading comparison command from Task 1, Step 4.
 
 Expected: command exits 0 and prints `Investigation fixture headings match expected behaviors`.
 
-- [ ] **Step 4: Validate plugin metadata parses**
+- [x] **Step 4: Validate plugin metadata parses**
 
 Run:
 
@@ -1750,7 +1754,7 @@ Get-Content '.\.claude-plugin\marketplace.json' -Raw | ConvertFrom-Json | Out-Nu
 
 Expected: command exits 0 and prints `Plugin metadata JSON parses`.
 
-- [ ] **Step 5: Validate example consistency**
+- [x] **Step 5: Validate example consistency**
 
 Run:
 
@@ -1768,7 +1772,7 @@ foreach ($n in 1..12) {
 
 Expected: command exits 0 and prints `Examples are internally consistent`.
 
-- [ ] **Step 6: Scan added skill content for unresolved template markers and sensitivity risks**
+- [x] **Step 6: Scan added skill content for unresolved template markers and sensitivity risks**
 
 Run:
 
@@ -1800,7 +1804,7 @@ foreach ($file in $files) {
 
 Expected: command exits 0 and prints `No unresolved template markers or sensitivity risks found in added content`.
 
-- [ ] **Step 7: Run Git whitespace validation**
+- [x] **Step 7: Run Git whitespace validation**
 
 Run:
 
@@ -1810,7 +1814,7 @@ git diff --check HEAD
 
 Expected: command exits 0 with no output.
 
-- [ ] **Step 8: Commit validation adjustments if any were needed**
+- [x] **Step 8: Commit validation adjustments if any were needed**
 
 If validation required edits, commit them:
 
@@ -1822,13 +1826,13 @@ git commit -m "fix: align investigation deepdive validation" -m $trailer
 
 Expected: if there were edits, commit exits 0. If there were no edits, skip this step.
 
-- [ ] **Step 9: Invoke completion verification skill**
+- [x] **Step 9: Invoke completion verification skill**
 
 Invoke `superpowers:verification-before-completion`.
 
 Expected: the verification skill is loaded before claiming the implementation is complete.
 
-- [ ] **Step 10: Final git status**
+- [x] **Step 10: Final git status**
 
 Run:
 

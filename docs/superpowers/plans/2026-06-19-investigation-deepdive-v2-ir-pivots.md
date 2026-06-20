@@ -2,7 +2,7 @@
 
 > **Execution-state note:** This plan has been completed on this branch. Its precondition and expected-failing TDD checks are historical red checks from the original execution, not current validation commands. Do not re-execute those checks for current branch validation.
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Expand `investigation-deepdive` into an entity-first, read-only IR pivot skill that handles specific incidents, single observables, and vague workbook anomalies with KQL pivot packets and hard tenant-safety controls.
 
@@ -34,7 +34,7 @@
 - Modify: `tests\prompt-fixtures.md`
 - Modify: `tests\expected-behaviors.md`
 
-- [ ] **Step 1: Verify v2 references do not exist before fixtures**
+- [x] **Step 1: Verify v2 references do not exist before fixtures**
 
 Run:
 
@@ -56,7 +56,7 @@ foreach ($file in $v2Files) {
 
 Expected: command exits 0 and prints `Expected fail state: v2 references are not created yet`.
 
-- [ ] **Step 2: Append v2 prompt fixtures**
+- [x] **Step 2: Append v2 prompt fixtures**
 
 Append this exact content to `tests\prompt-fixtures.md`:
 
@@ -175,7 +175,7 @@ Investigate https://credential-review.example/login as a URL-only seed with unkn
 ```
 ````
 
-- [ ] **Step 3: Append v2 expected behaviors**
+- [x] **Step 3: Append v2 expected behaviors**
 
 Append this exact content to `tests\expected-behaviors.md`:
 
@@ -291,7 +291,7 @@ Append this exact content to `tests\expected-behaviors.md`:
 - Requires any read-only KQL or pivot packets to include `Execution status: not executed`.
 ```
 
-- [ ] **Step 4: Verify v2 fixture headings match**
+- [x] **Step 4: Verify v2 fixture headings match**
 
 Run:
 
@@ -311,7 +311,7 @@ for ($i = 0; $i -lt $fixtures.Count; $i++) {
 
 Expected: command exits 0 and prints `V2 fixture headings match expected behaviors`.
 
-- [ ] **Step 5: Commit v2 fixtures**
+- [x] **Step 5: Commit v2 fixtures**
 
 Run:
 
@@ -328,7 +328,7 @@ Expected: commit exits 0.
 **Files:**
 - Modify: `skills\investigation-deepdive\SKILL.md`
 
-- [ ] **Step 1: Run failing root-skill validation for v2 references**
+- [x] **Step 1: Run failing root-skill validation for v2 references**
 
 Run:
 
@@ -353,7 +353,7 @@ if ($missing.Count -eq 0) { throw 'Expected fail state: root skill already conta
 
 Expected: command exits 0 and prints the missing v2 references.
 
-- [ ] **Step 2: Update `Reference Selection`**
+- [x] **Step 2: Update `Reference Selection`**
 
 In `skills\investigation-deepdive\SKILL.md`, add these bullets to `## Reference Selection` before the final smallest-reference-set bullet:
 
@@ -364,7 +364,7 @@ In `skills\investigation-deepdive\SKILL.md`, add these bullets to `## Reference 
 - Any request for destructive or mutating tenant action, containment command, remediation command, account disablement, host isolation, token revocation, role removal, file deletion, mailbox rule deletion, indicator blocking, or configuration change: read `references\hard-safety-controls.md` and refuse executable mutation guidance.
 ```
 
-- [ ] **Step 3: Update `Operating Flow`**
+- [x] **Step 3: Update `Operating Flow`**
 
 Replace steps 1 through 7 in `## Operating Flow` with this exact block:
 
@@ -378,7 +378,7 @@ Replace steps 1 through 7 in `## Operating Flow` with this exact block:
 7. Draft targeted read-only pivots and KQL packets. If live tools are not explicitly authorized, produce exact analyst-run queries with `Execution status: not executed` instead of claiming execution.
 ```
 
-- [ ] **Step 4: Strengthen `Safety Guardrails`**
+- [x] **Step 4: Strengthen `Safety Guardrails`**
 
 Add these bullets to `## Safety Guardrails` after the existing read-only bullets:
 
@@ -390,7 +390,7 @@ Add these bullets to `## Safety Guardrails` after the existing read-only bullets
 - Redact or summarize copyable payloads, exploit strings, credential material, and evasion command lines instead of reproducing them.
 ```
 
-- [ ] **Step 5: Add v2 answer shapes**
+- [x] **Step 5: Add v2 answer shapes**
 
 Add this block after the query or pivot packet answer shape:
 
@@ -417,7 +417,7 @@ For an entity pivot packet:
 8. `Stop conditions`
 ```
 
-- [ ] **Step 6: Validate root v2 updates**
+- [x] **Step 6: Validate root v2 updates**
 
 Run:
 
@@ -442,7 +442,7 @@ foreach ($item in @(
 
 Expected: command exits 0 and prints `Root skill v2 routing and safety updates are present`.
 
-- [ ] **Step 7: Commit root skill updates**
+- [x] **Step 7: Commit root skill updates**
 
 Run:
 
@@ -460,7 +460,7 @@ Expected: commit exits 0.
 - Create: `skills\investigation-deepdive\references\workbook-anomaly-intake.md`
 - Create: `skills\investigation-deepdive\references\hard-safety-controls.md`
 
-- [ ] **Step 1: Create `workbook-anomaly-intake.md`**
+- [x] **Step 1: Create `workbook-anomaly-intake.md`**
 
 Create `skills\investigation-deepdive\references\workbook-anomaly-intake.md` with this exact content:
 
@@ -533,7 +533,7 @@ Return this normalization before pivots:
 - If the workbook summary says behavior is rare, still verify prevalence with entity-specific queries.
 ```
 
-- [ ] **Step 2: Create `hard-safety-controls.md`**
+- [x] **Step 2: Create `hard-safety-controls.md`**
 
 Create `skills\investigation-deepdive\references\hard-safety-controls.md` with this exact content:
 
@@ -590,7 +590,7 @@ This investigation skill is read-only and cannot provide executable tenant mutat
 Do not include executable command examples for destructive or mutating actions.
 ````
 
-- [ ] **Step 3: Validate safety reference contains hard-stop controls**
+- [x] **Step 3: Validate safety reference contains hard-stop controls**
 
 Run:
 
@@ -609,7 +609,7 @@ foreach ($item in @('Structured row','Vague anomaly summary','Evidence gaps','Ro
 
 Expected: command exits 0 and prints `Workbook intake and hard safety references validate`.
 
-- [ ] **Step 4: Commit workbook and safety references**
+- [x] **Step 4: Commit workbook and safety references**
 
 Run:
 
@@ -628,7 +628,7 @@ Expected: commit exits 0.
 - Create: `skills\investigation-deepdive\references\scenario-routing-matrix.md`
 - Create: `skills\investigation-deepdive\references\false-positive-decisioning.md`
 
-- [ ] **Step 1: Create `entity-pivot-playbooks.md`**
+- [x] **Step 1: Create `entity-pivot-playbooks.md`**
 
 Create `skills\investigation-deepdive\references\entity-pivot-playbooks.md` with this exact content:
 
@@ -828,7 +828,7 @@ Benign alternatives: workbook threshold drift, peer group mismatch, data freshne
 Stop conditions: if only one metric exists and no entity can be extracted, return an evidence collection plan instead of a verdict.
 ```
 
-- [ ] **Step 2: Create `scenario-routing-matrix.md`**
+- [x] **Step 2: Create `scenario-routing-matrix.md`**
 
 Create `skills\investigation-deepdive\references\scenario-routing-matrix.md` with this exact content:
 
@@ -876,7 +876,7 @@ Use this matrix to route entities to investigation scenarios. More than one scen
 - If a workbook anomaly names a peer group or baseline, preserve it in the evidence ledger.
 ```
 
-- [ ] **Step 3: Create `false-positive-decisioning.md`**
+- [x] **Step 3: Create `false-positive-decisioning.md`**
 
 Create `skills\investigation-deepdive\references\false-positive-decisioning.md` with this exact content:
 
@@ -933,7 +933,7 @@ For each benign hypothesis, collect:
 - Never suppress a pattern solely because it is noisy.
 ```
 
-- [ ] **Step 4: Validate playbook references**
+- [x] **Step 4: Validate playbook references**
 
 Run:
 
@@ -956,7 +956,7 @@ foreach ($item in @('Scope first, tune second','Known-good explanation is a hypo
 
 Expected: command exits 0 and prints `Entity playbooks and scenario routing validate`.
 
-- [ ] **Step 5: Commit playbook references**
+- [x] **Step 5: Commit playbook references**
 
 Run:
 
@@ -973,7 +973,7 @@ Expected: commit exits 0.
 **Files:**
 - Create: `skills\investigation-deepdive\references\kql-pivot-template-pack.md`
 
-- [ ] **Step 1: Create `kql-pivot-template-pack.md`**
+- [x] **Step 1: Create `kql-pivot-template-pack.md`**
 
 Create `skills\investigation-deepdive\references\kql-pivot-template-pack.md` with this exact content:
 
@@ -1258,7 +1258,7 @@ Execution status: not executed.
 - Explain table assumptions before use.
 ````
 
-- [ ] **Step 2: Validate KQL template pack**
+- [x] **Step 2: Validate KQL template pack**
 
 Run:
 
@@ -1276,7 +1276,7 @@ if ($pack -match 'Defender Advanced Hunting or Sentinel `Device') { throw 'KQL p
 
 Expected: command exits 0 and prints `KQL pivot template pack validates`.
 
-- [ ] **Step 3: Commit KQL template pack**
+- [x] **Step 3: Commit KQL template pack**
 
 Run:
 
@@ -1295,7 +1295,7 @@ Expected: commit exits 0.
 - Create: `skills\investigation-deepdive\examples\workbook-anomaly-intake.md`
 - Create: `skills\investigation-deepdive\examples\kql-pivot-template-pack.md`
 
-- [ ] **Step 1: Create `entity-pivot-examples.md`**
+- [x] **Step 1: Create `entity-pivot-examples.md`**
 
 Create `skills\investigation-deepdive\examples\entity-pivot-examples.md` with this exact content:
 
@@ -1355,7 +1355,7 @@ Pivot plan:
 6. Compare activity against peer hosts.
 ```
 
-- [ ] **Step 2: Create `workbook-anomaly-intake.md` example**
+- [x] **Step 2: Create `workbook-anomaly-intake.md` example**
 
 Create `skills\investigation-deepdive\examples\workbook-anomaly-intake.md` with this exact content:
 
@@ -1412,7 +1412,7 @@ Execution status: not executed
 ```
 ````
 
-- [ ] **Step 3: Create `kql-pivot-template-pack.md` example**
+- [x] **Step 3: Create `kql-pivot-template-pack.md` example**
 
 Create `skills\investigation-deepdive\examples\kql-pivot-template-pack.md` with this exact content:
 
@@ -1433,22 +1433,25 @@ Query:
 
 ```kql
 let lookback = 30d;
-let targetDomain = "credential-review.example";
+let targetUrlOrDomain = "https://credential-review.example/login";
+let parsedTarget = parse_url(targetUrlOrDomain);
+let targetHost = tolower(iff(isnotempty(tostring(parsedTarget.Host)), tostring(parsedTarget.Host), targetUrlOrDomain));
 DeviceNetworkEvents
 | where Timestamp > ago(lookback)
-| where RemoteUrl =~ targetDomain
-| summarize FirstSeen=min(Timestamp), LastSeen=max(Timestamp), EventCount=count(), DeviceCount=dcount(DeviceName), UserCount=dcount(InitiatingProcessAccountUpn), Processes=make_set(InitiatingProcessFileName, 20) by RemoteUrl, RemoteIP
+| extend RemoteHost = tolower(iff(RemoteUrl startswith "http", tostring(parse_url(RemoteUrl).Host), RemoteUrl))
+| where tolower(RemoteUrl) =~ tolower(targetUrlOrDomain) or RemoteHost =~ targetHost or RemoteHost endswith strcat(".", targetHost)
+| summarize FirstSeen=min(Timestamp), LastSeen=max(Timestamp), EventCount=count(), DeviceCount=dcount(DeviceName), UserCount=dcount(InitiatingProcessAccountUpn), Processes=make_set(InitiatingProcessFileName, 20) by RemoteUrl, RemoteHost, RemoteIP
 | order by DeviceCount desc, EventCount desc
 ```
 
-Expected result shape: one row per domain and IP pair with first seen, last seen, device count, user count, and process set.
+Expected result shape: one row per domain, extracted host, and IP pair with first seen, last seen, device count, user count, and process set.
 
 How to interpret results: single-host prevalence can support targeted investigation, while many hosts may indicate business infrastructure, simulation, or broad campaign activity.
 
 Execution status: not executed.
 ````
 
-- [ ] **Step 4: Validate examples**
+- [x] **Step 4: Validate examples**
 
 Run:
 
@@ -1471,7 +1474,7 @@ if ($kql -notmatch 'Execution status: not executed') { throw 'KQL example missin
 
 Expected: command exits 0 and prints `V2 examples validate`.
 
-- [ ] **Step 5: Commit examples**
+- [x] **Step 5: Commit examples**
 
 Run:
 
@@ -1488,7 +1491,7 @@ Expected: commit exits 0.
 **Files:**
 - Modify: `README.md`
 
-- [ ] **Step 1: Update README capability list**
+- [x] **Step 1: Update README capability list**
 
 In the `investigation-deepdive` installed skill section of `README.md`, add these bullets to the capabilities list:
 
@@ -1499,7 +1502,7 @@ In the `investigation-deepdive` installed skill section of `README.md`, add thes
 - Enforces hard read-only tenant safety controls and refuses executable destructive actions.
 ```
 
-- [ ] **Step 2: Validate README**
+- [x] **Step 2: Validate README**
 
 Run:
 
@@ -1514,7 +1517,7 @@ foreach ($item in @('workbook anomaly rows','entity-specific investigation playb
 
 Expected: command exits 0 and prints `README v2 capabilities validate`.
 
-- [ ] **Step 3: Commit README update**
+- [x] **Step 3: Commit README update**
 
 Run:
 
@@ -1531,7 +1534,7 @@ Expected: commit exits 0.
 **Files:**
 - Inspect all changed files.
 
-- [ ] **Step 1: Validate required v2 files exist**
+- [x] **Step 1: Validate required v2 files exist**
 
 Run:
 
@@ -1556,7 +1559,7 @@ foreach ($file in $required) {
 
 Expected: command exits 0 and prints `All required v2 files exist`.
 
-- [ ] **Step 2: Validate root references resolve**
+- [x] **Step 2: Validate root references resolve**
 
 Run:
 
@@ -1575,13 +1578,13 @@ foreach ($ref in $refs) {
 
 Expected: command exits 0 and prints `Root skill reference links resolve`.
 
-- [ ] **Step 3: Validate v2 fixtures**
+- [x] **Step 3: Validate v2 fixtures**
 
 Run the fixture-heading validation from Task 1, Step 4.
 
 Expected: command exits 0 and prints `V2 fixture headings match expected behaviors`.
 
-- [ ] **Step 4: Validate hard safety controls and no mutation command examples**
+- [x] **Step 4: Validate hard safety controls and no mutation command examples**
 
 Run:
 
@@ -1608,7 +1611,7 @@ foreach ($file in $files) {
 
 Expected: command exits 0 and prints `No executable mutation command patterns found in skill content`.
 
-- [ ] **Step 5: Validate KQL examples**
+- [x] **Step 5: Validate KQL examples**
 
 Run:
 
@@ -1629,7 +1632,7 @@ foreach ($file in $kqlFiles) {
 
 Expected: command exits 0 and prints `KQL examples validate`.
 
-- [ ] **Step 6: Validate public-repo hygiene**
+- [x] **Step 6: Validate public-repo hygiene**
 
 Run:
 
@@ -1654,7 +1657,7 @@ foreach ($file in $files) {
 
 Expected: command exits 0 and prints `Public repo hygiene scan passed`.
 
-- [ ] **Step 7: Run Git whitespace validation**
+- [x] **Step 7: Run Git whitespace validation**
 
 Run:
 
@@ -1664,7 +1667,7 @@ git diff --check HEAD
 
 Expected: command exits 0 with no output.
 
-- [ ] **Step 8: Commit validation fixes if needed**
+- [x] **Step 8: Commit validation fixes if needed**
 
 If validation required edits, run:
 
@@ -1676,13 +1679,13 @@ git commit -m "fix: align investigation v2 validation" -m $trailer
 
 Expected: if edits were needed, commit exits 0. If no edits were needed, skip this step.
 
-- [ ] **Step 9: Invoke completion verification skill**
+- [x] **Step 9: Invoke completion verification skill**
 
 Invoke `superpowers:verification-before-completion`.
 
 Expected: the verification skill is loaded before claiming completion.
 
-- [ ] **Step 10: Final git status**
+- [x] **Step 10: Final git status**
 
 Run:
 
