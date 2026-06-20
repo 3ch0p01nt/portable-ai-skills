@@ -1,5 +1,7 @@
 # Investigation Deepdive Skill Implementation Plan
 
+> **Execution-state note:** This plan is a historical baseline retained for history after the v2 branch was completed. Do not re-execute this plan against the completed v2 branch; use the v2 plan and current files as the source of truth.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build the `investigation-deepdive` portable AI skill for Microsoft-first, evidence-driven SOC investigations from a single suspicious seed event or entity.

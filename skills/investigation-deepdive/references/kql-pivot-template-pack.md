@@ -44,7 +44,7 @@ let lookaround = 24h;
 DeviceProcessEvents
 | where Timestamp between ((seedTime - lookaround) .. (seedTime + lookaround))
 | where DeviceName =~ hostName
-| project Timestamp, DeviceName, AccountUpn, InitiatingProcessFileName, InitiatingProcessCommandLine, FileName, ProcessCommandLine, SHA1
+| project Timestamp, DeviceName, AccountUpn, InitiatingProcessFileName, InitiatingProcessCommandLine, FileName, ProcessCommandLine, SHA1, SHA256
 | order by Timestamp asc
 ```
 
@@ -96,6 +96,7 @@ Required table: `SigninLogs`.
 let lookback = 7d;
 let targetUser = "alex@example.com";
 let failureThreshold = 5;
+let sequenceWindow = 1d;
 let failureRows =
     SigninLogs
     | where TimeGenerated > ago(lookback)
@@ -114,7 +115,8 @@ let qualifyingSequences =
         successRows
         | project UserPrincipalName, CandidateSuccessTime=SuccessTime, SuccessIP, SuccessLocation, SuccessApp
     ) on UserPrincipalName
-    | where CandidateSuccessTime > FailureTime
+    | where FailureTime between ((CandidateSuccessTime - sequenceWindow) .. CandidateSuccessTime)
+    | where FailureTime < CandidateSuccessTime
     | summarize FailuresBeforeSuccess=count(), FirstFailure=min(FailureTime), LastFailureBeforeSuccess=max(FailureTime), FailureIPs=make_set(FailureIP, 20), FailureLocations=make_set(FailureLocation, 20), SuccessIP=take_any(SuccessIP), SuccessLocation=take_any(SuccessLocation), SuccessApp=take_any(SuccessApp) by UserPrincipalName, CandidateSuccessTime
     | where FailuresBeforeSuccess >= failureThreshold
     | extend FirstSuccessAfterFailure = CandidateSuccessTime
@@ -161,7 +163,7 @@ let delivered =
     EmailEvents
     | where Timestamp > ago(lookback)
     | where NetworkMessageId == targetMessageId
-    | project NetworkMessageId, RecipientEmailAddress, DeliveryTime=Timestamp, SenderFromAddress, SenderMailFromAddress, Subject, DeliveryAction, DeliveryLocation;
+    | project NetworkMessageId, RecipientEmailAddress, RecipientKey=tolower(RecipientEmailAddress), DeliveryTime=Timestamp, SenderFromAddress, SenderMailFromAddress, Subject, DeliveryAction, DeliveryLocation;
 delivered
 | join kind=leftouter (
     EmailUrlInfo
@@ -171,10 +173,10 @@ delivered
 | join kind=leftouter (
     UrlClickEvents
     | where Timestamp > ago(lookback)
-    | project ClickNetworkMessageId=NetworkMessageId, Url, ClickAccountUpn=AccountUpn, UrlClickTime=Timestamp, ActionType, IsClickedThrough
-) on $left.NetworkMessageId == $right.ClickNetworkMessageId, $left.Url == $right.Url, $left.RecipientEmailAddress == $right.ClickAccountUpn
+    | project ClickNetworkMessageId=NetworkMessageId, Url, ClickAccountUpn=AccountUpn, ClickAccountKey=tolower(AccountUpn), UrlClickTime=Timestamp, ActionType, IsClickedThrough
+) on $left.NetworkMessageId == $right.ClickNetworkMessageId, $left.Url == $right.Url, $left.RecipientKey == $right.ClickAccountKey
 | extend ClickAfterDelivery = isnotempty(UrlClickTime) and UrlClickTime >= DeliveryTime
-| project NetworkMessageId, ClickNetworkMessageId, RecipientEmailAddress, DeliveryTime, SenderFromAddress, Subject, DeliveryAction, DeliveryLocation, Url, UrlClickTime, ClickAccountUpn, ClickAfterDelivery, ActionType, IsClickedThrough
+| project NetworkMessageId, ClickNetworkMessageId, RecipientEmailAddress, RecipientKey, DeliveryTime, SenderFromAddress, Subject, DeliveryAction, DeliveryLocation, Url, UrlClickTime, ClickAccountUpn, ClickAccountKey, ClickAfterDelivery, ActionType, IsClickedThrough
 ```
 
 Execution status: not executed.
@@ -189,20 +191,19 @@ Required tables: `DeviceFileEvents`, `DeviceProcessEvents`.
 let lookback = 30d;
 let targetSha1 = "0123456789abcdef0123456789abcdef01234567";
 let targetSha256 = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+let InvestigationHash = case(isnotempty(targetSha256), targetSha256, targetSha1);
 let fileHits =
     DeviceFileEvents
     | where Timestamp > ago(lookback)
     | where (isnotempty(targetSha1) and SHA1 =~ targetSha1) or (isnotempty(targetSha256) and SHA256 =~ targetSha256)
-    | extend SelectedHash = case(isnotempty(targetSha256) and SHA256 =~ targetSha256, SHA256, isnotempty(targetSha1) and SHA1 =~ targetSha1, SHA1, coalesce(SHA256, SHA1))
-    | project Timestamp, DeviceName, AccountUpn=InitiatingProcessAccountUpn, FileName, FolderPath, SHA1, SHA256, SelectedHash, Source="DeviceFileEvents";
+    | project Timestamp, DeviceName, AccountUpn=InitiatingProcessAccountUpn, FileName, FolderPath, SHA1, SHA256, InvestigationHash, Source="DeviceFileEvents";
 let processHits =
     DeviceProcessEvents
     | where Timestamp > ago(lookback)
     | where (isnotempty(targetSha1) and SHA1 =~ targetSha1) or (isnotempty(targetSha256) and SHA256 =~ targetSha256)
-    | extend SelectedHash = case(isnotempty(targetSha256) and SHA256 =~ targetSha256, SHA256, isnotempty(targetSha1) and SHA1 =~ targetSha1, SHA1, coalesce(SHA256, SHA1))
-    | project Timestamp, DeviceName, AccountUpn, FileName, FolderPath, SHA1, SHA256, SelectedHash, Source="DeviceProcessEvents";
+    | project Timestamp, DeviceName, AccountUpn, FileName, FolderPath, SHA1, SHA256, InvestigationHash, Source="DeviceProcessEvents";
 union fileHits, processHits
-| summarize FirstSeen=min(Timestamp), LastSeen=max(Timestamp), DeviceCount=dcount(DeviceName), UserCount=dcount(AccountUpn), Sources=make_set(Source), Devices=make_set(DeviceName, 20), SHA1s=make_set(SHA1, 20), SHA256s=make_set(SHA256, 20) by SelectedHash
+| summarize FirstSeen=min(Timestamp), LastSeen=max(Timestamp), DeviceCount=dcount(DeviceName), UserCount=dcount(AccountUpn), Sources=make_set(Source), Devices=make_set(DeviceName, 20), ObservedSHA1s=make_set(SHA1, 20), ObservedSHA256s=make_set(SHA256, 20) by InvestigationHash
 ```
 
 Execution status: not executed.
@@ -240,7 +241,7 @@ DeviceProcessEvents
 | where Timestamp > ago(lookback)
 | where DeviceName =~ targetHost
 | where FileName in~ ("schtasks.exe", "powershell.exe", "cmd.exe", "reg.exe", "sc.exe", "wmic.exe")
-| project Timestamp, DeviceName, AccountUpn, InitiatingProcessFileName, InitiatingProcessCommandLine, FileName, ProcessCommandLine, SHA1
+| project Timestamp, DeviceName, AccountUpn, InitiatingProcessFileName, InitiatingProcessCommandLine, FileName, ProcessCommandLine, SHA1, SHA256
 | order by Timestamp desc
 ```
 
