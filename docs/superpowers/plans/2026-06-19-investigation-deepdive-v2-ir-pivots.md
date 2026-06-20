@@ -510,7 +510,7 @@ Return this normalization before pivots:
 
 Create `skills\investigation-deepdive\references\hard-safety-controls.md` with this exact content:
 
-```markdown
+````markdown
 # Hard Safety Controls
 
 This skill is strictly read-only. Destructive or mutating tenant operations are an absolute hard stop.
@@ -561,7 +561,7 @@ This investigation skill is read-only and cannot provide executable tenant mutat
 ```
 
 Do not include executable command examples for destructive or mutating actions.
-```
+````
 
 - [ ] **Step 3: Validate safety reference contains hard-stop controls**
 
@@ -1307,7 +1307,7 @@ Pivot plan:
 
 Create `skills\investigation-deepdive\examples\workbook-anomaly-intake.md` with this exact content:
 
-```markdown
+````markdown
 # Workbook Anomaly Intake Examples
 
 These examples are synthetic and offline.
@@ -1358,7 +1358,7 @@ Evidence gaps: host, user, domain, IP, timestamp, source tables, workbook query,
 Recommended playbooks: Weak-Context Workbook Anomaly, Domain or URL, Host or Device, User or Identity
 Execution status: not executed
 ```
-```
+````
 
 - [ ] **Step 3: Create `kql-pivot-template-pack.md` example**
 

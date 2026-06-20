@@ -131,7 +131,7 @@ Append this exact content to `tests\expected-behaviors.md`:
 ## Fixture 16: Suspicious PowerShell seed event
 
 - Selects `investigation-deepdive` and classifies the seed as endpoint process execution.
-- Loads `references\investigation-workflow.md`, `references\entity-pivot-playbook.md`, `references\evidence-confidence-ledger.md`, `references\microsoft-log-source-map.md`, and the existing `kql-m365-azure-hunting` skill for KQL query review.
+- Loads `references\investigation-workflow.md`, `references\entity-pivot-playbooks.md`, `references\evidence-confidence-ledger.md`, `references\microsoft-log-source-map.md`, and the existing `kql-m365-azure-hunting` skill for KQL query review.
 - Extracts host, process, parent process, timestamp, redacted command-line context, source tables, and available tools.
 - Notes that the encoded command content was omitted or redacted and treats that omission as an evidence gap without inventing decoded content.
 - Produces bounded Defender or Sentinel pivot queries without claiming they were executed.
@@ -261,7 +261,7 @@ Act like an experienced incident responder, not a log summarizer. Treat the seed
 
 ## Reference Selection
 
-- Any seed-event investigation: read `references\investigation-workflow.md`, `references\entity-pivot-playbook.md`, and `references\evidence-confidence-ledger.md`.
+- Any seed-event investigation: read `references\investigation-workflow.md`, `references\entity-pivot-playbooks.md`, and `references\evidence-confidence-ledger.md`.
 - Microsoft Sentinel, Microsoft Defender XDR, Entra ID, Microsoft 365, Azure, or KQL-driven investigation: also read `references\microsoft-log-source-map.md`; invoke or apply `kql-m365-azure-hunting` for KQL syntax, query-surface selection, and query review.
 - Sub-agent orchestration, branch assignment, or skeptical review: read `references\agent-orchestration-and-qa.md`.
 - Final report, executive summary, query ledger, recommendations, or analyst handoff: read `references\report-shapes.md`.

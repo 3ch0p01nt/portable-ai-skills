@@ -91,7 +91,7 @@ The root skill will include:
 
 The AI should load the smallest useful reference set:
 
-- Any seed-event investigation: `references\investigation-workflow.md`, `references\entity-pivot-playbook.md`, and `references\evidence-confidence-ledger.md`.
+- Any seed-event investigation: `references\investigation-workflow.md`, `references\entity-pivot-playbooks.md`, and `references\evidence-confidence-ledger.md`.
 - Microsoft Sentinel, Defender XDR, Entra ID, M365, Azure, or KQL investigation: add `references\microsoft-log-source-map.md` and use `kql-m365-azure-hunting` for KQL syntax, query-surface classification, and query review.
 - Sub-agent orchestration, recursive branch management, or skeptical review: add `references\agent-orchestration-and-qa.md`.
 - Report generation, executive summary, root cause, blast radius, recommendations, query ledger, or final answer formatting: add `references\report-shapes.md`.
