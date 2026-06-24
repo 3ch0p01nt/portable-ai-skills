@@ -1,7 +1,7 @@
 {
   "name": "portable-ai-skills",
   "version": "1.0.0",
-  "description": "Portable technical AI skills for Copilot CLI and compatible skill loaders, including KQL, Microsoft Sentinel, Defender XDR, Azure, and AOAI-connected workflows.",
+  "description": "Portable technical AI skills for Copilot CLI and compatible skill loaders, including KQL, Microsoft Sentinel, Defender XDR, Azure, AOAI-connected workflows, SOC investigation, and incident response.",
   "author": {
     "name": "Rob Soligan"
   },
@@ -14,6 +14,9 @@
     "defender",
     "azure",
     "aoai",
-    "gpt-5.1"
+    "gpt-5.1",
+    "soc",
+    "incident-response",
+    "investigation"
   ]
 }
