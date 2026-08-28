@@ -25,6 +25,22 @@ Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $Skil
 
 `..\..\skills` matches a layout where the repository is two directories below the destination. For another layout, assign `$SkillsDirectory` to the real absolute path. Do not type a placeholder such as `<skills-directory>` literally.
 
+Verify the installed entry point:
+
+```powershell
+Test-Path (Join-Path $SkillsDirectory 'cisco-device-compromise-investigation\SKILL.md')
+```
+
+It must return `True`. Restart or reload the skill loader, then use its skill-listing command, such as `/skills` when supported.
+
+If the skill is not discovered, check for a duplicated nested folder:
+
+```powershell
+Get-ChildItem (Join-Path $SkillsDirectory 'cisco-device-compromise-investigation') -Recurse -Filter SKILL.md
+```
+
+The expected relative path is `skills\cisco-device-compromise-investigation\SKILL.md`.
+
 Ask the skill to investigate sanitized local evidence, describe the device/platform and incident mode, or provide an explicitly named local folder.
 
 ## Preview-first folder analysis

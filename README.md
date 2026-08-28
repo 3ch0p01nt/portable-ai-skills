@@ -55,6 +55,34 @@ if (-not (Test-Path -LiteralPath $SkillsDirectory -PathType Container)) {
 Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $SkillsDirectory
 ```
 
+### Verify skill discovery
+
+Confirm the entry point is directly beneath the configured skills directory:
+
+```powershell
+Test-Path (Join-Path $SkillsDirectory 'cisco-device-compromise-investigation\SKILL.md')
+```
+
+The command must return `True`. Restart or reload the skill loader so it rescans the directory, then use its skill-listing command, such as `/skills` when supported.
+
+Trigger the skill with a natural-language request:
+
+```text
+Investigate this folder of Cisco artifacts for possible compromise: C:\path\to\evidence
+```
+
+If discovery fails, check for an accidentally duplicated directory:
+
+```powershell
+Get-ChildItem (Join-Path $SkillsDirectory 'cisco-device-compromise-investigation') -Recurse -Filter SKILL.md
+```
+
+The entry point must resolve exactly to:
+
+```text
+skills\cisco-device-compromise-investigation\SKILL.md
+```
+
 ## Repository Structure
 
 ```text
