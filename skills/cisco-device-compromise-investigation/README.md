@@ -19,8 +19,11 @@ The skill **never connects to a live device**. Any Cisco CLI, shell, API, or col
 Clone the repository, then copy this folder into the skills directory used by a compatible skill loader:
 
 ```powershell
-Copy-Item -Recurse '.\skills\cisco-device-compromise-investigation' '<skills-directory>\cisco-device-compromise-investigation'
+$SkillsDirectory = Resolve-Path '..\..\skills'
+Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $SkillsDirectory
 ```
+
+`..\..\skills` matches a layout where the repository is two directories below the destination. For another layout, assign `$SkillsDirectory` to the real absolute path. Do not type a placeholder such as `<skills-directory>` literally.
 
 Ask the skill to investigate sanitized local evidence, describe the device/platform and incident mode, or provide an explicitly named local folder.
 

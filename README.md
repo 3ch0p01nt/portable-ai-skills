@@ -33,13 +33,26 @@ Capabilities:
 
 ## Install
 
-Clone the repository, then copy either skill folder into the skills directory used by a compatible skill loader. Each `SKILL.md` includes YAML frontmatter for discovery:
+Clone the repository, then copy either skill folder into the skills directory used by a compatible skill loader. Each `SKILL.md` includes YAML frontmatter for discovery.
+
+Set `$SkillsDirectory` to a real directory; do not type `<skills-directory>` literally. For a layout where the repository is two directories below an existing `skills` folder:
 
 ```powershell
 git clone 'https://github.com/3ch0p01nt/portable-ai-skills.git' portable-ai-skills
 Set-Location .\portable-ai-skills
-Copy-Item -Recurse '.\skills\kql-m365-azure-hunting' '<skills-directory>\kql-m365-azure-hunting'
-Copy-Item -Recurse '.\skills\cisco-device-compromise-investigation' '<skills-directory>\cisco-device-compromise-investigation'
+$SkillsDirectory = Resolve-Path '..\..\skills'
+Copy-Item -Recurse -Force '.\skills\kql-m365-azure-hunting' $SkillsDirectory
+Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $SkillsDirectory
+```
+
+For any other layout, assign the absolute destination first:
+
+```powershell
+$SkillsDirectory = 'C:\path\to\your\skills'
+if (-not (Test-Path -LiteralPath $SkillsDirectory -PathType Container)) {
+    throw "Skills directory does not exist: $SkillsDirectory"
+}
+Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $SkillsDirectory
 ```
 
 ## Repository Structure
