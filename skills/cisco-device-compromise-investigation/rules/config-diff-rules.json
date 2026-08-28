@@ -1,0 +1,53 @@
+{
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "CFG-IDENTITY",
+      "category": "identity",
+      "description": "Identity, privilege, AAA, TACACS/RADIUS, or SSH public-key configuration was added",
+      "pattern": "(?i)^\\+\\s*(?:username|aaa\\s+authentication|aaa\\s+authorization|aaa\\s+accounting|tacacs|radius|ip\\s+ssh\\s+pubkey-chain)"
+    },
+    {
+      "id": "CFG-LOOPBACK",
+      "category": "loopback",
+      "description": "Loopback interface or loopback-sourced routing/tunnel configuration was added",
+      "pattern": "(?i)^\\+\\s*(?:interface\\s+Loopback|update-source\\s+Loopback|tunnel\\s+source\\s+Loopback)"
+    },
+    {
+      "id": "CFG-EEM",
+      "category": "eem",
+      "description": "EEM or kron trigger/action content was added or changed",
+      "pattern": "(?i)^\\+\\s*(?:event\\s+manager|action\\s+\\S+\\s+cli|kron\\s+policy-list|kron\\s+occurrence)"
+    },
+    {
+      "id": "CFG-ARCHIVE",
+      "category": "archive",
+      "description": "Configuration archive behavior or remote archive destination was added",
+      "pattern": "(?i)^\\+\\s*(?:archive|path\\s+(?:tftp|ftp|http|scp)://)"
+    },
+    {
+      "id": "CFG-SPAN",
+      "category": "span",
+      "description": "SPAN/ERSPAN monitoring session or remote destination was added",
+      "pattern": "(?i)^\\+\\s*(?:monitor\\s+session|destination\\s+ip)"
+    },
+    {
+      "id": "CFG-MANAGEMENT",
+      "category": "management",
+      "description": "Management-plane service, SNMP, Smart Install, API, or VTY configuration was added",
+      "pattern": "(?i)^\\+\\s*(?:ip\\s+http|restconf|netconf|nxapi|snmp-server|vstack|line\\s+vty)"
+    },
+    {
+      "id": "CFG-NETWORK-CONTROL",
+      "category": "network-control",
+      "description": "Routing, tunnel, ACL, NAT, crypto-map, or network-control configuration was added",
+      "pattern": "(?i)^\\+\\s*(?:tunnel|router\\s+bgp|neighbor\\s+\\S+\\s+route-map|ip\\s+route|access-list|route-map|crypto\\s+map|nat)"
+    },
+    {
+      "id": "CFG-PERSISTENCE",
+      "category": "persistence",
+      "description": "Boot, GuestShell, app-hosting, scheduler, trustpoint, or PKI persistence-relevant configuration was added",
+      "pattern": "(?i)^\\+\\s*(?:boot\\s+system|app-hosting|guestshell|scheduler|trustpoint|crypto\\s+ca)"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+schema_version: "1.0.0"
+status: "TEMPLATE_REQUIRES_BASELINE"
+input: "redacted normalized config diff"
+rules:
+  - id: "CFG-IDENTITY"
+    match_categories: ["username", "privilege", "aaa_method_order", "tacacs_radius_server", "ssh_pubkey"]
+    require: ["change_ticket", "approved_actor", "external_aaa", "controller_audit"]
+  - id: "CFG-MANAGEMENT"
+    match_categories: ["vty_transport", "vty_access_class", "http_api", "snmp", "smart_install"]
+    require: ["business_requirement", "management_acl", "exposure_test"]
+  - id: "CFG-NETWORK-CONTROL"
+    match_categories: ["loopback", "tunnel", "bgp_outbound_policy", "acl_nat", "span_erspan"]
+    require: ["peer_or_destination_owner", "change_ticket", "flow_corroboration"]
+  - id: "CFG-PERSISTENCE"
+    match_categories: ["eem_action_body", "kron_body", "archive_destination", "boot_system", "guest_shell", "app_hosting"]
+    require: ["full_stanza_diff", "filesystem_evidence", "controller_audit"]
+blind_spots:
+  - "GuestShell/Linux files, users, keys, cron, and mounts."
+  - "ROMMON/GRUB/BOOT variables."
+  - "Runtime memory and hidden packet captures."
+  - "Unsaved state not present in the supplied snapshot."
+output:
+  verdict: "none"
+  fields: ["rule_id", "line", "category", "reason", "required_corroboration", "confidence_contribution"]

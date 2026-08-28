@@ -195,7 +195,7 @@ Run:
 
 ```powershell
 git add README.md tests\prompt-fixtures.md tests\expected-behaviors.md
-git commit -m "test: define portable skill acceptance fixtures" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git commit -m "test: define portable skill acceptance fixtures"
 ```
 
 Expected: commit exits 0.
@@ -294,7 +294,7 @@ Run:
 
 ```powershell
 git add skills\kql-m365-azure-hunting\SKILL.md
-git commit -m "feat: add KQL M365 Azure root skill" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git commit -m "feat: add KQL M365 Azure root skill"
 ```
 
 Expected: commit exits 0.
@@ -402,7 +402,7 @@ Run:
 
 ```powershell
 git add skills\kql-m365-azure-hunting\references\kql-core.md
-git commit -m "feat: add KQL core reference" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git commit -m "feat: add KQL core reference"
 ```
 
 Expected: commit exits 0.
@@ -496,7 +496,7 @@ Run:
 
 ```powershell
 git add skills\kql-m365-azure-hunting\references\m365-defender.md
-git commit -m "feat: add M365 Defender hunting reference" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git commit -m "feat: add M365 Defender hunting reference"
 ```
 
 Expected: commit exits 0.
@@ -596,7 +596,7 @@ Run:
 
 ```powershell
 git add skills\kql-m365-azure-hunting\references\sentinel-azure.md
-git commit -m "feat: add Sentinel Azure reference" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git commit -m "feat: add Sentinel Azure reference"
 ```
 
 Expected: commit exits 0.
@@ -678,7 +678,7 @@ Run:
 
 ```powershell
 git add skills\kql-m365-azure-hunting\references\query-review.md
-git commit -m "feat: add KQL review checklist" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git commit -m "feat: add KQL review checklist"
 ```
 
 Expected: commit exits 0.
@@ -1028,7 +1028,7 @@ Run:
 
 ```powershell
 git add skills\kql-m365-azure-hunting\SKILL.md skills\kql-m365-azure-hunting\references\sentinel-rule-structure.md skills\kql-m365-azure-hunting\references\table-catalog.md skills\kql-m365-azure-hunting\references\example-style-guide.md
-git commit -m "feat: add source-derived KQL rule references" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git commit -m "feat: add source-derived KQL rule references"
 ```
 
 Expected: commit exits 0.
@@ -1338,7 +1338,7 @@ Run:
 
 ```powershell
 git add skills\kql-m365-azure-hunting\examples
-git commit -m "feat: add KQL hunting examples" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git commit -m "feat: add KQL hunting examples"
 ```
 
 Expected: commit exits 0.
@@ -1441,7 +1441,7 @@ Run:
 
 ```powershell
 git add tests\prompt-fixtures.md tests\expected-behaviors.md
-git commit -m "test: add source-derived KQL skill fixtures" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git commit -m "test: add source-derived KQL skill fixtures"
 ```
 
 Expected: commit exits 0.
@@ -1889,7 +1889,7 @@ Run:
 
 ```powershell
 git add skills\kql-m365-azure-hunting\SKILL.md skills\kql-m365-azure-hunting\references\azure-powershell-az.md skills\kql-m365-azure-hunting\references\sentinel-azure.md skills\kql-m365-azure-hunting\references\query-review.md skills\kql-m365-azure-hunting\examples\az-readonly-validation.md tests\prompt-fixtures.md tests\expected-behaviors.md
-git commit -m "feat: add read-only Az PowerShell guidance" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git commit -m "feat: add read-only Az PowerShell guidance"
 ```
 
 Expected: commit exits 0.
@@ -2022,7 +2022,7 @@ Run:
 
 ```powershell
 git add README.md
-git commit -m "docs: finalize portable skill packaging" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git commit -m "docs: finalize portable skill packaging"
 ```
 
 Expected: commit exits 0.
@@ -2082,7 +2082,7 @@ If Step 3 required edits, run:
 
 ```powershell
 git add README.md skills tests
-git commit -m "docs: align skill pack with acceptance fixtures" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git commit -m "docs: align skill pack with acceptance fixtures"
 ```
 
 Expected: commit exits 0 if edits were made. If no edits were made, keep the existing clean state.

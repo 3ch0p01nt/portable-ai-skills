@@ -1,0 +1,34 @@
+name: Cisco skill offline CI
+
+on:
+  pull_request:
+    paths:
+      - "skills/cisco-device-compromise-investigation/**"
+      - ".github/workflows/cisco-skill-ci.yml"
+  push:
+    paths:
+      - "skills/cisco-device-compromise-investigation/**"
+      - ".github/workflows/cisco-skill-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  offline:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        python-version: ["3.11", "3.12"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Validate bundle offline
+        run: python skills/cisco-device-compromise-investigation/scripts/validate_skill.py
+      - name: Run offline suite
+        run: python skills/cisco-device-compromise-investigation/scripts/test_skill.py --category all
+      - name: Run entry-point tests
+        run: python -m unittest discover -s skills/cisco-device-compromise-investigation/tests -p "test_python_entrypoints.py"

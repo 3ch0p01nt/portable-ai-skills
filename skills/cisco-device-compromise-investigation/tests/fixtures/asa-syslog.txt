@@ -1,0 +1,2 @@
+Aug 28 08:00:01 asa01 : %ASA-6-302013: Built inbound TCP connection 12345 for outside:198.51.100.10/443 to inside:10.0.0.10/50000
+Aug 28 08:00:02 asa01 : %ASA-6-302014: Teardown TCP connection 12345 for outside:198.51.100.10/443 to inside:10.0.0.10/50000 duration 0:00:01 bytes 128

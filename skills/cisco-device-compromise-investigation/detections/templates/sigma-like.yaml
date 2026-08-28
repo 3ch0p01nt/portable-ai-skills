@@ -1,0 +1,28 @@
+schema_version: "1.0.0"
+status: "ABSTRACT_TEMPLATE_NOT_PRODUCTION_SIGMA"
+title: "Cisco network-device behavioral indicator"
+scope:
+  platform: "<PLATFORM>"
+  layer: "<LAYER>"
+source:
+  source_id: "<SOURCE_ID_FROM_REFERENCES_SOURCES_JSON>"
+  source_version: "<VERSION>"
+  verified_date: "<DATE>"
+logsource:
+  product: "<CISCO_PRODUCT>"
+  service: "<SYSLOG_OR_AAA_SOURCE>"
+detection:
+  selection: "<FIELD_BINDINGS_AND_VALUES>"
+  condition: "<LOCALLY_VALIDATED_CONDITION>"
+falsepositives:
+  - "<CHANGE_OR_MAINTENANCE_CASE>"
+  - "<COLLECTOR_OR_AAA_FAILURE_CASE>"
+level: "<LOW_MEDIUM_HIGH_CRITICAL>"
+confidence_contribution: "<E0_E5>"
+requirements:
+  - "Field bindings validated against local telemetry."
+  - "Positive and benign fixtures pass."
+  - "Source is current."
+  - "Rule does not produce an automatic compromise verdict."
+notes:
+  - "Do not create a direct FIRESTARTER Sigma rule. CISA states standard log/Sigma detection is ineffective; use core/disk YARA and memory evidence."

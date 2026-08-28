@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:portable-ai-skills:cisco-device-compromise-investigation:evidence:1.0.0",
+  "version": "1.0.0",
+  "title": "Cisco investigation evidence record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_id",
+    "artifact_type",
+    "platform_family",
+    "platform_layer",
+    "investigation_mode",
+    "source_system",
+    "source_trust",
+    "deception_risk",
+    "collection_time_utc",
+    "volatile",
+    "can_prove",
+    "cannot_prove",
+    "expected_corroboration",
+    "observed_anomalies",
+    "benign_explanations",
+    "confidence_contribution",
+    "next_action"
+  ],
+  "properties": {
+    "artifact_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifact_type": {
+      "enum": [
+        "syslog",
+        "show-tech",
+        "config",
+        "config-diff",
+        "file-listing",
+        "hash",
+        "vpn-session",
+        "aaa",
+        "flow",
+        "pcap",
+        "core",
+        "controller-export",
+        "ticket",
+        "analyst-observation",
+        "unknown"
+      ]
+    },
+    "device_id": {
+      "type": ["string", "null"]
+    },
+    "platform_family": {
+      "enum": [
+        "ios",
+        "ios-xe",
+        "ios-xr",
+        "nx-os",
+        "asa",
+        "ftd",
+        "fmc",
+        "wlc",
+        "sd-wan",
+        "ise",
+        "catalyst-center",
+        "nso",
+        "cisco-rv",
+        "unknown"
+      ]
+    },
+    "platform_layer": {
+      "enum": [
+        "boot",
+        "rommon",
+        "grub",
+        "fxos",
+        "kernel",
+        "lina",
+        "application",
+        "container",
+        "config",
+        "network",
+        "controller",
+        "external",
+        "unknown"
+      ]
+    },
+    "investigation_mode": {
+      "enum": [
+        "live",
+        "dead-box",
+        "syslog-only",
+        "config-diff",
+        "fleet",
+        "threat-intel"
+      ]
+    },
+    "source_system": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_trust": {
+      "enum": ["T0", "T1", "T2", "T3", "T4"]
+    },
+    "deception_risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "reason"],
+      "properties": {
+        "level": {
+          "enum": ["none-known", "possible", "documented", "unknown"]
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "collection_time_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "event_time_original": {
+      "type": ["string", "null"]
+    },
+    "event_time_utc": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "timezone_confidence": {
+      "enum": [
+        "confirmed-ntp",
+        "declared-offset",
+        "uptime-derived",
+        "local-naive",
+        "unknown"
+      ]
+    },
+    "collector_receive_time": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "sequence_number": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "volatile": {
+      "type": "boolean"
+    },
+    "content_sha256": {
+      "type": ["string", "null"],
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    },
+    "chain_of_custody": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    },
+    "can_prove": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "cannot_prove": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "expected_corroboration": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "observed_anomalies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "category", "description"],
+        "properties": {
+          "id": {"type": "string"},
+          "category": {"type": "string"},
+          "description": {"type": "string"},
+          "line": {"type": ["integer", "null"], "minimum": 1}
+        }
+      }
+    },
+    "benign_explanations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["explanation", "status"],
+        "properties": {
+          "explanation": {"type": "string"},
+          "status": {
+            "enum": ["untested", "supported", "weakened", "rejected"]
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        }
+      }
+    },
+    "confidence_contribution": {
+      "enum": ["E0", "E1", "E2", "E3", "E4", "E5"]
+    },
+    "next_action": {
+      "type": "string"
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "redaction_manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rules_fired": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "redaction_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "residual_secret_lines": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    }
+  }
+}

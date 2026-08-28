@@ -1,0 +1,203 @@
+{
+  "version": "2.0.0",
+  "domains": [
+    {
+      "id": "scope-sources",
+      "title": "Scope, authorization, mode, and source freshness",
+      "checks": [
+        {"id": "scope-authorization", "title": "Authorization basis and investigator role captured", "artifact_types": ["ticket", "analyst-observation"]},
+        {"id": "scope-ticket", "title": "Case or incident reference captured", "artifact_types": ["ticket"]},
+        {"id": "scope-mode", "title": "Investigation mode declared with limitations", "artifact_types": ["analyst-observation"]},
+        {"id": "scope-window", "title": "Observation window and timezone defined", "artifact_types": ["ticket", "syslog"]},
+        {"id": "scope-sources-current", "title": "Primary sources and advisory versions verified", "artifact_types": ["analyst-observation", "ticket"]}
+      ]
+    },
+    {
+      "id": "evidence-integrity",
+      "title": "Evidence inventory, hashes, custody, duplicates, and gaps",
+      "checks": [
+        {"id": "evidence-complete-manifest", "title": "Every in-scope file has a manifest status", "artifact_types": ["unknown", "show-tech", "config", "syslog"]},
+        {"id": "evidence-original-hash", "title": "Original SHA-256 captured independently", "artifact_types": ["hash", "show-tech", "config", "syslog", "unknown"]},
+        {"id": "evidence-custody", "title": "Chain-of-custody fields are available", "artifact_types": ["ticket", "show-tech", "core"]},
+        {"id": "evidence-duplicates", "title": "Exact duplicates identified without confidence inflation", "artifact_types": ["unknown", "config", "syslog"]},
+        {"id": "evidence-errors", "title": "Unreadable, excluded, oversized, and unsupported evidence recorded", "artifact_types": ["unknown"]}
+      ]
+    },
+    {
+      "id": "device-identity",
+      "title": "Device identity, platform, version, HA, clock, uptime, and reload",
+      "checks": [
+        {"id": "identity-hostname", "title": "Hostname or case-scoped pseudonym resolved", "artifact_types": ["config", "show-tech", "syslog"]},
+        {"id": "identity-serial", "title": "Chassis/serial references correlated across artifacts", "artifact_types": ["show-tech", "controller-export"]},
+        {"id": "identity-platform", "title": "Platform family and model inferred or declared", "artifact_types": ["show-tech", "config", "syslog"]},
+        {"id": "identity-version", "title": "Application, package, host, and firmware versions inventoried", "artifact_types": ["show-tech", "config", "file-listing"]},
+        {"id": "identity-time-ha", "title": "HA role, peer, clock/NTP, uptime, and reload reason assessed", "artifact_types": ["show-tech", "syslog"]}
+      ]
+    },
+    {
+      "id": "identity-aaa",
+      "title": "Users, privilege, SSH keys, AAA, dormant accounts, and MFA",
+      "checks": [
+        {"id": "aaa-local-users", "title": "Local users, privilege, and credential types reviewed", "artifact_types": ["config", "config-diff"]},
+        {"id": "aaa-method-lists", "title": "AAA authentication/authorization/accounting method order reviewed", "artifact_types": ["config", "config-diff"]},
+        {"id": "aaa-server-identity", "title": "TACACS/RADIUS/ISE server identities and health correlated", "artifact_types": ["config", "aaa", "syslog"]},
+        {"id": "aaa-keys-dormant", "title": "SSH keys, dormant accounts, fallback, and break-glass use reviewed", "artifact_types": ["config", "config-diff", "aaa"]},
+        {"id": "aaa-mfa-vpn", "title": "MFA challenge and VPN accounting evidence correlated", "artifact_types": ["aaa", "vpn-session", "syslog"]}
+      ]
+    },
+    {
+      "id": "management-plane",
+      "title": "Management services, exposure, ACLs, and access history",
+      "checks": [
+        {"id": "mgmt-services", "title": "SSH, Telnet, HTTP(S), ASDM, API, NETCONF, RESTCONF, and SNMP inventoried", "artifact_types": ["config", "config-diff"]},
+        {"id": "mgmt-acls", "title": "VTY/management ACLs, source interfaces, and OOB restrictions reviewed", "artifact_types": ["config", "config-diff"]},
+        {"id": "mgmt-exposure", "title": "Internet and untrusted-network exposure assessed", "artifact_types": ["config", "flow", "controller-export"]},
+        {"id": "mgmt-access-history", "title": "Successful/failed access and source infrastructure reviewed", "artifact_types": ["syslog", "aaa"]},
+        {"id": "mgmt-legacy", "title": "Legacy services and Smart Install exposure assessed", "artifact_types": ["config", "config-diff", "flow"]}
+      ]
+    },
+    {
+      "id": "configuration",
+      "title": "Configuration baselines, risky deltas, EEM, archive, logging, and NTP",
+      "checks": [
+        {"id": "config-baselines", "title": "Running, startup, committed, checkpoint, and known-good baselines compared", "artifact_types": ["config", "config-diff"]},
+        {"id": "config-eem", "title": "EEM/kron/scheduler triggers and full action bodies reviewed", "artifact_types": ["config", "config-diff"]},
+        {"id": "config-archive", "title": "Archive destination, protocol, schedule, and retention reviewed", "artifact_types": ["config", "config-diff"]},
+        {"id": "config-logging", "title": "Logging destinations, severity, facility, timestamps, and sequence settings reviewed", "artifact_types": ["config", "config-diff", "syslog"]},
+        {"id": "config-ntp", "title": "NTP sources, clock changes, and timestamp integrity reviewed", "artifact_types": ["config", "config-diff", "syslog"]}
+      ]
+    },
+    {
+      "id": "runtime",
+      "title": "Sessions, processes, sockets, listeners, CPU, memory, and containers",
+      "checks": [
+        {"id": "runtime-sessions", "title": "Current users, VTY, VPN, and management sessions reviewed", "artifact_types": ["show-tech", "vpn-session"]},
+        {"id": "runtime-processes", "title": "Processes, services, and high-port listeners reviewed", "artifact_types": ["show-tech", "core"]},
+        {"id": "runtime-resources", "title": "CPU, memory, heaps, watchdog, and health anomalies reviewed", "artifact_types": ["show-tech", "syslog"]},
+        {"id": "runtime-containers", "title": "GuestShell, bash, app-hosting, and container state reviewed", "artifact_types": ["show-tech", "file-listing"]},
+        {"id": "runtime-captures", "title": "Visible and potentially hidden packet-capture state assessed", "artifact_types": ["show-tech", "pcap", "core"]}
+      ]
+    },
+    {
+      "id": "filesystem",
+      "title": "Filesystem artifacts, scripts, packages, crash data, and support bundles",
+      "checks": [
+        {"id": "fs-inventory", "title": "Flash, bootflash, disk0, harddisk, crashinfo, and cache inventoried", "artifact_types": ["file-listing", "show-tech"]},
+        {"id": "fs-unexpected", "title": "Unexpected scripts, archives, plugins, web assets, and binaries reviewed", "artifact_types": ["file-listing", "unknown"]},
+        {"id": "fs-crash", "title": "Crashinfo, cores, tracebacks, and reload artifacts reviewed", "artifact_types": ["core", "file-listing", "show-tech"]},
+        {"id": "fs-packages", "title": "Packages, SMUs, hotfixes, install history, and signatures reviewed", "artifact_types": ["file-listing", "show-tech", "hash"]},
+        {"id": "fs-support", "title": "Support-bundle snapshot time and completeness assessed", "artifact_types": ["show-tech"]}
+      ]
+    },
+    {
+      "id": "boot-integrity",
+      "title": "Image, package, boot, ROMMON, GRUB, FXOS, Secure Boot, and Trust Anchor",
+      "checks": [
+        {"id": "boot-image-hash", "title": "Offline image/package hashes compared with authoritative source", "artifact_types": ["hash", "unknown"]},
+        {"id": "boot-vars", "title": "Boot variables, image selection, and fallback images reviewed", "artifact_types": ["config", "show-tech"]},
+        {"id": "boot-rommon-grub", "title": "ROMMON/GRUB versions, regions, and persistence evidence reviewed", "artifact_types": ["show-tech", "core", "hash"]},
+        {"id": "boot-fxos", "title": "FXOS/host layer separated from ASA/FTD application layer", "artifact_types": ["show-tech", "file-listing", "core"]},
+        {"id": "boot-trust", "title": "Secure Boot, Trust Anchor, authenticity, and console evidence reviewed", "artifact_types": ["show-tech", "hash"]}
+      ]
+    },
+    {
+      "id": "routing-control",
+      "title": "ARP/MAC, routing protocols, loopbacks, ACL/NAT, tunnels, and control plane",
+      "checks": [
+        {"id": "route-neighbors", "title": "ARP/MAC and routing-neighbor state reviewed", "artifact_types": ["show-tech", "config"]},
+        {"id": "route-policies", "title": "BGP peers, route policy, prefix lists, and default advertisement reviewed", "artifact_types": ["config", "config-diff"]},
+        {"id": "route-loopbacks", "title": "Loopbacks and their use as routing/tunnel/management sources reviewed", "artifact_types": ["config", "config-diff"]},
+        {"id": "route-acl-nat", "title": "ACL, NAT, object, and policy changes reviewed", "artifact_types": ["config", "config-diff"]},
+        {"id": "route-tunnels", "title": "GRE, IPsec, SD-WAN, MPLS/LDP, and other tunnels reviewed", "artifact_types": ["config", "config-diff", "flow"]}
+      ]
+    },
+    {
+      "id": "vpn-pki",
+      "title": "VPN, WebVPN, certificates, trustpoints, PKI, IKE, and IPsec",
+      "checks": [
+        {"id": "vpn-sessions", "title": "Remote-access and site-to-site sessions correlated with AAA", "artifact_types": ["vpn-session", "aaa", "syslog"]},
+        {"id": "vpn-web-services", "title": "SSL VPN, WebVPN, and IKEv2 client-services exposure reviewed", "artifact_types": ["config", "show-tech"]},
+        {"id": "vpn-profiles", "title": "Tunnel groups, group policies, crypto maps, and profiles reviewed", "artifact_types": ["config", "config-diff"]},
+        {"id": "vpn-certificates", "title": "Trustpoints, certificates, serials, issuers, and validity reviewed", "artifact_types": ["config", "show-tech"]},
+        {"id": "vpn-keys", "title": "Private-key and certificate exposure/rotation scope assessed", "artifact_types": ["config", "show-tech", "ticket"]}
+      ]
+    },
+    {
+      "id": "network-telemetry",
+      "title": "Packet capture, SPAN/ERSPAN, NetFlow/IPFIX, PCAP/NDR, DNS, proxy, and firewall",
+      "checks": [
+        {"id": "net-vantage", "title": "WAN, LAN-inside, management, OOB, and upstream sensor vantage recorded", "artifact_types": ["pcap", "flow", "ticket"]},
+        {"id": "net-flow", "title": "NetFlow/IPFIX source/destination, volume, flags, and export trust reviewed", "artifact_types": ["flow"]},
+        {"id": "net-pcap", "title": "PCAP/PCAPNG metadata, capture point, and encryption limits reviewed", "artifact_types": ["pcap"]},
+        {"id": "net-span", "title": "SPAN/ERSPAN source scope and destinations reviewed", "artifact_types": ["config", "config-diff"]},
+        {"id": "net-exfil", "title": "TFTP, FTP, SCP, high-port SSH, GRE, proxy, DNS, and management egress reviewed", "artifact_types": ["flow", "pcap", "syslog", "config-diff"]}
+      ]
+    },
+    {
+      "id": "malware",
+      "title": "Cisco malware and threat-specific artifact branches",
+      "checks": [
+        {"id": "malware-arcane", "title": "LINE DANCER, LINE RUNNER, RayInitiator, LINE VIPER, and FIRESTARTER branches assessed", "artifact_types": ["core", "file-listing", "syslog", "show-tech"]},
+        {"id": "malware-badcandy", "title": "BadCandy account-only, implant, variant, and reboot behavior assessed", "artifact_types": ["config", "syslog", "file-listing"]},
+        {"id": "malware-ios", "title": "SYNful Knock, Jaguar Tooth, BlackTech, and historical IOS tradecraft assessed", "artifact_types": ["hash", "core", "config", "syslog"]},
+        {"id": "malware-nx-xr", "title": "JumbledPath, Velvet Ant, tpacap, EPC, and Linux-layer artifacts assessed", "artifact_types": ["file-listing", "show-tech", "config-diff", "syslog"]},
+        {"id": "malware-soho", "title": "ZuoRAT, KV/JDY Botnet, and Cisco RV reinfection risk assessed", "artifact_types": ["unknown", "flow", "config"]}
+      ]
+    },
+    {
+      "id": "persistence",
+      "title": "Persistence, staged relaunch, credential access, and reinfection",
+      "checks": [
+        {"id": "persist-boot", "title": "Image, bootkit, ROMMON, GRUB, and FXOS persistence assessed", "artifact_types": ["hash", "core", "show-tech"]},
+        {"id": "persist-config", "title": "Users, keys, AAA fallback, EEM/kron, boot, and archive persistence assessed", "artifact_types": ["config", "config-diff"]},
+        {"id": "persist-files", "title": "Client bundles, web assets, service files, and container persistence assessed", "artifact_types": ["file-listing", "unknown"]},
+        {"id": "persist-controller", "title": "Controller templates, service packages, tokens, and credential vault persistence assessed", "artifact_types": ["controller-export", "config-diff"]},
+        {"id": "persist-reinfection", "title": "EOL, exposure, credential, and external reinfection paths assessed", "artifact_types": ["ticket", "flow", "config"]}
+      ]
+    },
+    {
+      "id": "anti-forensics",
+      "title": "Logging loss, deceptive output, hidden captures, time changes, and forced reload",
+      "checks": [
+        {"id": "evasion-log-volume", "title": "Selective/total syslog loss and collector failure differentiated", "artifact_types": ["syslog"]},
+        {"id": "evasion-accounting", "title": "Missing AAA/command accounting and local fallback differentiated", "artifact_types": ["aaa", "syslog", "config"]},
+        {"id": "evasion-cli", "title": "Deceptive verify/copy/show/EEM output paths assessed", "artifact_types": ["show-tech", "config", "config-diff"]},
+        {"id": "evasion-time", "title": "NTP changes, timestamp rollback, cleared histories, and sequence gaps reviewed", "artifact_types": ["syslog", "config-diff"]},
+        {"id": "evasion-reload", "title": "Immediate/delayed reload, no-dump events, and failover context reviewed", "artifact_types": ["syslog", "show-tech", "core"]}
+      ]
+    },
+    {
+      "id": "orchestration",
+      "title": "Controller, orchestrator, automation, and fleet blast radius",
+      "checks": [
+        {"id": "orch-trust", "title": "Controller/orchestrator trust established before remediation", "artifact_types": ["controller-export", "ticket"]},
+        {"id": "orch-audit", "title": "Admin/API token, command runner, deployment, and audit history reviewed", "artifact_types": ["controller-export", "aaa"]},
+        {"id": "orch-config", "title": "Templates, services, policies, objects, and device pushes correlated", "artifact_types": ["controller-export", "config-diff"]},
+        {"id": "orch-images", "title": "SWIM/image/package/hotfix provenance reviewed", "artifact_types": ["controller-export", "hash"]},
+        {"id": "orch-fleet", "title": "Per-device provenance and fleet-wide pattern separated", "artifact_types": ["controller-export", "config-diff", "ticket"]}
+      ]
+    },
+    {
+      "id": "crown-jewels",
+      "title": "Crown jewels, reachability, credential exposure, and business impact",
+      "checks": [
+        {"id": "crown-identity", "title": "AD, RADIUS, TACACS, ISE, PKI, PAM, and MFA exposure assessed", "artifact_types": ["aaa", "vpn-session", "config"]},
+        {"id": "crown-egress", "title": "Internet gateways, VPN, SD-WAN, cloud on-ramps, and egress exposure assessed", "artifact_types": ["config", "flow"]},
+        {"id": "crown-sensitive", "title": "Sensitive, regulated, classified, and customer network reachability assessed", "artifact_types": ["ticket", "config", "flow"]},
+        {"id": "crown-ot", "title": "OT/ICS, safety, building, camera, and plant adjacency assessed", "artifact_types": ["ticket", "config", "flow"]},
+        {"id": "crown-control", "title": "Core routing, route reflectors, policy chokepoints, and business impact assessed", "artifact_types": ["config", "show-tech", "ticket"]}
+      ]
+    },
+    {
+      "id": "hypotheses-response",
+      "title": "Hypotheses, benign alternatives, confidence ceiling, response readiness, and next evidence",
+      "checks": [
+        {"id": "hyp-register", "title": "Ranked compromise and benign hypotheses recorded", "artifact_types": ["analyst-observation", "ticket"]},
+        {"id": "hyp-support", "title": "Supporting, contradicting, and missing evidence linked", "artifact_types": ["analyst-observation", "ticket", "syslog", "config"]},
+        {"id": "hyp-ceiling", "title": "Evidence confidence ceiling and untested layers stated", "artifact_types": ["analyst-observation", "ticket"]},
+        {"id": "hyp-response", "title": "Immediate, 24-hour, recovery, and hardening actions assigned", "artifact_types": ["ticket", "analyst-observation"]},
+        {"id": "hyp-handoff", "title": "SOC, network, TAC/CISA/NCSC, executive, and fleet handoffs prepared", "artifact_types": ["ticket", "analyst-observation"]}
+      ]
+    }
+  ]
+}

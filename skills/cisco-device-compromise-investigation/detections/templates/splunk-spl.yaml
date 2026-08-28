@@ -1,0 +1,56 @@
+schema_version: "1.0.0"
+status: "TEMPLATE_REQUIRES_VALIDATION"
+platform: "splunk"
+source_claim: "ncsc-rayinitiator-line-viper-v1.1"
+expires_review: "2026-11-28"
+field_bindings:
+  index: "<CISCO_SYSLOG_INDEX>"
+  sourcetype: "<CISCO_ASA_SOURCETYPE>"
+  device: "<DEVICE_FIELD>"
+  message_id: "<MESSAGE_ID_FIELD>"
+  collector: "<COLLECTOR_FIELD>"
+detections:
+  - id: "ASA-LV-SYSLOG-SUPPRESSION"
+    purpose: "Flag selective loss of documented ASA message IDs while other device syslog remains healthy."
+    message_ids: ["302013", "302014", "609002", "710005"]
+    template: |
+      | inputlookup <BASELINE_LOOKUP>
+      | where baseline_count>0 AND <MESSAGE_ID_FIELD> IN ("302013","302014","609002","710005")
+      | eval expected_bins=mvrange(relative_time(now(),"-<LOOKBACK>"),now(),<BIN_SECONDS>)
+      | mvexpand expected_bins
+      | eval _time=expected_bins
+      | fields _time,<DEVICE_FIELD>,<MESSAGE_ID_FIELD>,<COLLECTOR_FIELD>,baseline_count
+      | join type=left _time,<DEVICE_FIELD>,<MESSAGE_ID_FIELD>,<COLLECTOR_FIELD>
+          [ search index=<CISCO_SYSLOG_INDEX> sourcetype=<CISCO_ASA_SOURCETYPE>
+            <MESSAGE_ID_FIELD> IN ("302013","302014","609002","710005")
+            | bin _time span=<BIN_SIZE>
+            | stats count as target_count by _time,<DEVICE_FIELD>,<MESSAGE_ID_FIELD>,<COLLECTOR_FIELD> ]
+      | fillnull value=0 target_count
+      | join type=left _time,<DEVICE_FIELD>,<COLLECTOR_FIELD>
+          [ search index=<CISCO_SYSLOG_INDEX> sourcetype=<CISCO_ASA_SOURCETYPE>
+            | bin _time span=<BIN_SIZE>
+            | stats count as device_event_count by _time,<DEVICE_FIELD>,<COLLECTOR_FIELD>
+            | eventstats sum(device_event_count) as collector_event_count by _time,<COLLECTOR_FIELD> ]
+      | fillnull value=0 device_event_count collector_event_count
+      | eval device_healthy=if(device_event_count>0,1,0),
+             collector_healthy=if(collector_event_count>0,1,0)
+      | where device_healthy=1 AND collector_healthy=1
+          AND target_count < baseline_count*<LOCAL_TUNED_RATIO>
+    required_validation:
+      - "Bind all placeholders to local fields."
+      - "Prove severity 7 messages are emitted and ingested where applicable."
+      - "Exclude collector outages, maintenance, failover, and zero-connection periods."
+      - "Tune per device and per message; do not deploy a fleet-global threshold."
+      - "Validate the baseline lookup and bin expansion so absent target rows become target_count=0."
+      - "Treat device/collector continuity as separate health evidence, never as target-message count."
+    confidence: "E2-E3 until independently corroborated"
+  - id: "ASA-LV-AAA-MISMATCH"
+    purpose: "Find VPN/network activity lacking the independently expected AAA session record."
+    template: |
+      <VPN_OR_FLOW_SEARCH>
+      | join type=left <SESSION_KEY> [ search <EXTERNAL_AAA_SEARCH> ]
+      | where isnull(<AAA_RECORD_FIELD>)
+    required_validation:
+      - "Prove the tunnel group requires external AAA and accounting."
+      - "Exclude local fallback, AAA outage, service accounts, and logging delay."
+    confidence: "E2-E3 until configuration and server health are proven"

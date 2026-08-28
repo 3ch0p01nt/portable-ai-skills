@@ -1,6 +1,6 @@
 # Portable AI Skills
 
-Portable technical AI skills for GitHub Copilot CLI and compatible skill loaders. This repository is designed for environments where Copilot CLI is connected to GPT 5.1, including direct GPT 5.1 API access hosted in Azure OpenAI, without embedding model endpoints, tenant identifiers, API keys, or deployment-specific secrets.
+Portable technical AI skills for compatible skill loaders. The repository includes KQL cloud hunting and authorized Cisco network-device incident-response workflows without embedding endpoints, tenant identifiers, credentials, or deployment-specific secrets.
 
 ## Installed Skills
 
@@ -19,46 +19,51 @@ Capabilities:
 - Keeps Device Query separate from Sentinel and Defender Advanced Hunting.
 - Treats Live Response as non-KQL operational/remote-shell work and out of scope except for boundary explanation.
 
-## Install as a Copilot CLI Plugin
+### cisco-device-compromise-investigation
 
-Use GitHub Copilot CLI plugin management instead of manually writing into the internal installed plugins directory.
+Analyze sanitized local Cisco network-device evidence in live-guidance, dead-box, syslog-only, config-diff, fleet/orchestrator, and threat-intelligence-led modes.
 
-Install directly from PowerShell:
+Capabilities:
 
-```powershell
-copilot plugin install 3ch0p01nt/portable-ai-skills
-```
+- Routes platform-specific evidence for IOS XE, IOS, IOS XR, NX-OS, ASA/FTD/FXOS/FMC, SD-WAN, wireless, ISE, and orchestrators.
+- Uses preview-first recursive local-folder analysis with redaction, evidence IDs, an 18-domain rubric, and explicit gaps.
+- Separates vulnerabilities, exploitation, campaigns, actors, malware, and persistence.
+- Preserves volatile evidence and availability through safety-specific LINE VIPER, RayInitiator, FIRESTARTER, and ArcaneDoor branches.
+- Never connects to live devices; all live-device commands are human-executed and risk labeled.
 
-The equivalent interactive command inside Copilot CLI is:
+## Install
 
-```text
-/plugin install 3ch0p01nt/portable-ai-skills
-```
-
-You can also run `/plugin`, choose the interactive install flow, and provide `3ch0p01nt/portable-ai-skills` when prompted. Restart or reload Copilot CLI, then use `/plugin` and `/skills` to confirm the plugin and skills are available.
-
-## Direct Skill Folder Install
-
-If an environment loads skills directly instead of using plugin metadata, this skill folder can be copied for Copilot-compatible skill loaders because `SKILL.md` includes YAML frontmatter:
+Clone the repository, then copy either skill folder into the skills directory used by a compatible skill loader. Each `SKILL.md` includes YAML frontmatter for discovery:
 
 ```powershell
 git clone 'https://github.com/3ch0p01nt/portable-ai-skills.git' portable-ai-skills
 Set-Location .\portable-ai-skills
 Copy-Item -Recurse '.\skills\kql-m365-azure-hunting' '<skills-directory>\kql-m365-azure-hunting'
+Copy-Item -Recurse '.\skills\cisco-device-compromise-investigation' '<skills-directory>\cisco-device-compromise-investigation'
 ```
 
 ## Repository Structure
 
 ```text
 portable-ai-skills/
-  .claude-plugin/
-    plugin.json
-    marketplace.json
   skills/
     kql-m365-azure-hunting/
       SKILL.md
       references/
       examples/
+    cisco-device-compromise-investigation/
+      SKILL.md
+      README.md
+      references/
+      detections/
+      evals/
+      rules/
+      schemas/
+      scripts/
+      tests/
+      tools/
+  .github/
+    workflows/
   tests/
     prompt-fixtures.md
     expected-behaviors.md
@@ -78,15 +83,28 @@ skills/<skill-name>/references/
 skills/<skill-name>/examples/
 ```
 
-Include YAML frontmatter in each `SKILL.md`, then update this README and any plugin metadata or registry files required by the chosen loader or distribution channel. Some loaders may use `.claude-plugin` metadata; update `.claude-plugin\plugin.json` or `.claude-plugin\marketplace.json` only when that loader requires it.
+Include YAML frontmatter in each `SKILL.md`, then update this README and any registry files required by the chosen loader or distribution channel.
 
 ## Offline Validation
 
-Use these files to check behavior after installation:
+Use the root prompt fixtures to check expected routing behavior:
 
 ```text
 tests\prompt-fixtures.md
 tests\expected-behaviors.md
+```
+
+The Cisco skill also ships cross-platform, standard-library validation. These commands require Python 3.11+ and do not use the network:
+
+```text
+python skills/cisco-device-compromise-investigation/scripts/validate_skill.py
+python skills/cisco-device-compromise-investigation/scripts/test_skill.py --category all
+```
+
+Run source freshness separately when network access is appropriate:
+
+```text
+python skills/cisco-device-compromise-investigation/scripts/check_sources.py --strict --output source-status.json
 ```
 
 ## Constraints
@@ -100,6 +118,10 @@ tests\expected-behaviors.md
 - Device Query is a separate KQL-like surface from Sentinel and Defender Advanced Hunting.
 - Live Response is non-KQL operational/remote-shell work and is out of scope except for boundary explanation.
 - Az module guidance is read-only in v1; mutating `New-Az*`, resource-changing `Set-Az*`, `Update-Az*`, and `Remove-Az*` workflows are out of scope unless explicitly redesigned.
+- Cisco evidence and reports can contain sensitive incident data; sanitize them and never publish real evidence or secrets.
+- Cisco tooling processes local artifacts only and never connects to a live device.
+- Missing volatile state, baselines, independent evidence, or platform visibility limits Cisco conclusions.
+- Vendor YARA/Snort content is referenced at its source and is not redistributed.
 
 ## License
 

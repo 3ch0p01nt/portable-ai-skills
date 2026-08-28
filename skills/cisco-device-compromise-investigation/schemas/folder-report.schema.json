@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:portable-ai-skills:cisco-device-compromise-investigation:folder-report:1.0.0",
+  "version": "1.0.0",
+  "title": "Cisco folder analysis report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "analyzer_version",
+    "component_versions",
+    "scan_id",
+    "generated_at_utc",
+    "input_root",
+    "output_dir",
+    "options",
+    "summary",
+    "manifest",
+    "devices",
+    "findings",
+    "timeline",
+    "rubric",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "analyzer_version": {"type": "string"},
+    "component_versions": {"type": "object"},
+    "scan_id": {"type": "string"},
+    "generated_at_utc": {"type": "string", "format": "date-time"},
+    "input_root": {"type": "string"},
+    "output_dir": {"type": "string"},
+    "options": {"type": "object"},
+    "summary": {
+      "type": "object",
+      "required": [
+        "files_discovered",
+        "evidence_records",
+        "findings",
+        "devices",
+        "duplicates",
+        "errors_or_skips"
+      ]
+    },
+    "manifest": {
+      "type": "object",
+      "required": ["artifacts"]
+    },
+    "devices": {"type": "array"},
+    "findings": {"type": "array"},
+    "timeline": {"type": "array"},
+    "rubric": {
+      "type": "object",
+      "required": ["domains"]
+    },
+    "limitations": {"type": "array"}
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "version": "1.1.0",
+  "peek_bytes": 65536,
+  "ambiguity_gap": 0.15,
+  "magic": [
+    {"hex": "d4c3b2a1", "kind": "pcap", "artifact_type": "pcap", "platform_family": "unknown", "confidence": 1.0},
+    {"hex": "a1b2c3d4", "kind": "pcap", "artifact_type": "pcap", "platform_family": "unknown", "confidence": 1.0},
+    {"hex": "0a0d0d0a", "kind": "pcapng", "artifact_type": "pcap", "platform_family": "unknown", "confidence": 1.0},
+    {"hex": "7f454c46", "kind": "elf", "artifact_type": "core", "platform_family": "unknown", "confidence": 0.7},
+    {"hex": "504b0304", "kind": "zip", "artifact_type": "unknown", "platform_family": "unknown", "confidence": 1.0},
+    {"hex": "1f8b", "kind": "gzip", "artifact_type": "unknown", "platform_family": "unknown", "confidence": 1.0},
+    {"hex": "425a68", "kind": "bzip2", "artifact_type": "unknown", "platform_family": "unknown", "confidence": 1.0},
+    {"hex": "fd377a585a00", "kind": "xz", "artifact_type": "unknown", "platform_family": "unknown", "confidence": 1.0},
+    {"hex": "25504446", "kind": "pdf", "artifact_type": "unknown", "platform_family": "unknown", "confidence": 1.0},
+    {"hex": "89504e47", "kind": "png", "artifact_type": "unknown", "platform_family": "unknown", "confidence": 1.0},
+    {"hex": "ffd8ff", "kind": "jpeg", "artifact_type": "unknown", "platform_family": "unknown", "confidence": 1.0}
+  ],
+  "archive_extensions": [
+    ".zip",
+    ".tar",
+    ".tar.gz",
+    ".tgz",
+    ".tar.bz2",
+    ".tbz2",
+    ".tar.xz",
+    ".txz",
+    ".gz"
+  ],
+  "binary_extensions": [
+    ".pcap",
+    ".pcapng",
+    ".cap",
+    ".core",
+    ".dump",
+    ".bin",
+    ".img",
+    ".pkg",
+    ".spa",
+    ".pdf",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".gif",
+    ".docx",
+    ".xlsx",
+    ".pptx"
+  ],
+  "artifact_markers": [
+    {
+      "artifact_type": "aaa",
+      "filename_pattern": "(?i)(?:aaa|tacacs|radius)[-_ .]*(?:accounting|audit|auth(?:entication|orization)?)(?:[-_ .]*(?:export|events?|records?|logs?))?\\.(?:csv|json|jsonl|xml|log)$",
+      "content_pattern": "(?im)(?:^|[,\\t{ ])(?:acct_status_type|authorization_status|authentication_status)(?:[,\\t}: ]|$)|^radius live logs\\b|^(?:timestamp|time)[,\\t].*(?:user|username)[,\\t].*(?:command|auth(?:entication|orization)?|acct)",
+      "confidence": 0.9
+    },
+    {
+      "artifact_type": "vpn-session",
+      "filename_pattern": "(?i)(?:vpn|webvpn|anyconnect)[-_ .]*(?:session|user|export|log)|(?:session|user)[-_ .]*(?:vpn|webvpn|anyconnect)",
+      "content_pattern": "(?is)\\b(?:assigned[_ ]ip|public[_ ]ip)\\b.*\\b(?:login[_ ]time|duration|tunnel[_ ]group)\\b",
+      "confidence": 0.9
+    },
+    {
+      "artifact_type": "flow",
+      "filename_pattern": "(?i)(?:netflow|ipfix|flow)[-_ .]*(?:export|record|data|log)|(?:export|record)[-_ .]*(?:netflow|ipfix|flow)",
+      "content_pattern": "(?is)(?:sourceipv[46]address.*destinationipv[46]address.*octetdeltacount)|(?:src[_ ]ip.*dst[_ ]ip.*(?:bytes|octets).*\\b(?:netflow|ipfix)\\b)",
+      "confidence": 0.9
+    },
+    {
+      "artifact_type": "controller-export",
+      "filename_pattern": "(?i)(?:catalyst[-_ ]*center|dna[-_ ]*center|vmanage|fmc|nso|controller)[-_ .]*(?:audit|activity|task|export|log)",
+      "content_pattern": "(?is)(?:\"eventtype\"\\s*:\\s*\"audit\"|\\b(?:catalyst center|dna center|vmanage|firepower management center|cisco nso)\\b.*\\b(?:audit|taskid|userid|operation)\\b)",
+      "confidence": 0.9
+    }
+  ],
+  "platform_markers": [
+    {"platform_family": "asa", "pattern": "(?im)\\bASA Version\\s+\\d|%ASA-\\d-\\d+:", "confidence": 0.95},
+    {"platform_family": "ftd", "pattern": "(?im)\\bFirepower Threat Defense\\b|\\bCisco Secure FTD\\b", "confidence": 0.95},
+    {"platform_family": "fmc", "pattern": "(?im)\\bFirepower Management Center\\b|\\bFMC audit\\b", "confidence": 0.9},
+    {"platform_family": "ios-xe", "pattern": "(?im)\\bCisco IOS XE\\b|^version\\s+(?:16|17)\\.", "confidence": 0.9},
+    {"platform_family": "ios-xr", "pattern": "(?im)\\bIOS XR\\b|^!! IOS XR Configuration|^(?:route-policy|prefix-set)\\s+", "confidence": 0.95},
+    {"platform_family": "nx-os", "pattern": "(?im)\\bNX-OS\\b|^!Command: show running-config|^feature\\s+vpc\\b", "confidence": 0.95},
+    {"platform_family": "sd-wan", "pattern": "(?im)\\b(?:vManage|vSmart|vBond|Viptela)\\b|control-connection-state-change", "confidence": 0.9},
+    {"platform_family": "ise", "pattern": "(?im)\\bCisco ISE\\b|\\bIdentity Services Engine\\b|RADIUS Live Logs", "confidence": 0.9},
+    {"platform_family": "wlc", "pattern": "(?im)\\bAireOS\\b|\\bCatalyst 9800\\b|\\bCAPWAP\\b|AP join", "confidence": 0.85},
+    {"platform_family": "catalyst-center", "pattern": "(?im)\\b(?:DNA Center|Catalyst Center|SWIM)\\b", "confidence": 0.9},
+    {"platform_family": "nso", "pattern": "(?im)\\bCisco NSO\\b|\\bNED\\b|\\bauthgroup\\b|\\bncs\\.conf\\b", "confidence": 0.85},
+    {"platform_family": "cisco-rv", "pattern": "(?im)\\bCisco RV(?:160|320|325|340|345|420)\\b", "confidence": 0.9},
+    {"platform_family": "ios", "pattern": "(?im)\\bCisco IOS Software\\b|^version\\s+(?:12|15)\\.", "confidence": 0.75}
+  ]
+}

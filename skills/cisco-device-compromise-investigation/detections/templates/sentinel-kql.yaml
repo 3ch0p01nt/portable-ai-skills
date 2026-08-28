@@ -1,0 +1,69 @@
+schema_version: "1.0.0"
+status: "TEMPLATE_REQUIRES_VALIDATION"
+platform: "microsoft-sentinel"
+source_claim: "ncsc-rayinitiator-line-viper-v1.1"
+expires_review: "2026-11-28"
+field_bindings:
+  table: "<CISCO_SYSLOG_TABLE>"
+  device: "<DEVICE_FIELD>"
+  message_id: "<MESSAGE_ID_FIELD>"
+  collector: "<COLLECTOR_FIELD>"
+detections:
+  - id: "ASA-LV-SELECTIVE-SUPPRESSION"
+    template: |
+      let ExpectedRows = materialize(
+        <BASELINE_QUERY>
+        | where <MESSAGE_ID_FIELD> in ("302013","302014","609002","710005")
+        | where BaselineCount > 0
+        | extend ExpectedBins=range(bin(ago(<LOOKBACK>),<BIN>),bin(now(),<BIN>),<BIN>)
+        | mv-expand TimeGenerated=ExpectedBins to typeof(datetime)
+        | project TimeGenerated,<DEVICE_FIELD>,<MESSAGE_ID_FIELD>,<COLLECTOR_FIELD>,BaselineCount
+      );
+      let CurrentTargetCounts = materialize(
+        <CISCO_SYSLOG_TABLE>
+        | where TimeGenerated > ago(<LOOKBACK>)
+        | where <MESSAGE_ID_FIELD> in ("302013","302014","609002","710005")
+        | summarize TargetCount=count()
+            by TimeGenerated=bin(TimeGenerated,<BIN>),<DEVICE_FIELD>,<MESSAGE_ID_FIELD>,<COLLECTOR_FIELD>
+      );
+      let DeviceCollectorHealth = materialize(
+        <CISCO_SYSLOG_TABLE>
+        | where TimeGenerated > ago(<LOOKBACK>)
+        | summarize DeviceEventCount=count()
+            by TimeGenerated=bin(TimeGenerated,<BIN>),<DEVICE_FIELD>,<COLLECTOR_FIELD>
+      );
+      let CollectorHealth = materialize(
+        <CISCO_SYSLOG_TABLE>
+        | where TimeGenerated > ago(<LOOKBACK>)
+        | summarize CollectorEventCount=count()
+            by TimeGenerated=bin(TimeGenerated,<BIN>),<COLLECTOR_FIELD>
+      );
+      ExpectedRows
+      | join kind=leftouter CurrentTargetCounts
+          on TimeGenerated,<DEVICE_FIELD>,<MESSAGE_ID_FIELD>,<COLLECTOR_FIELD>
+      | extend TargetCount=coalesce(TargetCount,0)
+      | join kind=leftouter DeviceCollectorHealth
+          on TimeGenerated,<DEVICE_FIELD>,<COLLECTOR_FIELD>
+      | join kind=leftouter CollectorHealth on TimeGenerated,<COLLECTOR_FIELD>
+      | extend DeviceEventCount=coalesce(DeviceEventCount,0),
+               CollectorEventCount=coalesce(CollectorEventCount,0)
+      | extend DeviceHealthy=DeviceEventCount>0, CollectorHealthy=CollectorEventCount>0
+      | where DeviceHealthy and CollectorHealthy
+      | where TargetCount < BaselineCount*<LOCAL_TUNED_RATIO>
+    required_validation:
+      - "Resolve table and fields with getschema."
+      - "Prove the baseline period is outside the incident and maintenance windows."
+      - "Correlate collector health and other message continuity."
+      - "Validate that the baseline supplies device, message, collector, and BaselineCount rows; zero target rows are generated from that baseline."
+    confidence: "E2-E3"
+  - id: "ASA-VPN-IMPOSSIBLE-TRAVEL"
+    template: |
+      <VPN_AUTH_TABLE>
+      | where TimeGenerated > ago(<LOOKBACK>)
+      | where isnotempty(<USER_FIELD>) and isnotempty(<SOURCE_IP_FIELD>)
+      | invoke <APPROVED_GEO_VELOCITY_FUNCTION>
+      | where <VELOCITY_FIELD> > <LOCALLY_APPROVED_THRESHOLD>
+    required_validation:
+      - "Exclude corporate VPN egress, cloud jump hosts, carrier NAT, proxies, and test accounts."
+      - "Absence cannot clear LINE VIPER when AAA bypass is suspected."
+    confidence: "E2 until account and network context corroborate"

@@ -1,0 +1,10 @@
++ username emergency privilege 15 secret 9 [REDACTED]
++ aaa authentication login default local
++ interface Loopback99
++  ip address 198.51.100.99 255.255.255.255
++ event manager applet HEALTHCHECK
++  action 2.0 cli command "copy running-config tftp://198.51.100.20/device.cfg"
++ archive
++  path tftp://198.51.100.20/$h
++ monitor session 7 type erspan-source
++  destination ip 198.51.100.21

@@ -1,0 +1,3 @@
+Directory of disk0:/
+101 -rw- 1042 Aug 28 2026 07:00:00 client_bundle_install.zip
+102 -rw- 814 Aug 28 2026 07:05:00 firmware_update.log

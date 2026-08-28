@@ -2,34 +2,44 @@
 
 ## Goal
 
-Publish the completed `kql-m365-azure-hunting` skill as the first skill in a new public GitHub repository designed to hold many portable skills for Copilot CLI, GPT 5.1, and AOAI-connected environments.
+Publish the completed `kql-m365-azure-hunting` skill as the first skill in a public GitHub repository designed to hold portable, model-host-neutral skills.
 
 ## Repository Decision
 
-Create a new public repository:
+Use the public repository:
 
 ```text
 3ch0p01nt/portable-ai-skills
 ```
 
-This is preferred over reusing `3ch0p01nt/AI_Skills` because `AI_Skills` already exists as a public Copilot CLI skill repository focused on professional-development workflows such as Connect and Perspectives. The new repository should be a neutral technical skill-pack collection that can grow independently.
+A dedicated technical skill collection keeps security and cloud workflows independent from unrelated skill sets and provides room for additional self-contained skills.
 
-## Existing GitHub Findings
+## Portable Loader Design
 
-`3ch0p01nt/AI_Skills` is the relevant existing pattern. It is public, uses a root `skills\` folder, and includes `.claude-plugin\plugin.json` plus `.claude-plugin\marketplace.json`. Its `marketplace.json` lists skills by name and description. This structure is the best model to reuse for Copilot CLI plugin/skill compatibility.
+The repository uses a root `skills\` directory. Each child folder is independently installable and contains a `SKILL.md` entry point with YAML frontmatter. References, examples, tests, schemas, scripts, and tools that belong to a skill remain in that skill's folder.
+
+Compatible loaders install a skill by copying its folder into their configured skills directory. The repository does not require loader-specific discovery metadata.
 
 ## Target Layout
 
 ```text
 portable-ai-skills/
-  .claude-plugin/
-    plugin.json
-    marketplace.json
   skills/
     kql-m365-azure-hunting/
       SKILL.md
       references/
       examples/
+    cisco-device-compromise-investigation/
+      SKILL.md
+      README.md
+      references/
+      detections/
+      evals/
+      rules/
+      schemas/
+      scripts/
+      tests/
+      tools/
   tests/
     prompt-fixtures.md
     expected-behaviors.md
@@ -40,7 +50,7 @@ portable-ai-skills/
   README.md
 ```
 
-Future skills should be added as:
+Future skills follow:
 
 ```text
 skills/<skill-name>/SKILL.md
@@ -48,52 +58,48 @@ skills/<skill-name>/references/
 skills/<skill-name>/examples/
 ```
 
-Skill-specific tests may either go under `tests/<skill-name>/` when the collection grows, or stay in aggregate fixture files while the repository is small.
+Additional directories are allowed when the skill needs deterministic tooling, schemas, evaluations, or detections.
 
-## Plugin Metadata
+## Skill Discovery Contract
 
-Add `.claude-plugin\plugin.json` with repository-level metadata:
-
-- Name: `portable-ai-skills`
-- Description: portable technical AI skills for Copilot CLI and compatible skill loaders.
-- Author: Rob Soligan.
-- License: MIT unless a different license is selected before publishing.
-- Keywords: `copilot-cli`, `skills`, `kql`, `sentinel`, `defender`, `azure`, `aoai`, `gpt-5.1`.
-
-Add `.claude-plugin\marketplace.json` with one initial skill:
-
-- `kql-m365-azure-hunting`: write, review, package, and safely validate KQL for M365 Defender, Sentinel, Log Analytics, Azure Resource Graph, and read-only Az PowerShell workflows.
+- `SKILL.md` is the required entry point.
+- YAML frontmatter declares loader-facing identity and purpose.
+- Relative paths keep references valid after direct folder installation.
+- Skill content must not assume a particular model host, command-line client, or repository registry.
+- The README documents direct folder installation and any loader prerequisites.
 
 ## README Requirements
 
-The README should explain:
+The root README should explain:
 
-- How to clone the repo for Copilot CLI plugin use.
-- How to copy or reference a single skill folder directly.
-- That the skill content is static/offline and includes no AOAI endpoints, tenant IDs, keys, secrets, or deployment-specific details.
-- That it is suitable for Copilot CLI sessions using GPT 5.1 through AOAI because it is plain skill content, not model-host-specific code.
-- How future skills should be added.
+- How to clone the repository.
+- How to copy one skill folder into a compatible loader's skills directory.
+- What each included skill does.
+- How future skills should be structured.
+- How to run offline validation.
+- That no endpoints, tenant identifiers, keys, credentials, or deployment-specific details are included.
 
 ## Upload Workflow
 
-1. Create public repo `3ch0p01nt/portable-ai-skills`.
-2. Rename the local branch from `master` to `main`.
-3. Add `.claude-plugin` metadata files.
-4. Update README with plugin install and direct skill install instructions.
-5. Add the GitHub remote as `origin`.
-6. Push `main` to GitHub.
-7. Verify the GitHub repo contents and plugin metadata after push.
+1. Validate the repository shape and direct-install documentation.
+2. Parse all JSON and run the available offline test suites.
+3. Scan paths and text for prohibited or sensitive content.
+4. Run `git diff --check`.
+5. Create or configure the GitHub remote.
+6. Push the `main` branch.
+7. Verify the public README and skill entry points.
 
 ## Guardrails
 
-- Do not include AOAI endpoint URLs, API keys, tenant IDs, client secrets, or deployment names in the public repo.
-- Do not include production-only paths or machine-specific install paths except generic examples.
-- Keep the repository public only because the current skill content is tenant-agnostic and contains no secrets.
-- Future skills that contain customer-specific, tenant-specific, or sensitive content should go in a private repository or be sanitized before landing here.
+- Keep the repository public only while its content is tenant-agnostic and contains no secrets.
+- Do not include production-only paths or machine-specific installation locations except generic placeholders.
+- Keep operational tooling offline by default and clearly label any network-dependent validation.
+- Sanitize customer-specific, tenant-specific, or sensitive content before publication.
+- Preserve useful history; do not rewrite it solely for publication.
 
 ## Self-Review
 
-- The design uses an existing successful Copilot CLI plugin layout from `AI_Skills`.
-- The design supports many future skills without mixing professional-development skills and technical security skills.
-- The upload workflow preserves the existing local repo history and moves to the GitHub-standard `main` branch.
-- No placeholders or secrets are included.
+- The design supports many skills without tying discovery to one loader.
+- Direct folder installation keeps each skill portable.
+- The upload workflow gates publication on content, path, JSON, test, and whitespace validation.
+- No placeholders beyond intentional user-supplied paths are required.

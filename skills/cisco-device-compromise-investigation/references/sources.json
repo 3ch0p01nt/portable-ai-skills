@@ -1,0 +1,350 @@
+{
+  "version": "1.2.0",
+  "last_verified": "2026-08-28",
+  "sources": [
+    {
+      "id": "ncsc-rayinitiator-line-viper-v1.1",
+      "kind": "malware-analysis-report",
+      "url": "https://www.ncsc.gov.uk/sites/default/files/documents/ncsc-mar-rayinitiator-line-viper.pdf",
+      "mutable": true,
+      "published": "2025-10",
+      "version_label": "1.1",
+      "expected_sha256": "34512371459D15517007E14ECE049A8DE40503495DD763A7031939B6192AB3FD",
+      "claims": ["RayInitiator", "LINE VIPER", "NCSC YARA", "core detector"]
+    },
+    {
+      "id": "cisco-continued-attacks",
+      "kind": "event-response",
+      "url": "https://sec.cloudapps.cisco.com/security/center/resources/asa_ftd_continued_attacks",
+      "mutable": true,
+      "last_observed_update": "2026-04-24",
+      "version_label": "2.3",
+      "claims": ["continued attacks", "affected products", "fixed releases", "ROMMON"]
+    },
+    {
+      "id": "cisco-continued-detection",
+      "kind": "detection-guide",
+      "url": "https://sec.cloudapps.cisco.com/security/center/resources/detection_guide_for_continued_attacks",
+      "mutable": true,
+      "last_observed_update": "2026-04-24",
+      "version_label": "1.2",
+      "claims": ["syslog suppression", "checkheaps", "impossible travel", "firmware_update.log"]
+    },
+    {
+      "id": "cisa-firestarter-ar26-113a",
+      "kind": "malware-analysis-report",
+      "url": "https://www.cisa.gov/news-events/analysis-reports/ar26-113a",
+      "mutable": true,
+      "published": "2026-04-23",
+      "claims": ["FIRESTARTER", "LINE VIPER direct deployment", "YARA", "FCEB workflow"]
+    },
+    {
+      "id": "cisco-firestarter-advisory",
+      "kind": "security-advisory",
+      "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-asaftd-persist-CISAED25-03",
+      "mutable": true,
+      "claims": ["FIRESTARTER detection", "lina_cs false positive", "affected products"]
+    },
+    {
+      "id": "talos-firestarter",
+      "kind": "threat-research",
+      "url": "https://blog.talosintelligence.com/uat-4356-firestarter/",
+      "mutable": true,
+      "claims": ["FIRESTARTER internals", "RayInitiator overlap", "Snort", "ClamAV"]
+    },
+    {
+      "id": "cisa-ed25-03-v1",
+      "kind": "directive",
+      "url": "https://www.cisa.gov/news-events/directives/v1-ed-25-03-identify-and-mitigate-potential-compromise-cisco-devices",
+      "mutable": true,
+      "claims": ["FCEB requirements"]
+    },
+    {
+      "id": "cisa-ed25-03-supplemental",
+      "kind": "directive",
+      "url": "https://www.cisa.gov/news-events/directives/supplemental-direction-ed-25-03-core-dump-and-hunt-instructions",
+      "mutable": true,
+      "claims": ["core dump", "hunt instructions", "FCEB requirements"]
+    },
+    {
+      "id": "talos-arcanedoor",
+      "kind": "threat-research",
+      "url": "https://blog.talosintelligence.com/arcanedoor-new-espionage-focused-campaign-found-targeting-perimeter-network-devices/",
+      "mutable": true,
+      "published": "2024-04-24",
+      "last_observed_update": "2025-09-25",
+      "claims": ["LINE DANCER", "LINE RUNNER", "UAT4356"]
+    },
+    {
+      "id": "cisco-cve-2025-20333",
+      "kind": "security-advisory",
+      "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-asaftd-webvpn-z5xP8EUB",
+      "mutable": true,
+      "claims": ["CVE-2025-20333", "fixed releases"]
+    },
+    {
+      "id": "cisco-cve-2025-20362",
+      "kind": "security-advisory",
+      "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-asaftd-webvpn-YROOTUW",
+      "mutable": true,
+      "claims": ["CVE-2025-20362", "fixed releases"]
+    },
+    {
+      "id": "cisco-cve-2025-20363",
+      "kind": "security-advisory",
+      "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-http-code-exec-WmfP3h3O",
+      "fallback_url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-http-code-exec-WmfP3h3O/csaf/cisco-sa-http-code-exec-WmfP3h3O.json",
+      "mutable": true,
+      "claims": ["CVE-2025-20363", "ASA/FTD unauthenticated RCE", "IOS/IOS XE SSL VPN authenticated RCE", "32-bit IOS XR ASR 9001 HTTP RCE", "NX-OS not affected", "fixed releases"]
+    },
+    {
+      "id": "talos-badcandy",
+      "kind": "threat-research",
+      "url": "https://blog.talosintelligence.com/active-exploitation-of-cisco-ios-xe-software/",
+      "mutable": true,
+      "claims": ["BadCandy", "IOS XE Web UI", "variants", "logs"]
+    },
+    {
+      "id": "cisco-iosxe-webui-cves",
+      "kind": "security-advisory",
+      "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-iosxe-webui-privesc-j22SaA4z",
+      "fallback_url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-iosxe-webui-privesc-j22SaA4z/csaf/cisco-sa-iosxe-webui-privesc-j22SaA4z.json",
+      "mutable": true,
+      "claims": ["CVE-2023-20198", "CVE-2023-20273", "IOS XE Web UI exposure", "privilege-15 account", "root filesystem implant"]
+    },
+    {
+      "id": "cisco-synful-knock",
+      "kind": "event-response",
+      "url": "https://sec.cloudapps.cisco.com/security/center/resources/synful_knock",
+      "mutable": true,
+      "claims": ["SYNful Knock", "IOS integrity"]
+    },
+    {
+      "id": "mandiant-synful-knock",
+      "kind": "incident-research",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/synful-knock-acis/",
+      "mutable": true,
+      "claims": ["SYNful Knock internals", "image size preservation"]
+    },
+    {
+      "id": "ncsc-jaguar-tooth",
+      "kind": "government-advisory",
+      "url": "https://www.ncsc.gov.uk/news/apt28-exploits-known-vulnerability-to-carry-out-reconnaissance-and-deploy-malware-on-cisco-routers",
+      "mutable": true,
+      "claims": ["Jaguar Tooth", "APT28", "CVE-2017-6742"]
+    },
+    {
+      "id": "cisco-snmp-cve-2017-6742",
+      "kind": "security-advisory",
+      "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20170629-snmp",
+      "fallback_url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-20170629-snmp/csaf/cisco-sa-20170629-snmp.json",
+      "mutable": true,
+      "claims": ["CVE-2017-6742", "IOS and IOS XE SNMP RCE", "SNMP credentials required", "multiple-CVE umbrella advisory"]
+    },
+    {
+      "id": "cisa-jaguar-tooth-aa23-108",
+      "kind": "joint-advisory",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-108",
+      "mutable": true,
+      "claims": ["Jaguar Tooth", "APT28", "CVE-2017-6742", "classic IOS deployment"]
+    },
+    {
+      "id": "mitre-synful-knock-s0519",
+      "kind": "attack-technique-record",
+      "url": "https://attack.mitre.org/software/S0519/",
+      "fallback_url": "https://attack.mitre.org/software/S0519/S0519-enterprise-layer.json",
+      "mutable": true,
+      "claims": ["SYNful Knock", "T1556.004", "T1601.001", "T1205"]
+    },
+    {
+      "id": "talos-salt-typhoon",
+      "kind": "threat-research",
+      "url": "https://blog.talosintelligence.com/salt-typhoon-analysis/",
+      "mutable": true,
+      "claims": ["JumbledPath", "tpacap", "EPC", "network-device tradecraft"]
+    },
+    {
+      "id": "cisa-joint-aa25-239a-v1.1",
+      "kind": "joint-advisory",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa25-239a",
+      "mutable": true,
+      "version_label": "v1.1",
+      "claims": ["Salt Typhoon overlap", "IOS XR sshd_operns", "IOS XE TACACS EPC", "NX-OS Guest Shell", "network-device tradecraft"]
+    },
+    {
+      "id": "cisa-blacktech-aa23-270a",
+      "kind": "joint-advisory",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-270a",
+      "mutable": true,
+      "claims": ["BlackTech", "modified firmware", "EEM"]
+    },
+    {
+      "id": "cisco-nxos-cve-2024-20399",
+      "kind": "security-advisory",
+      "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-nxos-cmd-injection-xD9OhyOP",
+      "mutable": true,
+      "claims": ["CVE-2024-20399", "NX-OS"]
+    },
+    {
+      "id": "sygnia-velvet-ant-nxos",
+      "kind": "incident-research",
+      "url": "https://www.sygnia.co/threat-reports-and-advisories/china-nexus-threat-group-velvet-ant-exploits-cisco-0-day/",
+      "mutable": true,
+      "last_checked": "2026-08-28",
+      "manual_verified_on": "2026-08-28",
+      "manual_verification_method": "web retrieval",
+      "retrieval_notes": "Primary incident report may return HTTP 403 to non-browser clients; preserve for manual review and corroborate product exposure with Cisco PSIRT.",
+      "claims": ["Velvet Ant", "unnamed NX-OS implant"]
+    },
+    {
+      "id": "lumen-zuorat",
+      "kind": "incident-research",
+      "url": "https://www.lumen.com/blog/en-us/zuorat-hijacks-soho-routers-silently-stalk-networks",
+      "mutable": true,
+      "claims": ["ZuoRAT", "Cisco RV320", "Cisco RV325", "Cisco RV420"]
+    },
+    {
+      "id": "lumen-kv-botnet",
+      "kind": "incident-research",
+      "url": "https://www.lumen.com/blog/en-us/kv-botnet-investigation",
+      "mutable": true,
+      "claims": ["KV Botnet", "JDY", "Cisco RV320", "Cisco RV325"]
+    },
+    {
+      "id": "cisa-volt-typhoon-aa24-038a",
+      "kind": "joint-advisory",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-038a",
+      "mutable": true,
+      "claims": ["Volt Typhoon", "SOHO proxy infrastructure"]
+    },
+    {
+      "id": "cisa-ed26-03",
+      "kind": "directive",
+      "url": "https://www.cisa.gov/news-events/directives/ed-26-03-mitigate-vulnerabilities-cisco-sd-wan-systems",
+      "mutable": true,
+      "published": "2026-02-25",
+      "claims": ["CVE-2026-20127", "CVE-2022-20775", "SD-WAN mitigation"]
+    },
+    {
+      "id": "cisa-ed26-03-supplemental",
+      "kind": "directive",
+      "url": "https://www.cisa.gov/news-events/directives/supplemental-direction-ed-26-03-hunt-and-hardening-guidance-cisco-sd-wan-systems",
+      "mutable": true,
+      "published": "2026-02-25",
+      "claims": ["SD-WAN hunt", "SD-WAN hardening"]
+    },
+    {
+      "id": "cisco-cve-2026-20127",
+      "kind": "security-advisory",
+      "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-sdwan-rpa-EHchtZk",
+      "mutable": true,
+      "published": "2026-02-25",
+      "claims": ["CVE-2026-20127", "vmanage-admin", "peering validation", "admin-tech"]
+    },
+    {
+      "id": "cisco-cve-2022-20775",
+      "kind": "security-advisory",
+      "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-sd-wan-priv-E6e8tEdF",
+      "fallback_url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-sd-wan-priv-E6e8tEdF/csaf/cisco-sa-sd-wan-priv-E6e8tEdF.json",
+      "mutable": true,
+      "version_label": "1.2",
+      "last_checked": "2026-08-28",
+      "claims": ["CVE-2022-20775", "legacy SD-WAN path traversal", "authenticated local root execution", "IOS XE SD-WAN not affected", "attempted exploitation"]
+    },
+    {
+      "id": "cisco-cve-2020-3259",
+      "kind": "security-advisory",
+      "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-asaftd-info-disclose-9eJtycMB",
+      "mutable": true,
+      "claims": ["CVE-2020-3259", "ASA/FTD WebVPN memory disclosure", "affected products", "fixed releases"]
+    },
+    {
+      "id": "cisa-kev-cve-2020-3259",
+      "kind": "kev-record",
+      "url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+      "mutable": true,
+      "last_checked": "2026-08-28",
+      "source_content_date": "2026-08-27",
+      "claims": ["CVE-2020-3259", "known ransomware campaign use"]
+    },
+    {
+      "id": "ncsc-forensic-monitoring-guidance",
+      "kind": "joint-guidance",
+      "url": "https://www.ncsc.gov.uk/guidance/guidance-on-digital-forensics-protective-monitoring",
+      "mutable": true,
+      "last_checked": "2026-08-28",
+      "claims": ["minimum forensic visibility", "logging requirements", "forensic acquisition"]
+    },
+    {
+      "id": "ncsc-forensic-observability-2026",
+      "kind": "government-guidance",
+      "url": "https://www.ncsc.gov.uk/blogs/making-forensic-observability-the-norm-for-network-devices",
+      "mutable": true,
+      "published": "2026-08",
+      "claims": ["network-device forensic observability", "memory and data-at-rest acquisition", "software transparency"]
+    },
+    {
+      "id": "cisco-ios-integrity-assurance",
+      "kind": "vendor-guidance",
+      "url": "https://sec.cloudapps.cisco.com/security/center/resources/integrity_assurance.html",
+      "mutable": true,
+      "claims": ["IOS stored image verification", "runtime memory verification", "boot and ROMMON integrity", "known good values"]
+    },
+    {
+      "id": "cisco-iosxe-integrity-assurance",
+      "kind": "vendor-guidance",
+      "url": "https://sec.cloudapps.cisco.com/security/center/resources/ios_xe_integrity_assurance.html",
+      "mutable": true,
+      "claims": ["IOS XE integrity assurance", "stored image versus running memory limits", "Linux process and kernel blind spots"]
+    },
+    {
+      "id": "local-forensic-safety",
+      "kind": "local-methodology",
+      "path": "references/forensic-safety.md",
+      "mutable": true,
+      "claims": ["action authority", "mode gates", "HA", "RMA", "human-only commands"]
+    },
+    {
+      "id": "local-evidence-schema",
+      "kind": "local-methodology",
+      "path": "references/evidence-schema.md",
+      "mutable": true,
+      "claims": ["evidence schema", "confidence", "timeline", "custody", "uncleared layers"]
+    },
+    {
+      "id": "local-detection-engineering",
+      "kind": "local-methodology",
+      "path": "references/detection-engineering.md",
+      "mutable": true,
+      "claims": ["syslog", "AAA", "telemetry", "config diff", "platform modules"]
+    },
+    {
+      "id": "local-output-templates",
+      "kind": "local-methodology",
+      "path": "references/output-templates.md",
+      "mutable": true,
+      "claims": ["SOC", "network", "TAC", "executive", "hunt", "fleet", "custody"]
+    },
+    {
+      "id": "local-malware-catalog",
+      "kind": "local-methodology",
+      "path": "references/cisco-malware-catalog.md",
+      "mutable": true,
+      "claims": ["classification", "scope exclusions", "no-named-malware platforms"]
+    },
+    {
+      "id": "local-source-manifest",
+      "kind": "local-methodology",
+      "path": "references/sources.json",
+      "mutable": true,
+      "claims": ["source freshness", "source graph"]
+    },
+    {
+      "id": "local-folder-analysis",
+      "kind": "local-methodology",
+      "path": "references/folder-analysis.md",
+      "mutable": true,
+      "claims": ["folder ingestion", "archive safety", "artifact classification", "correlation", "rubric", "reports"]
+    }
+  ]
+}

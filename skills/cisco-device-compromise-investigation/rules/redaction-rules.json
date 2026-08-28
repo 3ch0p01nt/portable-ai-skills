@@ -1,0 +1,80 @@
+{
+  "version": "1.1.0",
+  "rules": [
+    {
+      "id": "SECRET-USERNAME",
+      "pattern": "(?im)^([\\t ]*username[\\t ]+\\S+[\\t ]+(?:privilege[\\t ]+\\d+[\\t ]+)?(?:secret|password)[\\t ]+(?:\\d+[\\t ]+)?)(\\S+)",
+      "replacement": "\\1[REDACTED]"
+    },
+    {
+      "id": "SECRET-ENABLE",
+      "pattern": "(?im)^([\\t ]*enable[\\t ]+(?:secret|password)[\\t ]+(?:\\d+[\\t ]+)?)(\\S+)",
+      "replacement": "\\1[REDACTED]"
+    },
+    {
+      "id": "SECRET-SNMP",
+      "pattern": "(?im)^([\\t ]*snmp-server[\\t ]+community[\\t ]+)(\\S+)",
+      "replacement": "\\1[REDACTED]"
+    },
+    {
+      "id": "SECRET-SNMPV3-AUTH",
+      "pattern": "(?im)^([\\t ]*snmp-server[\\t ]+user[\\t ]+\\S+[\\t ]+\\S+[\\t ]+v3\\b[^\\r\\n]*?\\bauth[\\t ]+\\S+[\\t ]+)(?!\\[REDACTED\\])(\\S+)",
+      "replacement": "\\1[REDACTED]"
+    },
+    {
+      "id": "SECRET-SNMPV3-PRIV",
+      "pattern": "(?im)^([\\t ]*snmp-server[\\t ]+user[\\t ]+\\S+[\\t ]+\\S+[\\t ]+v3\\b[^\\r\\n]*?\\bpriv[\\t ]+\\S+(?:[\\t ]+(?:128|192|256))?[\\t ]+)(?!\\[REDACTED\\])(\\S+)",
+      "replacement": "\\1[REDACTED]"
+    },
+    {
+      "id": "SECRET-KEY-LINE",
+      "pattern": "(?im)^([\\t ]*key[\\t ]+(?!(?:chain|config-key)\\b)(?!(?:\\d+)[\\t ]*$)(?:\\d+[\\t ]+)?)(\\S+)",
+      "replacement": "\\1[REDACTED]"
+    },
+    {
+      "id": "SECRET-LEGACY-AAA",
+      "pattern": "(?im)^([\\t ]*(?:tacacs-server|radius-server)[\\t ]+key[\\t ]+(?:\\d+[\\t ]+)?)(\\S+)",
+      "replacement": "\\1[REDACTED]"
+    },
+    {
+      "id": "SECRET-ISAKMP",
+      "pattern": "(?im)^([\\t ]*crypto[\\t ]+isakmp[\\t ]+key[\\t ]+)(\\S+)",
+      "replacement": "\\1[REDACTED]"
+    },
+    {
+      "id": "SECRET-PPP",
+      "pattern": "(?im)^([\\t ]*ppp[\\t ]+\\S+[\\t ]+password[\\t ]+(?:\\d+[\\t ]+)?)(\\S+)",
+      "replacement": "\\1[REDACTED]"
+    },
+    {
+      "id": "SECRET-ROUTING-DIGEST",
+      "pattern": "(?im)^([\\t ]*(?:ip[\\t ]+)?(?:ospf|isis|eigrp)?[\\t ]*message-digest-key[\\t ]+\\d+[\\t ]+md5[\\t ]+)(\\S+)",
+      "replacement": "\\1[REDACTED]"
+    },
+    {
+      "id": "SECRET-KEY-STRING",
+      "pattern": "(?im)^([\\t ]*key-string[\\t ]+(?:\\d+[\\t ]+)?)(\\S+)",
+      "replacement": "\\1[REDACTED]"
+    },
+    {
+      "id": "SECRET-AUTHENTICATION-KEY",
+      "pattern": "(?im)^([\\t ]*(?:ip[\\t ]+)?(?:ospf|isis|eigrp)?[\\t ]*authentication-key[\\t ]+(?:\\d+[\\t ]+)?)(\\S+)",
+      "replacement": "\\1[REDACTED]"
+    },
+    {
+      "id": "SECRET-NEIGHBOR",
+      "pattern": "(?im)^([\\t ]*neighbor[\\t ]+\\S+[\\t ]+password[\\t ]+(?:\\d+[\\t ]+)?)(\\S+)",
+      "replacement": "\\1[REDACTED]"
+    },
+    {
+      "id": "SECRET-PRESHARED",
+      "pattern": "(?im)^([\\t ]*(?:pre-shared-key|ikev2[\\t ]+local-authentication[\\t ]+pre-shared-key)[\\t ]+)(\\S+)",
+      "replacement": "\\1[REDACTED]"
+    },
+    {
+      "id": "SECRET-PRIVATE-KEY",
+      "pattern": "(?is)-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----.*?-----END (?:RSA |EC |OPENSSH )?PRIVATE KEY-----",
+      "replacement": "[PRIVATE-KEY-REDACTED]"
+    }
+  ]
+}
