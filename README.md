@@ -40,29 +40,25 @@ From a repository cloned inside the target project:
 ```powershell
 git clone 'https://github.com/3ch0p01nt/portable-ai-skills.git' portable-ai-skills
 Set-Location .\portable-ai-skills
-$ProjectSkills = '..\.github\skills'
+$ProjectRoot = Resolve-Path '..'
+$ProjectSkills = Join-Path $ProjectRoot '.github\skills'
 New-Item -ItemType Directory -Force $ProjectSkills | Out-Null
 Copy-Item -Recurse -Force '.\skills\kql-m365-azure-hunting' $ProjectSkills
 Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $ProjectSkills
-```
-
-For another layout, assign the target project's absolute `.github\skills` path:
-
-```powershell
-$ProjectSkills = 'C:\path\to\project\.github\skills'
-New-Item -ItemType Directory -Force $ProjectSkills | Out-Null
-Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $ProjectSkills
-```
-
-### Verify skill discovery
-
-Confirm the entry point is directly beneath the configured skills directory:
-
-```powershell
 Test-Path (Join-Path $ProjectSkills 'cisco-device-compromise-investigation\SKILL.md')
 ```
 
-The command must return `True`. Restart or reload the skill loader so it rescans the directory, then use its skill-listing command, such as `/skills` when supported.
+The final command must return `True`. Do not replace `$ProjectRoot` or `$ProjectSkills` with example placeholder text.
+
+### Verify skill discovery
+
+Return to the project root and restart or reload the skill loader so it rescans `.github\skills`:
+
+```powershell
+Set-Location $ProjectRoot
+```
+
+Then use the loader's skill-listing command, such as `/skills` when supported.
 
 Trigger the skill with a natural-language request:
 

@@ -19,20 +19,20 @@ The skill **never connects to a live device**. Any Cisco CLI, shell, API, or col
 Clone the repository inside the target project, then copy this folder into the project's `.github\skills` directory:
 
 ```powershell
-$ProjectSkills = '..\.github\skills'
+$ProjectRoot = Resolve-Path '..'
+$ProjectSkills = Join-Path $ProjectRoot '.github\skills'
 New-Item -ItemType Directory -Force $ProjectSkills | Out-Null
 Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $ProjectSkills
-```
-
-For another layout, assign `$ProjectSkills` to the target project's absolute `.github\skills` path.
-
-Verify the installed entry point:
-
-```powershell
 Test-Path (Join-Path $ProjectSkills 'cisco-device-compromise-investigation\SKILL.md')
 ```
 
-It must return `True`. Restart or reload the skill loader, then use its skill-listing command, such as `/skills` when supported.
+The final command must return `True`. Do not replace either variable with example placeholder text.
+
+Return to the project root, restart or reload the skill loader, and then use its skill-listing command, such as `/skills` when supported:
+
+```powershell
+Set-Location $ProjectRoot
+```
 
 If the skill is not discovered, check for a duplicated nested folder:
 
