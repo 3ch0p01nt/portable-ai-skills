@@ -16,19 +16,20 @@ The skill **never connects to a live device**. Any Cisco CLI, shell, API, or col
 
 ## Install and use
 
-Clone the repository, then copy this folder into the skills directory used by a compatible skill loader:
+Clone the repository inside the target project, then copy this folder into the project's `.github\skills` directory:
 
 ```powershell
-$SkillsDirectory = Resolve-Path '..\..\skills'
-Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $SkillsDirectory
+$ProjectSkills = '..\.github\skills'
+New-Item -ItemType Directory -Force $ProjectSkills | Out-Null
+Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $ProjectSkills
 ```
 
-`..\..\skills` matches a layout where the repository is two directories below the destination. For another layout, assign `$SkillsDirectory` to the real absolute path. Do not type a placeholder such as `<skills-directory>` literally.
+For another layout, assign `$ProjectSkills` to the target project's absolute `.github\skills` path.
 
 Verify the installed entry point:
 
 ```powershell
-Test-Path (Join-Path $SkillsDirectory 'cisco-device-compromise-investigation\SKILL.md')
+Test-Path (Join-Path $ProjectSkills 'cisco-device-compromise-investigation\SKILL.md')
 ```
 
 It must return `True`. Restart or reload the skill loader, then use its skill-listing command, such as `/skills` when supported.
@@ -36,10 +37,10 @@ It must return `True`. Restart or reload the skill loader, then use its skill-li
 If the skill is not discovered, check for a duplicated nested folder:
 
 ```powershell
-Get-ChildItem (Join-Path $SkillsDirectory 'cisco-device-compromise-investigation') -Recurse -Filter SKILL.md
+Get-ChildItem (Join-Path $ProjectSkills 'cisco-device-compromise-investigation') -Recurse -Filter SKILL.md
 ```
 
-The expected relative path is `skills\cisco-device-compromise-investigation\SKILL.md`.
+The expected project-relative path is `.github\skills\cisco-device-compromise-investigation\SKILL.md`.
 
 Ask the skill to investigate sanitized local evidence, describe the device/platform and incident mode, or provide an explicitly named local folder.
 

@@ -33,26 +33,25 @@ Capabilities:
 
 ## Install
 
-Clone the repository, then copy either skill folder into the skills directory used by a compatible skill loader. Each `SKILL.md` includes YAML frontmatter for discovery.
+Clone the repository, then copy either skill folder into the target project's `.github\skills` directory. Each `SKILL.md` includes YAML frontmatter for discovery.
 
-Set `$SkillsDirectory` to a real directory; do not type `<skills-directory>` literally. For a layout where the repository is two directories below an existing `skills` folder:
+From a repository cloned inside the target project:
 
 ```powershell
 git clone 'https://github.com/3ch0p01nt/portable-ai-skills.git' portable-ai-skills
 Set-Location .\portable-ai-skills
-$SkillsDirectory = Resolve-Path '..\..\skills'
-Copy-Item -Recurse -Force '.\skills\kql-m365-azure-hunting' $SkillsDirectory
-Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $SkillsDirectory
+$ProjectSkills = '..\.github\skills'
+New-Item -ItemType Directory -Force $ProjectSkills | Out-Null
+Copy-Item -Recurse -Force '.\skills\kql-m365-azure-hunting' $ProjectSkills
+Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $ProjectSkills
 ```
 
-For any other layout, assign the absolute destination first:
+For another layout, assign the target project's absolute `.github\skills` path:
 
 ```powershell
-$SkillsDirectory = 'C:\path\to\your\skills'
-if (-not (Test-Path -LiteralPath $SkillsDirectory -PathType Container)) {
-    throw "Skills directory does not exist: $SkillsDirectory"
-}
-Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $SkillsDirectory
+$ProjectSkills = 'C:\path\to\project\.github\skills'
+New-Item -ItemType Directory -Force $ProjectSkills | Out-Null
+Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $ProjectSkills
 ```
 
 ### Verify skill discovery
@@ -60,7 +59,7 @@ Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $Skil
 Confirm the entry point is directly beneath the configured skills directory:
 
 ```powershell
-Test-Path (Join-Path $SkillsDirectory 'cisco-device-compromise-investigation\SKILL.md')
+Test-Path (Join-Path $ProjectSkills 'cisco-device-compromise-investigation\SKILL.md')
 ```
 
 The command must return `True`. Restart or reload the skill loader so it rescans the directory, then use its skill-listing command, such as `/skills` when supported.
@@ -74,13 +73,13 @@ Investigate this folder of Cisco artifacts for possible compromise: C:\path\to\e
 If discovery fails, check for an accidentally duplicated directory:
 
 ```powershell
-Get-ChildItem (Join-Path $SkillsDirectory 'cisco-device-compromise-investigation') -Recurse -Filter SKILL.md
+Get-ChildItem (Join-Path $ProjectSkills 'cisco-device-compromise-investigation') -Recurse -Filter SKILL.md
 ```
 
 The entry point must resolve exactly to:
 
 ```text
-skills\cisco-device-compromise-investigation\SKILL.md
+.github\skills\cisco-device-compromise-investigation\SKILL.md
 ```
 
 ## Repository Structure
