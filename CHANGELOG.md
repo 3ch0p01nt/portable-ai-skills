@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.2.0 - 2026-09-04
+
+### Added
+
+- Published `identity-threat-investigator` for evidence-grounded investigation of identity compromise, baseline deviations, MFA abuse, token or session reuse, workload identities, and post-authentication persistence.
+- Added Microsoft cloud telemetry coverage with MDI, MDE, and Advanced Hunting as sensor-fed hybrid context without assuming direct host artifacts.
+- Added a typed investigation schema, eight redaction rules, 12 known-answer evaluations, 14 authoritative source records, and deterministic PowerShell validation and security scanning.
+
+### Safety and scope
+
+- The skill is read-only and produces approval-ready response options rather than changing identities, sessions, credentials, devices, applications, consent, Conditional Access, or tenant configuration.
+- Empty query results cannot establish safety until table availability, schema, ingestion, licensing, and retention are validated.
+- MFA success, anomaly detections, location, and risk scores remain evidence inputs rather than automatic compromise or clearance verdicts.
+
 ## 1.1.0 - 2026-08-28
 
 ### Added

@@ -1,6 +1,6 @@
 # Portable AI Skills
 
-Portable technical AI skills for compatible skill loaders. The repository includes KQL cloud hunting and authorized Cisco network-device incident-response workflows without embedding endpoints, tenant identifiers, credentials, or deployment-specific secrets.
+Portable technical AI skills for compatible skill loaders. The repository includes KQL cloud hunting, identity-threat investigation, and authorized Cisco network-device incident-response workflows without embedding endpoints, tenant identifiers, credentials, or deployment-specific secrets.
 
 ## Installed Skills
 
@@ -31,6 +31,20 @@ Capabilities:
 - Preserves volatile evidence and availability through safety-specific LINE VIPER, RayInitiator, FIRESTARTER, and ArcaneDoor branches.
 - Never connects to live devices; all live-device commands are human-executed and risk labeled.
 
+### identity-threat-investigator
+
+Investigate identity compromise, behavioral deviations, MFA abuse, token or session reuse, workload-identity abuse, and related persistence using Microsoft cloud telemetry and sensor-fed hybrid context.
+
+Capabilities:
+
+- Correlates Entra interactive, non-interactive, workload, audit, risk, device, application, consent, and Conditional Access evidence.
+- Uses Defender XDR, MDI, MDE, Advanced Hunting, Sentinel, Purview, and Microsoft 365 evidence when available.
+- Builds separate human and workload baselines with explicit cold-start, stale, and missing-data labels.
+- Distinguishes observed facts, assessments, hypotheses, benign alternatives, and response options.
+- Generates schema-aware KQL with connector, licensing, retention, and validation requirements.
+- Treats MDI/MDE as sensor evidence and never claims direct host clearance without host artifacts.
+- Remains read-only; containment and tenant changes require separate human authorization.
+
 ## Install
 
 Clone the repository, then copy either skill folder into the target project's `.github\skills` directory. Each `SKILL.md` includes YAML frontmatter for discovery.
@@ -45,6 +59,7 @@ $ProjectSkills = Join-Path $ProjectRoot '.github\skills'
 New-Item -ItemType Directory -Force $ProjectSkills | Out-Null
 Copy-Item -Recurse -Force '.\skills\kql-m365-azure-hunting' $ProjectSkills
 Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $ProjectSkills
+Copy-Item -Recurse -Force '.\skills\identity-threat-investigator' $ProjectSkills
 Test-Path (Join-Path $ProjectSkills 'cisco-device-compromise-investigation\SKILL.md')
 ```
 
@@ -98,6 +113,14 @@ portable-ai-skills/
       scripts/
       tests/
       tools/
+    identity-threat-investigator/
+      SKILL.md
+      README.md
+      references/
+      evals/
+      rules/
+      schemas/
+      scripts/
   .github/
     workflows/
   tests/
@@ -156,6 +179,10 @@ python skills/cisco-device-compromise-investigation/scripts/check_sources.py --s
 - Az module guidance is read-only in v1; mutating `New-Az*`, resource-changing `Set-Az*`, `Update-Az*`, and `Remove-Az*` workflows are out of scope unless explicitly redesigned.
 - Cisco evidence and reports can contain sensitive incident data; sanitize them and never publish real evidence or secrets.
 - Cisco tooling processes local artifacts only and never connects to a live device.
+- Identity investigations are read-only and do not modify accounts, sessions, credentials, devices, applications, consent, Conditional Access, or tenant configuration.
+- MDI, MDE, and Advanced Hunting are sensor-fed evidence sources, not substitutes for unavailable host, domain-controller, AD FS, memory, disk, registry, or packet artifacts.
+- Empty identity-query results are inconclusive until source availability, schema, ingestion, license, and retention are validated.
+- Identity reports must redact credentials, bearer tokens, cookies, private keys, and unnecessary personal data.
 - Missing volatile state, baselines, independent evidence, or platform visibility limits Cisco conclusions.
 - Vendor YARA/Snort content is referenced at its source and is not redistributed.
 

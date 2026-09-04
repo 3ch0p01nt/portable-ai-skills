@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.scout/schemas/identity-threat-investigation-v1.json",
+  "title": "Identity Threat Investigation",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "case",
+    "coverage",
+    "observations",
+    "hypotheses",
+    "data_gaps",
+    "next_steps",
+    "response_options"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "case": {
+      "type": "object",
+      "required": ["case_id", "tenant", "start_utc", "end_utc"],
+      "properties": {
+        "case_id": {"type": "string", "minLength": 1},
+        "tenant": {"type": "string", "minLength": 1},
+        "start_utc": {"type": "string", "format": "date-time"},
+        "end_utc": {"type": "string", "format": "date-time"},
+        "analyst_question": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "coverage": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source", "status"],
+        "properties": {
+          "source": {"type": "string"},
+          "status": {
+            "enum": ["available", "missing", "stale", "not_licensed", "not_collected", "unknown"]
+          },
+          "first_event_utc": {"type": ["string", "null"], "format": "date-time"},
+          "last_event_utc": {"type": ["string", "null"], "format": "date-time"},
+          "notes": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "summary", "evidence_refs", "confidence"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^OBS-[0-9]{3,}$"},
+          "kind": {
+            "enum": ["fact", "deviation", "sequence", "coverage", "persistence", "access", "configuration"]
+          },
+          "summary": {"type": "string"},
+          "baseline": {"type": ["string", "null"]},
+          "observed": {"type": ["string", "null"]},
+          "evidence_refs": {
+            "type": "array",
+            "items": {"type": "string"},
+            "minItems": 1
+          },
+          "contradicting_evidence_refs": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "benign_alternatives": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "confidence": {
+            "enum": ["confirmed_observation", "high_assessment", "medium_assessment", "low_assessment", "unknown"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "statement",
+          "supporting_evidence_refs",
+          "contradicting_evidence_refs",
+          "missing_evidence",
+          "confidence",
+          "next_test",
+          "status"
+        ],
+        "properties": {
+          "id": {"type": "string", "pattern": "^HYP-[0-9]{3,}$"},
+          "statement": {"type": "string"},
+          "supporting_evidence_refs": {"type": "array", "items": {"type": "string"}},
+          "contradicting_evidence_refs": {"type": "array", "items": {"type": "string"}},
+          "missing_evidence": {"type": "array", "items": {"type": "string"}},
+          "benign_alternatives": {"type": "array", "items": {"type": "string"}},
+          "confidence": {
+            "enum": ["high_assessment", "medium_assessment", "low_assessment", "unknown"]
+          },
+          "next_test": {"type": "string"},
+          "status": {"enum": ["open", "supported", "weakened", "refuted", "superseded"]}
+        },
+        "additionalProperties": false
+      }
+    },
+    "data_gaps": {"type": "array", "items": {"type": "string"}},
+    "next_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["priority", "question", "source", "reason"],
+        "properties": {
+          "priority": {"enum": ["urgent", "high", "normal", "low"]},
+          "question": {"type": "string"},
+          "source": {"type": "string"},
+          "reason": {"type": "string"},
+          "requirements": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "response_options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action", "classification", "rationale", "approval_required", "impact"],
+        "properties": {
+          "action": {"type": "string"},
+          "classification": {"enum": ["reversible", "high_impact", "destructive"]},
+          "rationale": {"type": "string"},
+          "approval_required": {"const": true},
+          "impact": {"type": "string"},
+          "prerequisites": {"type": "array", "items": {"type": "string"}},
+          "coverage_gaps": {"type": "array", "items": {"type": "string"}},
+          "rollback": {"type": ["string", "null"]}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

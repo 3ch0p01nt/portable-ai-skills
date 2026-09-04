@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "rules": [
+    {"id": "jwt", "pattern": "\\beyJ[A-Za-z0-9_-]{20,}\\.[A-Za-z0-9_-]{20,}\\.[A-Za-z0-9_-]{10,}\\b", "replacement": "[REDACTED_TOKEN]"},
+    {"id": "bearer", "pattern": "(?i)\\bBearer\\s+[A-Za-z0-9._~+/-]+=*\\b", "replacement": "Bearer [REDACTED_TOKEN]"},
+    {"id": "private-key", "pattern": "-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----", "replacement": "[REDACTED_PRIVATE_KEY]"},
+    {"id": "client-secret", "pattern": "(?i)(client[_ -]?secret\\s*[:=]\\s*)\\S+", "replacement": "$1[REDACTED_SECRET]"},
+    {"id": "password", "pattern": "(?i)(password\\s*[:=]\\s*)\\S+", "replacement": "$1[REDACTED_PASSWORD]"},
+    {"id": "cookie", "pattern": "(?i)(set-cookie|cookie)\\s*:\\s*[^\\r\\n]+", "replacement": "$1: [REDACTED_COOKIE]"},
+    {"id": "phone", "pattern": "(?<!\\d)\\+?\\d[\\d .()-]{7,}\\d(?!\\d)", "replacement": "[REDACTED_PHONE]"},
+    {"id": "email-local-part", "pattern": "\\b([A-Za-z0-9._%+-])[A-Za-z0-9._%+-]*(@[A-Za-z0-9.-]+\\.[A-Za-z]{2,})\\b", "replacement": "$1***$2"}
+  ]
+}

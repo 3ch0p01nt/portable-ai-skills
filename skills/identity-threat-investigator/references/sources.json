@@ -1,0 +1,76 @@
+{
+  "version": "1.0.0",
+  "reviewed": "2026-09-04",
+  "sources": [
+    {
+      "id": "mitre-credential-access",
+      "title": "MITRE ATT&CK Credential Access",
+      "url": "https://attack.mitre.org/tactics/TA0006/"
+    },
+    {
+      "id": "entra-risk-detections",
+      "title": "Microsoft Entra ID Protection risk detections",
+      "url": "https://learn.microsoft.com/en-us/entra/id-protection/concept-identity-protection-risks"
+    },
+    {
+      "id": "entra-signin-details",
+      "title": "Microsoft Entra sign-in log activity details",
+      "url": "https://learn.microsoft.com/en-us/entra/identity/monitoring-health/concept-sign-in-log-activity-details"
+    },
+    {
+      "id": "microsoft-token-tactics",
+      "title": "Token tactics: prevent, detect, and respond to cloud token theft",
+      "url": "https://www.microsoft.com/en-us/security/blog/2022/11/16/token-tactics-how-to-prevent-detect-and-respond-to-cloud-token-theft/"
+    },
+    {
+      "id": "microsoft-aitm-bec",
+      "title": "Detecting and mitigating a multi-stage AiTM phishing and BEC campaign",
+      "url": "https://www.microsoft.com/en-us/security/blog/2023/06/08/detecting-and-mitigating-a-multi-stage-aitm-phishing-and-bec-campaign/"
+    },
+    {
+      "id": "entra-auth-strengths",
+      "title": "Microsoft Entra authentication strengths",
+      "url": "https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-strengths"
+    },
+    {
+      "id": "entra-token-protection",
+      "title": "Microsoft Entra token protection",
+      "url": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-token-protection"
+    },
+    {
+      "id": "sentinel-anomalies",
+      "title": "Microsoft Sentinel customizable anomalies",
+      "url": "https://learn.microsoft.com/en-us/azure/sentinel/soc-ml-anomalies"
+    },
+    {
+      "id": "microsoft-phishing-ir",
+      "title": "Microsoft incident response playbook for phishing",
+      "url": "https://learn.microsoft.com/en-us/security/operations/incident-response-playbook-phishing"
+    },
+    {
+      "id": "cisa-aa22-074a",
+      "title": "CISA AA22-074A MFA exploitation advisory",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa22-074a"
+    },
+    {
+      "id": "nist-ir",
+      "title": "NIST SP 800-61 Revision 3",
+      "url": "https://csrc.nist.gov/pubs/sp/800/61/r3/final"
+    },
+    {
+      "id": "nist-identity",
+      "title": "NIST SP 800-63-4 Digital Identity Guidelines",
+      "url": "https://pages.nist.gov/800-63-4/"
+    },
+    {
+      "id": "ietf-dpop",
+      "title": "RFC 9449 OAuth Demonstrating Proof of Possession",
+      "url": "https://www.rfc-editor.org/rfc/rfc9449"
+    },
+    {
+      "id": "owasp-llm",
+      "title": "OWASP Top 10 for LLM Applications",
+      "url": "https://genai.owasp.org/llm-top-10/"
+    }
+  ]
+}
