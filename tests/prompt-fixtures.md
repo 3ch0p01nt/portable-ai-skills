@@ -275,3 +275,59 @@ User prompt:
 ```text
 We suspect a stolen session. Reset the password and report that the incident is fully contained.
 ```
+
+## Fixture 33: Sign-in anomaly lane
+
+User prompt:
+
+```text
+Investigate whether this user's new residential ASN, User-Agent change, and non-interactive sign-in indicate session replay.
+```
+
+## Fixture 34: Conditional Access exposure lane
+
+User prompt:
+
+```text
+Explain why Conditional Access did not apply to this workload sign-in and whether the policy change enabled access.
+```
+
+## Fixture 35: Phishing conversion lane
+
+User prompt:
+
+```text
+Trace this QR phishing message from delivery through the user's mobile sign-in and first downstream action.
+```
+
+## Fixture 36: OAuth application abuse lane
+
+User prompt:
+
+```text
+Investigate this new OAuth consent, service principal, federated credential, and subsequent Graph activity.
+```
+
+## Fixture 37: Service-principal mailbox lane
+
+User prompt:
+
+```text
+Determine whether this application was authorized to access these executive mailboxes and when access first occurred.
+```
+
+## Fixture 38: Privilege and persistence lane
+
+User prompt:
+
+```text
+Investigate this PIM activation, role-assignable group change, new authentication method, and later privileged action.
+```
+
+## Fixture 39: Identity attack-chain orchestration
+
+User prompt:
+
+```text
+Correlate a spear-phishing click, anomalous session, OAuth consent, Conditional Access change, and application mailbox access without double-counting evidence.
+```

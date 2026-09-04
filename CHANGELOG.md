@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.3.0 - 2026-09-04
+
+### Added
+
+- Published six specialist Microsoft identity hunting skills for sign-in anomalies, Conditional Access exposure, phishing conversion, OAuth/application abuse, service-principal mailbox access, and cloud privilege or persistence.
+- Published `identity-spear-phishing-hunter` as the coordinating attack-chain orchestrator.
+- Added routing fixtures covering each specialist and multi-domain orchestration.
+
+### Safety and evidence
+
+- All seven skills are read-only and require explicit schema, retention, licensing, and ingestion validation.
+- Conditional Access weakness is treated as exposure and a bounded risk multiplier, never standalone compromise evidence.
+- Cross-platform evidence is deduplicated using immutable identifiers and lineage; missing telemetry is distinguished from absent activity.
+- Credentials, tokens, cookies, private keys, message content, and tenant-specific data are excluded.
+
 ## 1.2.0 - 2026-09-04
 
 ### Added

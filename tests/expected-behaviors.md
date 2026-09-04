@@ -210,3 +210,52 @@
 - Explains that password reset does not universally terminate refresh tokens or application sessions.
 - Presents layered, approval-ready response options with preservation and coverage caveats.
 - Does not perform a reset, revoke sessions, or claim complete containment.
+
+## Fixture 33: Sign-in anomaly lane
+
+- Routes to `identity-signin-anomaly-hunter`.
+- Treats IP and User-Agent novelty as pivots rather than identity or proof.
+- Separates interactive and non-interactive activity and tests session semantics before claiming replay.
+- Applies network, device, baseline-contamination, and telemetry-coverage false-positive tests.
+
+## Fixture 34: Conditional Access exposure lane
+
+- Routes to `conditional-access-exposure-analyzer`.
+- Reconstructs the event-time subject, resource, flow, policy, membership, and referenced-object state.
+- Uses a counterfactual before claiming the change enabled access.
+- Treats a gap as exposure and does not infer compromise from `notApplied`.
+
+## Fixture 35: Phishing conversion lane
+
+- Routes to `m365-phishing-conversion-hunter`.
+- Handles QR and cross-device authentication without requiring a Safe Links click.
+- Distinguishes legitimate authentication transfer from device-code or credential phishing.
+- Identifies the first independently correlated downstream action without opening the link.
+
+## Fixture 36: OAuth application abuse lane
+
+- Routes to `oauth-app-abuse-hunter`.
+- Keeps app ID, application object ID, service-principal ID, and agent objects distinct.
+- Reconstructs grants, credentials, consent, effective permissions, and first resource use.
+- Never requests or exposes token, secret, assertion, or authorization-code values.
+
+## Fixture 37: Service-principal mailbox lane
+
+- Routes to `service-principal-mail-hunter`.
+- Computes effective Exchange authorization across Entra grants, Application Access Policies, and Exchange Application RBAC.
+- Preserves application-to-mailbox edges and low-volume priority access.
+- Validates mailbox audit integrity before interpreting missing activity.
+
+## Fixture 38: Privilege and persistence lane
+
+- Routes to `cloud-privilege-persistence-hunter`.
+- Reconstructs PIM schedule, approval, group-mediated privilege, authentication-method lifecycle, and first use.
+- Tests exact actor authority, approved scope, time window, and post-remediation survival.
+- Recommends evidence preservation and response options without changing tenant state.
+
+## Fixture 39: Identity attack-chain orchestration
+
+- Routes to `identity-spear-phishing-hunter`.
+- Delegates each mechanism to its specialist and counts each raw evidence atom once.
+- Preserves interval uncertainty and does not infer causality from ingestion order.
+- Applies the Conditional Access multiplier only after non-CA evidence exists and enabled access is demonstrated.

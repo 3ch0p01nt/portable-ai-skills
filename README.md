@@ -45,6 +45,20 @@ Capabilities:
 - Treats MDI/MDE as sensor evidence and never claims direct host clearance without host artifacts.
 - Remains read-only; containment and tenant changes require separate human authorization.
 
+### Microsoft identity hunting skill family
+
+Seven coordinated, read-only skills decompose complex Microsoft identity attacks into evidence-bounded specialist lanes:
+
+- `identity-signin-anomaly-hunter` — IP, ASN, User-Agent, device, session, protocol, workload, token-replay, and baseline anomalies.
+- `conditional-access-exposure-analyzer` — event-time Conditional Access coverage, exclusions, policy dependencies, counterfactuals, and workload or agent identity gaps.
+- `m365-phishing-conversion-hunter` — email, QR, Teams, callback, AiTM, device-code, and delivery-to-impact conversion.
+- `oauth-app-abuse-hunter` — OAuth flows, consent, grants, app/service-principal lifecycle, FICs, agent permissions, and first use.
+- `service-principal-mail-hunter` — Graph and Exchange application mailbox access, effective authorization, subscriptions, and app-to-mailbox edges.
+- `cloud-privilege-persistence-hunter` — PIM, directory and Azure roles, authentication methods, devices, FICs, hybrid trust, and durable access.
+- `identity-spear-phishing-hunter` — orchestrates the six specialists, deduplicates evidence, constructs partial-order timelines, and correlates campaigns.
+
+The family preserves immutable evidence identifiers, distinguishes observed from unobservable activity, rejects indicator-only conclusions, and requires schema, retention, licensing, and false-positive validation before assigning confidence.
+
 ## Install
 
 Clone the repository, then copy either skill folder into the target project's `.github\skills` directory. Each `SKILL.md` includes YAML frontmatter for discovery.
@@ -60,6 +74,13 @@ New-Item -ItemType Directory -Force $ProjectSkills | Out-Null
 Copy-Item -Recurse -Force '.\skills\kql-m365-azure-hunting' $ProjectSkills
 Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $ProjectSkills
 Copy-Item -Recurse -Force '.\skills\identity-threat-investigator' $ProjectSkills
+Copy-Item -Recurse -Force '.\skills\identity-signin-anomaly-hunter' $ProjectSkills
+Copy-Item -Recurse -Force '.\skills\conditional-access-exposure-analyzer' $ProjectSkills
+Copy-Item -Recurse -Force '.\skills\m365-phishing-conversion-hunter' $ProjectSkills
+Copy-Item -Recurse -Force '.\skills\oauth-app-abuse-hunter' $ProjectSkills
+Copy-Item -Recurse -Force '.\skills\service-principal-mail-hunter' $ProjectSkills
+Copy-Item -Recurse -Force '.\skills\cloud-privilege-persistence-hunter' $ProjectSkills
+Copy-Item -Recurse -Force '.\skills\identity-spear-phishing-hunter' $ProjectSkills
 Test-Path (Join-Path $ProjectSkills 'cisco-device-compromise-investigation\SKILL.md')
 ```
 
@@ -121,6 +142,20 @@ portable-ai-skills/
       rules/
       schemas/
       scripts/
+    identity-signin-anomaly-hunter/
+      SKILL.md
+    conditional-access-exposure-analyzer/
+      SKILL.md
+    m365-phishing-conversion-hunter/
+      SKILL.md
+    oauth-app-abuse-hunter/
+      SKILL.md
+    service-principal-mail-hunter/
+      SKILL.md
+    cloud-privilege-persistence-hunter/
+      SKILL.md
+    identity-spear-phishing-hunter/
+      SKILL.md
   .github/
     workflows/
   tests/
