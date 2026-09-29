@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "timeline.schema.json",
+  "title": "HAVOC timeline kernel record",
+  "description": "Closed kernel record for multi-clock timeline normalization, uncertainty, clock offset correction, latency, and deduplication. Records include the audit-output timelineRecord required projection.",
+  "type": "object",
+  "required": [
+    "timeline_id",
+    "event_ref",
+    "source_id",
+    "upstream_record_id",
+    "time_kind",
+    "time_value",
+    "timestamp_provenance",
+    "timestamp_confidence",
+    "uncertainty_interval",
+    "uncertainty",
+    "ingestion_time",
+    "retrieval_time",
+    "latency",
+    "deduplication",
+    "claim_ids",
+    "evidence_ids",
+    "gap_ids",
+    "error_ids",
+    "behavior_bases"
+  ],
+  "properties": {
+    "timeline_id": { "$ref": "#/$defs/identifier" },
+    "event_ref": { "$ref": "#/$defs/identifier" },
+    "source_id": { "$ref": "#/$defs/identifier" },
+    "upstream_record_id": { "type": "string", "minLength": 1 },
+    "time_kind": {
+      "type": "string",
+      "enum": ["event_time_utc", "event_time_corrected_utc", "event_time_missing"]
+    },
+    "time_value": { "$ref": "#/$defs/timestamp" },
+    "timestamp_provenance": {
+      "type": "object",
+      "required": [
+        "raw_timestamp",
+        "source_timezone",
+        "event_time_source",
+        "source_event_time_utc",
+        "parse_culture",
+        "normalization"
+      ],
+      "properties": {
+        "raw_timestamp": { "type": "string" },
+        "source_timezone": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Declared source timezone, explicit_offset when the source timestamp carried its own offset and no timezone was supplied, or not_provided when no timezone was supplied."
+        },
+        "event_time_source": { "type": "string", "enum": ["source_event_time", "corrected_source_event_time", "missing"] },
+        "source_event_time_utc": { "type": "string" },
+        "parse_culture": { "type": "string", "const": "InvariantCulture" },
+        "normalization": { "type": "string", "const": "UTC comparison time with raw value preserved" }
+      },
+      "additionalProperties": false
+    },
+    "timestamp_confidence": {
+      "type": "object",
+      "required": ["level", "reason", "evidence_ids"],
+      "properties": {
+        "level": { "type": "string", "enum": ["high", "moderate", "low", "not_assessed"] },
+        "reason": { "type": "string", "minLength": 1 },
+        "evidence_ids": { "$ref": "#/$defs/idArray" }
+      },
+      "additionalProperties": false
+    },
+    "uncertainty_interval": {
+      "type": "object",
+      "required": ["start_utc", "end_utc", "basis"],
+      "properties": {
+        "start_utc": { "$ref": "#/$defs/timestamp" },
+        "end_utc": { "$ref": "#/$defs/timestamp" },
+        "basis": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "uncertainty": { "type": "string", "minLength": 1 },
+    "ingestion_time": { "$ref": "#/$defs/timestamp" },
+    "retrieval_time": { "$ref": "#/$defs/timestamp" },
+    "latency": {
+      "type": "object",
+      "required": ["event_to_ingestion_seconds", "event_to_retrieval_seconds", "is_late_arriving", "late_arrival_basis"],
+      "properties": {
+        "event_to_ingestion_seconds": { "type": "integer", "minimum": 0 },
+        "event_to_retrieval_seconds": { "type": "integer", "minimum": 0 },
+        "is_late_arriving": { "type": "boolean" },
+        "late_arrival_basis": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "deduplication": {
+      "type": "object",
+      "required": ["lineage_key", "duplicate_count", "duplicate_timeline_ids", "independence_basis"],
+      "properties": {
+        "lineage_key": { "type": "string", "minLength": 1 },
+        "duplicate_count": { "type": "integer", "minimum": 0 },
+        "duplicate_timeline_ids": { "$ref": "#/$defs/idArray" },
+        "independence_basis": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "clock_offset": {
+      "type": "object",
+      "required": ["offset_seconds", "method", "evidence_ids", "applied_at"],
+      "properties": {
+        "offset_seconds": { "type": "integer" },
+        "method": { "type": "string", "minLength": 1 },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "applied_at": { "$ref": "#/$defs/timestamp" }
+      },
+      "additionalProperties": false
+    },
+    "claim_ids": { "$ref": "#/$defs/idArray" },
+    "evidence_ids": { "$ref": "#/$defs/idArray" },
+    "gap_ids": { "$ref": "#/$defs/idArray" },
+    "error_ids": { "$ref": "#/$defs/idArray" },
+    "behavior_bases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["guaranteed_behavior", "configurable_project_policy", "conditional_capability", "explicit_gap"]
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "idArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "interfaceVersion": "1.0.0",
+  "purpose": "Mandatory authenticated, cancellable, deadline-aware transport executor for all adapter HTTP work.",
+  "approvedProvider": {
+    "contract_id": "havoc-trusted-transport-contract",
+    "minimum_contract_version": "1.0.0",
+    "provider_id": "havoc-trusted-transport",
+    "minimum_provider_version": "1.0.0"
+  },
+  "requiredFields": [
+    "contract_id",
+    "contract_version",
+    "provider_id",
+    "provider_version",
+    "authenticated",
+    "supports_cancellation",
+    "supports_deadline",
+    "executor",
+    "state"
+  ],
+  "requestBinding": [
+    "operation_id",
+    "resource_binding_hmac",
+    "resource_identifier_ref",
+    "principal_ref",
+    "source_scope_ref",
+    "auth_provider_id",
+    "auth_provider_version",
+    "deadline_utc"
+  ],
+  "constraints": [
+    "No unauthenticated default HTTP fallback.",
+    "Executor runs in an isolated cancellable runspace.",
+    "The adapter stops and disposes the runspace at the remaining runtime deadline.",
+    "Provider and contract versions are stable semantic versions at or above the declared minimum.",
+    "Mock transports use explicit response-queue state rather than closure side effects."
+  ]
+}

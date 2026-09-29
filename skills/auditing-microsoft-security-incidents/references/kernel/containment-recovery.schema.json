@@ -1,0 +1,287 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "containment-recovery.schema.json",
+  "title": "Containment and Recovery Review Kernel Record",
+  "description": "Closed schema for observational containment decision review and recovery validation. It never authorizes or carries executable response actions.",
+  "type": "object",
+  "required": [
+    "record_type",
+    "review_id",
+    "incident_ref",
+    "incident_type",
+    "review_generated_at",
+    "behavior_bases",
+    "evidence_available",
+    "containment_decisions",
+    "recovery_claims",
+    "recommendations"
+  ],
+  "properties": {
+    "record_type": {"type": "string", "const": "containment_recovery_review"},
+    "review_id": {"$ref": "#/$defs/identifier"},
+    "incident_ref": {"$ref": "#/$defs/identifier"},
+    "incident_type": {
+      "type": "string",
+      "enum": [
+        "generic",
+        "identity_compromise",
+        "ransomware",
+        "email_compromise",
+        "cloud_control_plane",
+        "endpoint_intrusion"
+      ]
+    },
+    "review_generated_at": {"$ref": "#/$defs/timestamp"},
+    "behavior_bases": {"$ref": "#/$defs/behaviorBases"},
+    "evidence_available": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/availableEvidence"}
+    },
+    "containment_decisions": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/containmentDecision"}
+    },
+    "recovery_claims": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/recoveryClaim"}
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/recommendation"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "idArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/identifier"}
+    },
+    "behaviorBases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "guaranteed_behavior",
+          "configurable_project_policy",
+          "conditional_capability",
+          "explicit_gap"
+        ]
+      }
+    },
+    "protectedReference": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?:protected(?:-link|-request|-evidence)?|not-applicable):(?!(?:[a-z0-9._/-]*[./])?(?:bearer|token|secret|password|credential|apikey|api-key|authorization|access_token|access-token)(?:[./]|$))[a-z0-9][a-z0-9._/-]*$"
+    },
+    "safeText": {
+      "type": "string",
+      "minLength": 1,
+      "allOf": [
+        {"not": {"pattern": "\\b[Rr]evoke-"}},
+        {"not": {"pattern": "\\b[Dd]isable-"}},
+        {"not": {"pattern": "\\b[Rr]emove-"}},
+        {"not": {"pattern": "\\b[Ss]et-"}},
+        {"not": {"pattern": "\\b(?:New|Set|Remove|Update|Add|Revoke|Disable|Enable|Reset|Stop|Start|Restart|Suspend|Resume|Block|Unblock|Grant|Deny|Clear|Move|Rename|Register|Unregister|Install|Uninstall|Publish|Confirm|Approve|Submit|Send|Lock|Unlock|Restore|Undo|Redo|Merge|Split|Close|Dismiss|Resolve)-[A-Z][A-Za-z0-9]+"}},
+        {"not": {"pattern": "\\b[Nn]ew-[Aa]z[Ss]entinel"}},
+        {"not": {"pattern": "\\b[Uu]pdate-[Mm]g"}},
+        {"not": {"pattern": "(?:^|\\s)-[Mm]ethod(?::|\\s+)['\"]?(?:Post|Put|Patch|Delete|Merge|POST|PUT|PATCH|DELETE|MERGE)\\b"}},
+        {"not": {"pattern": "\\bcurl\\b[^\\r\\n]*?(?:\\s-X\\s*|\\s--request(?:=|\\s+))['\"]?(?:POST|PUT|PATCH|DELETE|post|put|patch|delete)\\b"}},
+        {"not": {"pattern": "\\baz(?:\\s+[a-z][a-z0-9-]*){1,6}?\\s+(?:create|update|delete|set|reset|stop|start|restart|revoke|remove|add|assign|deallocate|disable|enable|purge|import|redeploy|rotate|renew|close|dismiss)\\b"}},
+        {"not": {"pattern": "(?m)^\\s*(?:POST|PUT|PATCH|DELETE|MERGE)\\s+(?:https?://|/)"}}
+      ]
+    },
+    "availableEvidence": {
+      "type": "object",
+      "required": ["evidence_id", "available_at", "summary", "source_ref"],
+      "properties": {
+        "evidence_id": {"$ref": "#/$defs/identifier"},
+        "available_at": {"$ref": "#/$defs/timestamp"},
+        "summary": {"$ref": "#/$defs/safeText"},
+        "source_ref": {"$ref": "#/$defs/protectedReference"}
+      },
+      "additionalProperties": false
+    },
+    "containmentCriterionId": {
+      "type": "string",
+      "enum": [
+        "necessity",
+        "proportionality",
+        "timing",
+        "scope",
+        "evidence_preservation",
+        "authority",
+        "alternatives_considered",
+        "reversibility",
+        "critical_service_effects",
+        "side_effects",
+        "post_action_monitoring"
+      ]
+    },
+    "recoveryCriterionId": {
+      "type": "string",
+      "enum": [
+        "password_reset",
+        "credential_rotation",
+        "token_revocation",
+        "session_invalidation",
+        "key_rotation",
+        "secondary_persistence_removal",
+        "patching",
+        "reimage_rebuild_evidence",
+        "backup_integrity",
+        "clean_monitoring_window",
+        "recurrence_check",
+        "independent_control_validation"
+      ]
+    },
+    "criterionAssessment": {
+      "type": "string",
+      "enum": ["satisfied", "partially_satisfied", "missing", "not_applicable"]
+    },
+    "containmentCriterion": {
+      "type": "object",
+      "required": ["criterion_id", "assessment", "evidence_ids", "review_note"],
+      "properties": {
+        "criterion_id": {"$ref": "#/$defs/containmentCriterionId"},
+        "assessment": {"$ref": "#/$defs/criterionAssessment"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "review_note": {"$ref": "#/$defs/safeText"}
+      },
+      "additionalProperties": false
+    },
+    "recoveryCriterion": {
+      "type": "object",
+      "required": ["criterion_id", "assessment", "evidence_ids", "review_note"],
+      "properties": {
+        "criterion_id": {"$ref": "#/$defs/recoveryCriterionId"},
+        "assessment": {"$ref": "#/$defs/criterionAssessment"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "review_note": {"$ref": "#/$defs/safeText"}
+      },
+      "additionalProperties": false
+    },
+    "containmentDecision": {
+      "type": "object",
+      "required": [
+        "decision_id",
+        "decision_time",
+        "observed_action",
+        "decision_state",
+        "authority_state",
+        "criteria",
+        "claim_ids",
+        "gap_ids",
+        "error_ids"
+      ],
+      "properties": {
+        "decision_id": {"$ref": "#/$defs/identifier"},
+        "decision_time": {"$ref": "#/$defs/timestamp"},
+        "observed_action": {"$ref": "#/$defs/safeText"},
+        "decision_state": {
+          "type": "string",
+          "enum": ["observed", "proposed", "not_observed", "unknown"]
+        },
+        "authority_state": {"$ref": "#/$defs/safeText"},
+        "criteria": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/containmentCriterion"}
+        },
+        "scoped_entity_refs": {"$ref": "#/$defs/protectedReferenceArray"},
+        "accounted_entity_refs": {"$ref": "#/$defs/protectedReferenceArray"},
+        "scoped_actions": {"$ref": "#/$defs/idArray"},
+        "accounted_actions": {"$ref": "#/$defs/idArray"},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"}
+      },
+      "additionalProperties": false
+    },
+    "protectedReferenceArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/protectedReference"}
+    },
+    "credentialTokenSessionReview": {
+      "type": "object",
+      "required": [
+        "password_reset_evidence_ids",
+        "credential_rotation_evidence_ids",
+        "token_revocation_evidence_ids",
+        "session_invalidation_evidence_ids",
+        "key_rotation_evidence_ids",
+        "distinction_note"
+      ],
+      "properties": {
+        "password_reset_evidence_ids": {"$ref": "#/$defs/idArray"},
+        "credential_rotation_evidence_ids": {"$ref": "#/$defs/idArray"},
+        "token_revocation_evidence_ids": {"$ref": "#/$defs/idArray"},
+        "session_invalidation_evidence_ids": {"$ref": "#/$defs/idArray"},
+        "key_rotation_evidence_ids": {"$ref": "#/$defs/idArray"},
+        "distinction_note": {"$ref": "#/$defs/safeText"}
+      },
+      "additionalProperties": false
+    },
+    "recoveryClaim": {
+      "type": "object",
+      "required": [
+        "recovery_id",
+        "claim",
+        "claim_state",
+        "criteria",
+        "credential_token_session_review",
+        "claim_ids",
+        "gap_ids",
+        "error_ids"
+      ],
+      "properties": {
+        "recovery_id": {"$ref": "#/$defs/identifier"},
+        "claim": {"$ref": "#/$defs/safeText"},
+        "claim_state": {
+          "type": "string",
+          "enum": ["claimed_validated", "claimed_partial", "claimed_unverified", "not_claimed"]
+        },
+        "criteria": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/recoveryCriterion"}
+        },
+        "credential_token_session_review": {"$ref": "#/$defs/credentialTokenSessionReview"},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"}
+      },
+      "additionalProperties": false
+    },
+    "recommendation": {
+      "type": "object",
+      "required": [
+        "recommendation_id",
+        "recommendation",
+        "human_approval_required",
+        "owner",
+        "evidence_ids",
+        "expected_evidence_after_completion"
+      ],
+      "properties": {
+        "recommendation_id": {"$ref": "#/$defs/identifier"},
+        "recommendation": {"$ref": "#/$defs/safeText"},
+        "human_approval_required": {"type": "boolean", "const": true},
+        "owner": {"$ref": "#/$defs/safeText"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "expected_evidence_after_completion": {"$ref": "#/$defs/safeText"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

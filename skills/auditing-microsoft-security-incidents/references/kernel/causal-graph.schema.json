@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "causal-graph.schema.json",
+  "title": "Causal Graph Kernel",
+  "type": "object",
+  "required": ["graph_id", "graph_likelihood", "analytic_confidence", "nodes", "edges", "root_cause_factors", "attribution"],
+  "properties": {
+    "graph_id": { "$ref": "#/$defs/identifier" },
+    "graph_likelihood": { "$ref": "#/$defs/likelihood" },
+    "analytic_confidence": { "$ref": "#/$defs/analyticConfidence" },
+    "nodes": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/causalNode" } },
+    "edges": { "type": "array", "items": { "$ref": "#/$defs/causalEdge" } },
+    "root_cause_factors": { "type": "array", "minItems": 6, "items": { "$ref": "#/$defs/rootCauseFactor" } },
+    "attribution": { "$ref": "#/$defs/attributionBoundary" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": { "type": "string", "minLength": 1, "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "idArray": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
+    "behaviorBases": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "enum": ["guaranteed_behavior", "configurable_project_policy", "conditional_capability", "explicit_gap"] } },
+    "likelihood": { "type": "string", "enum": ["highly_unlikely", "unlikely", "roughly_even", "likely", "highly_likely", "not_assessed"] },
+    "analyticConfidence": { "type": "string", "enum": ["low", "moderate", "high", "not_assessed"] },
+    "causalNode": {
+      "type": "object",
+      "required": ["node_id", "node_type", "label", "event_time_start", "event_time_end", "evidence_ids", "claim_ids"],
+      "properties": {
+        "node_id": { "$ref": "#/$defs/identifier" },
+        "node_type": { "type": "string", "enum": ["observed_event", "entry_vector", "enabling_condition", "failed_control", "organizational_process", "latent_systemic_condition"] },
+        "label": { "type": "string", "minLength": 1 },
+        "event_time_start": { "$ref": "#/$defs/timestamp" },
+        "event_time_end": { "$ref": "#/$defs/timestamp" },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "claim_ids": { "$ref": "#/$defs/idArray" }
+      },
+      "additionalProperties": false
+    },
+    "causalEdge": {
+      "type": "object",
+      "required": ["edge_id", "from_ref", "to_ref", "edge_type", "relationship_basis", "statement", "cause_time", "effect_time", "time_uncertainty_seconds", "mechanism_evidence_ids", "mechanism_lineage_ids", "corroboration_evidence_ids", "corroboration_lineage_ids", "evidence_ids", "claim_ids", "gap_ids", "error_ids", "behavior_bases", "is_root_cause"],
+      "properties": {
+        "edge_id": { "$ref": "#/$defs/identifier" },
+        "from_ref": { "$ref": "#/$defs/identifier" },
+        "to_ref": { "$ref": "#/$defs/identifier" },
+        "edge_type": { "type": "string", "enum": ["association", "mechanism-supported", "intervention-supported", "counterfactual"] },
+        "relationship_basis": { "type": "string", "enum": ["observed_sequence", "supported_mechanism", "association", "unresolved_inference"] },
+        "statement": { "type": "string", "minLength": 1 },
+        "cause_time": { "$ref": "#/$defs/timestamp" },
+        "effect_time": { "$ref": "#/$defs/timestamp" },
+        "time_uncertainty_seconds": { "type": "integer", "minimum": 0 },
+        "mechanism_evidence_ids": { "$ref": "#/$defs/idArray" },
+        "mechanism_lineage_ids": { "$ref": "#/$defs/idArray" },
+        "corroboration_evidence_ids": { "$ref": "#/$defs/idArray" },
+        "corroboration_lineage_ids": { "$ref": "#/$defs/idArray" },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "claim_ids": { "$ref": "#/$defs/idArray" },
+        "gap_ids": { "$ref": "#/$defs/idArray" },
+        "error_ids": { "$ref": "#/$defs/idArray" },
+        "behavior_bases": { "$ref": "#/$defs/behaviorBases" },
+        "is_root_cause": { "type": "boolean" }
+      },
+      "allOf": [
+        { "if": { "properties": { "edge_type": { "const": "mechanism-supported" } }, "required": ["edge_type"] }, "then": { "properties": { "mechanism_evidence_ids": { "minItems": 1 }, "mechanism_lineage_ids": { "minItems": 1 } } } },
+        { "if": { "properties": { "edge_type": { "enum": ["mechanism-supported", "intervention-supported", "counterfactual"] } }, "required": ["edge_type"] }, "then": { "properties": { "corroboration_evidence_ids": { "minItems": 1 }, "corroboration_lineage_ids": { "minItems": 1 } } } }
+      ],
+      "additionalProperties": false
+    },
+    "rootCauseFactor": {
+      "type": "object",
+      "required": ["role", "status", "node_ref", "edge_ref", "evidence_ids"],
+      "properties": {
+        "role": { "type": "string", "enum": ["proximate_event", "entry_vector", "enabling_technical_condition", "failed_control", "organizational_process_cause", "latent_systemic_condition"] },
+        "status": { "type": "string", "enum": ["present", "gap"] },
+        "node_ref": { "$ref": "#/$defs/identifier" },
+        "edge_ref": { "$ref": "#/$defs/identifier" },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "gap_id": { "$ref": "#/$defs/identifier" }
+      },
+      "additionalProperties": false
+    },
+    "attributionBoundary": {
+      "type": "object",
+      "required": ["technical_identification", "human_attribution_confidence", "intent_confidence", "accountability_confidence", "technical_logs_only", "authorized_human_review"],
+      "properties": {
+        "technical_identification": { "type": "string", "minLength": 1 },
+        "human_attribution_confidence": { "$ref": "#/$defs/analyticConfidence" },
+        "intent_confidence": { "$ref": "#/$defs/analyticConfidence" },
+        "accountability_confidence": { "$ref": "#/$defs/analyticConfidence" },
+        "technical_logs_only": { "type": "boolean" },
+        "authorized_human_review": { "type": "string", "enum": ["not_observed", "observed", "not_applicable"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "technical_logs_only": { "const": true } }, "required": ["technical_logs_only"] },
+          "then": {
+            "properties": {
+              "human_attribution_confidence": { "enum": ["low", "not_assessed"] },
+              "intent_confidence": { "enum": ["low", "not_assessed"] },
+              "accountability_confidence": { "enum": ["low", "not_assessed"] }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

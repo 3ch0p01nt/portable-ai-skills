@@ -1,0 +1,303 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "contract-vocabulary.json",
+  "title": "Microsoft Security Incident Auditor Contract Vocabulary",
+  "description": "The sole authoritative declaration of current contract, schema, and label-map versions; closed vocabularies; section manifests; and default rendering labels.",
+  "x-behavior-basis-sort-order": [
+    "guaranteed_behavior",
+    "configurable_project_policy",
+    "conditional_capability",
+    "explicit_gap"
+  ],
+  "x-default-locale": "en",
+  "x-locale-labels": {
+    "en": {
+      "report_metadata": "Report Metadata",
+      "executive_assessment": "Executive Assessment",
+      "incident_comparison": "Original Incident and Auditor Comparison",
+      "authorization_and_safety": "Authorization and Safety",
+      "coverage_and_limitations": "Coverage and Limitations",
+      "query_and_retrieval": "Query and Retrieval Record",
+      "evidence_ledger": "Evidence Ledger",
+      "entity_resolution": "Entity Resolution",
+      "timeline": "Multi-Clock Timeline",
+      "competing_hypotheses": "Competing Hypotheses",
+      "causal_analysis": "Multi-Factor Causal Analysis",
+      "soc_decision_review": "SOC Decision-Time Review",
+      "detection_audit": "Detection Audit",
+      "automation_provenance": "Automation Provenance",
+      "recurrence_review": "Recurrence and Related-Incident Review",
+      "containment_and_recovery": "Containment and Recovery Review",
+      "privacy_review": "Privacy and Evidence Handling",
+      "business_and_legal_facts": "Business and Legal Fact Packet",
+      "recommendations": "Non-Executable Recommendations",
+      "independent_qa": "Independent QA",
+      "stop_and_errors": "Stop Receipt and Errors"
+    }
+  },
+  "$defs": {
+    "contractVersion": {
+      "type": "string",
+      "const": "2.0.0"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "const": "2.0.0"
+    },
+    "labelMapVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "semanticVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "opaqueText": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Source-defined opaque text. It is not a contract enum and must not be interpreted as one."
+    },
+    "authorizationPurpose": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Recorded approved purpose for this audit. The value is request-specific text, not a contract enum."
+    },
+    "protectedEvidenceStoreReferenceClass": {
+      "type": "string",
+      "enum": ["opaque_non_bearer_locator"],
+      "description": "Closed class for a protected evidence-store reference that is non-secret, non-bearer, and requires independent authorization to resolve."
+    },
+    "reportStatus": {
+      "type": "string",
+      "enum": ["complete", "partial", "blocked", "failed"]
+    },
+    "sectionStatus": {
+      "type": "string",
+      "enum": ["complete", "partial", "blocked", "not_applicable"]
+    },
+    "evidenceCompleteness": {
+      "type": "string",
+      "enum": ["complete", "partial", "insufficient", "not_assessed", "not_applicable"]
+    },
+    "evidenceClass": {
+      "type": "string",
+      "enum": ["fact", "inference", "assumption", "recommendation"]
+    },
+    "behaviorBasis": {
+      "type": "string",
+      "enum": [
+        "guaranteed_behavior",
+        "configurable_project_policy",
+        "conditional_capability",
+        "explicit_gap"
+      ]
+    },
+    "coverageState": {
+      "type": "string",
+      "enum": ["healthy", "degraded", "failed", "unmonitored", "structurally_absent", "unknown"]
+    },
+    "likelihood": {
+      "type": "string",
+      "enum": ["highly_unlikely", "unlikely", "roughly_even", "likely", "highly_likely", "not_assessed"]
+    },
+    "analyticConfidence": {
+      "type": "string",
+      "enum": ["low", "moderate", "high", "not_assessed"]
+    },
+    "queryResponseClassification": {
+      "type": "string",
+      "enum": ["success", "partial", "truncated", "throttled", "failed", "denied", "malformed"]
+    },
+    "socAssessmentLabel": {
+      "type": "string",
+      "enum": [
+        "reasonable_with_available_evidence",
+        "questionable_with_available_evidence",
+        "not_assessable",
+        "outcome_only_hindsight"
+      ]
+    },
+    "qaReviewerVerdict": {
+      "type": "string",
+      "enum": ["pass", "pass_with_limitations", "fail", "not_independent"]
+    },
+    "adjudicationState": {
+      "type": "string",
+      "enum": ["not_required", "pending", "agreed", "resolved", "unresolved"]
+    },
+    "operatingMode": {
+      "type": "string",
+      "enum": ["authorized_live_read", "offline_fixture", "report_reconstruction"]
+    },
+    "errorCategory": {
+      "type": "string",
+      "enum": [
+        "safety_policy_denied",
+        "permission_denied",
+        "license_unavailable",
+        "retention_boundary",
+        "coverage_gap",
+        "throttled",
+        "response_truncated",
+        "partial_response",
+        "malformed_response",
+        "source_unavailable",
+        "unsupported_capability",
+        "invalid_input",
+        "schema_incompatible"
+      ]
+    },
+    "stopCause": {
+      "type": "string",
+      "enum": [
+        "evidence_sufficient",
+        "coverage_boundary",
+        "quota",
+        "budget_exhausted",
+        "circuit_breaker",
+        "authorization_boundary",
+        "unsupported_capability",
+        "source_unavailable",
+        "unresolved_material_frontier",
+        "operator_stop"
+      ]
+    },
+    "automationExecutionState": {
+      "type": "string",
+      "enum": ["recommendation_only", "executed", "failed", "not_observed", "unknown"]
+    },
+    "relationshipBasis": {
+      "type": "string",
+      "enum": ["observed_sequence", "supported_mechanism", "association", "unresolved_inference"]
+    },
+    "sectionId": {
+      "type": "string",
+      "enum": [
+        "report_metadata",
+        "executive_assessment",
+        "incident_comparison",
+        "authorization_and_safety",
+        "coverage_and_limitations",
+        "query_and_retrieval",
+        "evidence_ledger",
+        "entity_resolution",
+        "timeline",
+        "competing_hypotheses",
+        "causal_analysis",
+        "soc_decision_review",
+        "detection_audit",
+        "automation_provenance",
+        "recurrence_review",
+        "containment_and_recovery",
+        "privacy_review",
+        "business_and_legal_facts",
+        "recommendations",
+        "independent_qa",
+        "stop_and_errors"
+      ]
+    },
+    "rootCollectionName": {
+      "type": "string",
+      "enum": [
+        "report_metadata",
+        "incident_summary",
+        "evidence_records",
+        "coverage_receipts",
+        "query_records",
+        "entity_records",
+        "timeline_records",
+        "hypothesis_records",
+        "causal_records",
+        "decision_records",
+        "automation_records",
+        "recurrence_records",
+        "recovery_records",
+        "privacy_records",
+        "business_fact_records",
+        "legal_fact_records",
+        "qa_records",
+        "stop_receipt",
+        "errors"
+      ]
+    },
+    "sectionManifestBase": {
+      "type": "object",
+      "required": [
+        "section_id",
+        "ordinal",
+        "section_status",
+        "evidence_completeness",
+        "behavior_bases",
+        "summary",
+        "collection_refs",
+        "claim_ids",
+        "evidence_ids",
+        "gap_ids",
+        "error_ids"
+      ],
+      "properties": {
+        "section_id": {"$ref": "#/$defs/sectionId"},
+        "ordinal": {"type": "integer", "minimum": 1, "maximum": 21},
+        "section_status": {"$ref": "#/$defs/sectionStatus"},
+        "evidence_completeness": {"$ref": "#/$defs/evidenceCompleteness"},
+        "behavior_bases": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/behaviorBasis"}
+        },
+        "summary": {"type": "string", "minLength": 1},
+        "collection_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/rootCollectionName"}
+        },
+        "claim_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "evidence_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "gap_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "error_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"section_status": {"const": "not_applicable"}},
+            "required": ["section_status"]
+          },
+          "then": {
+            "properties": {"evidence_completeness": {"const": "not_applicable"}}
+          },
+          "else": {
+            "properties": {
+              "evidence_completeness": {
+                "not": {"const": "not_applicable"}
+              }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "section01": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "report_metadata"}, "ordinal": {"const": 1}, "collection_refs": {"const": ["report_metadata"]}}}]},
+    "section02": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "executive_assessment"}, "ordinal": {"const": 2}, "collection_refs": {"const": ["incident_summary", "evidence_records"]}}}]},
+    "section03": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "incident_comparison"}, "ordinal": {"const": 3}, "collection_refs": {"const": ["incident_summary", "decision_records", "evidence_records"]}}}]},
+    "section04": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "authorization_and_safety"}, "ordinal": {"const": 4}, "collection_refs": {"const": ["report_metadata", "query_records", "coverage_receipts", "errors"]}}}]},
+    "section05": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "coverage_and_limitations"}, "ordinal": {"const": 5}, "collection_refs": {"const": ["coverage_receipts", "errors"]}}}]},
+    "section06": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "query_and_retrieval"}, "ordinal": {"const": 6}, "collection_refs": {"const": ["query_records", "coverage_receipts", "errors"]}}}]},
+    "section07": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "evidence_ledger"}, "ordinal": {"const": 7}, "collection_refs": {"const": ["evidence_records"]}}}]},
+    "section08": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "entity_resolution"}, "ordinal": {"const": 8}, "collection_refs": {"const": ["entity_records", "evidence_records"]}}}]},
+    "section09": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "timeline"}, "ordinal": {"const": 9}, "collection_refs": {"const": ["timeline_records", "evidence_records"]}}}]},
+    "section10": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "competing_hypotheses"}, "ordinal": {"const": 10}, "collection_refs": {"const": ["hypothesis_records", "evidence_records"]}}}]},
+    "section11": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "causal_analysis"}, "ordinal": {"const": 11}, "collection_refs": {"const": ["causal_records", "evidence_records"]}}}]},
+    "section12": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "soc_decision_review"}, "ordinal": {"const": 12}, "collection_refs": {"const": ["decision_records", "evidence_records"]}}}]},
+    "section13": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "detection_audit"}, "ordinal": {"const": 13}, "collection_refs": {"const": ["query_records", "coverage_receipts", "evidence_records"]}}}]},
+    "section14": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "automation_provenance"}, "ordinal": {"const": 14}, "collection_refs": {"const": ["automation_records", "evidence_records"]}}}]},
+    "section15": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "recurrence_review"}, "ordinal": {"const": 15}, "collection_refs": {"const": ["recurrence_records", "evidence_records"]}}}]},
+    "section16": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "containment_and_recovery"}, "ordinal": {"const": 16}, "collection_refs": {"const": ["recovery_records", "evidence_records"]}}}]},
+    "section17": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "privacy_review"}, "ordinal": {"const": 17}, "collection_refs": {"const": ["privacy_records"]}}}]},
+    "section18": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "business_and_legal_facts"}, "ordinal": {"const": 18}, "collection_refs": {"const": ["business_fact_records", "legal_fact_records", "evidence_records"]}}}]},
+    "section19": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "recommendations"}, "ordinal": {"const": 19}, "collection_refs": {"const": ["evidence_records"]}}}]},
+    "section20": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "independent_qa"}, "ordinal": {"const": 20}, "collection_refs": {"const": ["qa_records"]}}}]},
+    "section21": {"allOf": [{"$ref": "#/$defs/sectionManifestBase"}, {"properties": {"section_id": {"const": "stop_and_errors"}, "ordinal": {"const": 21}, "collection_refs": {"const": ["stop_receipt", "errors"]}}}]}
+  }
+}

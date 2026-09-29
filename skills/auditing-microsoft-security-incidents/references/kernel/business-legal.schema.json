@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "business-legal.schema.json",
+  "title": "Business Impact and Legal Fact Kernel Packet",
+  "description": "Closed synthetic kernel schema for business-impact facts and counsel-routed legal/regulatory fact packets. It emits records compatible with audit-output businessFactRecord and legalFactRecord definitions.",
+  "type": "object",
+  "required": ["business_fact_records", "legal_fact_records"],
+  "properties": {
+    "packet_state": {
+      "type": "string",
+      "enum": ["facts_provided", "no_facts_provided"]
+    },
+    "valid_for_reporting": {
+      "type": "boolean"
+    },
+    "business_fact_records": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/businessFactKernelRecord"}
+    },
+    "legal_fact_records": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/legalFactKernelRecord"}
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "business_fact_records": {"maxItems": 0},
+          "legal_fact_records": {"maxItems": 0}
+        },
+        "required": ["business_fact_records", "legal_fact_records"]
+      },
+      "then": {
+        "required": ["packet_state", "valid_for_reporting"],
+        "properties": {
+          "packet_state": {"const": "no_facts_provided"},
+          "valid_for_reporting": {"const": false}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"packet_state": {"const": "no_facts_provided"}},
+        "required": ["packet_state"]
+      },
+      "then": {
+        "required": ["valid_for_reporting"],
+        "properties": {
+          "business_fact_records": {"maxItems": 0},
+          "legal_fact_records": {"maxItems": 0},
+          "valid_for_reporting": {"const": false}
+        }
+      }
+    },
+    {
+      "not": {
+        "properties": {
+          "business_fact_records": {"maxItems": 0},
+          "legal_fact_records": {"maxItems": 0}
+        },
+        "required": ["business_fact_records", "legal_fact_records"],
+        "not": {"required": ["packet_state"]}
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "idArray": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+    "stringArray": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "behaviorBases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "enum": ["guaranteed_behavior", "configurable_project_policy", "conditional_capability", "explicit_gap"]}
+    },
+    "protectedReference": {
+      "type": "string",
+      "pattern": "^(?:protected(?:-link|-request|-evidence)?|not-applicable):(?!(?:[a-z0-9._/-]*[./])?(?:bearer|token|secret|password|credential|apikey|api-key|authorization|access_token|access-token)(?:[./]|$))[a-z0-9][a-z0-9._/-]*$"
+    },
+    "chainOfCustodyNote": {
+      "type": "object",
+      "required": ["actor_ref", "preserved_at", "action", "evidence_ref", "hash"],
+      "properties": {
+        "actor_ref": {"type": "string", "minLength": 1},
+        "preserved_at": {"$ref": "#/$defs/timestamp"},
+        "action": {"type": "string", "minLength": 1},
+        "evidence_ref": {"$ref": "#/$defs/protectedReference"},
+        "hash": {
+          "type": "object",
+          "required": ["algorithm", "value"],
+          "properties": {
+            "algorithm": {"type": "string", "enum": ["synthetic-sha256", "synthetic-hmac-sha256"]},
+            "value": {"type": "string", "pattern": "^synthetic:[a-f0-9]{64}$"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "timelineAnchor": {
+      "type": "object",
+      "required": ["timeline_ref", "event_time", "retrieval_time"],
+      "properties": {
+        "timeline_ref": {"$ref": "#/$defs/identifier"},
+        "event_time": {"$ref": "#/$defs/timestamp"},
+        "retrieval_time": {"$ref": "#/$defs/timestamp"}
+      },
+      "additionalProperties": false
+    },
+    "commonOutputCore": {
+      "type": "object",
+      "required": ["claim_ids", "evidence_ids", "gap_ids", "error_ids", "behavior_bases"],
+      "properties": {
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      }
+    },
+    "businessFactKernelRecord": {
+      "allOf": [
+        {"$ref": "#/$defs/commonOutputCore"},
+        {
+          "type": "object",
+          "required": [
+            "business_fact_id", "fact", "determination_boundary", "critical_service", "dependencies",
+            "observed_confidentiality_effect", "observed_integrity_effect", "observed_availability_effect",
+            "recoverability", "affected_parties", "affected_data_categories", "protected_evidence_refs",
+            "chain_of_custody_notes"
+          ],
+          "properties": {
+            "business_fact_id": {"$ref": "#/$defs/identifier"},
+            "fact": {"type": "string", "minLength": 1},
+            "determination_boundary": {"type": "string", "const": "requires_human_business_owner_determination"},
+            "critical_service": {"type": "string", "minLength": 1},
+            "dependencies": {"$ref": "#/$defs/stringArray"},
+            "observed_confidentiality_effect": {"type": "string", "minLength": 1},
+            "observed_integrity_effect": {"type": "string", "minLength": 1},
+            "observed_availability_effect": {"type": "string", "minLength": 1},
+            "recoverability": {"type": "string", "minLength": 1},
+            "affected_parties": {"$ref": "#/$defs/stringArray"},
+            "affected_data_categories": {"$ref": "#/$defs/stringArray"},
+            "protected_evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/protectedReference"}},
+            "chain_of_custody_notes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/chainOfCustodyNote"}},
+            "claim_ids": {"$ref": "#/$defs/idArray"},
+            "evidence_ids": {"$ref": "#/$defs/idArray"},
+            "gap_ids": {"$ref": "#/$defs/idArray"},
+            "error_ids": {"$ref": "#/$defs/idArray"},
+            "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "legalFactKernelRecord": {
+      "allOf": [
+        {"$ref": "#/$defs/commonOutputCore"},
+        {
+          "type": "object",
+          "required": [
+            "legal_fact_id", "fact", "human_route", "determination_boundary", "data_categories_potentially_accessed",
+            "jurisdictions_indicated_by_evidence", "timeline_anchors", "chain_of_custody_notes", "protected_evidence_refs"
+          ],
+          "properties": {
+            "legal_fact_id": {"$ref": "#/$defs/identifier"},
+            "fact": {"type": "string", "minLength": 1},
+            "human_route": {"type": "string", "minLength": 1},
+            "determination_boundary": {"type": "string", "const": "requires_human_counsel_determination"},
+            "data_categories_potentially_accessed": {"$ref": "#/$defs/stringArray"},
+            "jurisdictions_indicated_by_evidence": {"$ref": "#/$defs/stringArray"},
+            "timeline_anchors": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/timelineAnchor"}},
+            "chain_of_custody_notes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/chainOfCustodyNote"}},
+            "protected_evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/protectedReference"}},
+            "claim_ids": {"$ref": "#/$defs/idArray"},
+            "evidence_ids": {"$ref": "#/$defs/idArray"},
+            "gap_ids": {"$ref": "#/$defs/idArray"},
+            "error_ids": {"$ref": "#/$defs/idArray"},
+            "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

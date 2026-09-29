@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "incident-taxonomy.schema.json",
+  "title": "Incident Taxonomy Audit Kernel Record",
+  "$ref": "#/$defs/taxonomyAuditRecord",
+  "$defs": {
+    "auditorVerdict": {
+      "type": "string",
+      "enum": [
+        "true_positive_malicious_activity",
+        "informational_benign_positive_expected_activity",
+        "false_positive_detection_logic",
+        "false_positive_incorrect_data",
+        "inconclusive_evidence_or_coverage_gap"
+      ]
+    },
+    "sourceName": {
+      "type": "string",
+      "enum": [
+        "microsoft_graph_security_incident",
+        "microsoft_graph_security_alert",
+        "microsoft_sentinel_incident_arm",
+        "securityincident_log_analytics_table"
+      ]
+    },
+    "recordedClassification": {
+      "type": "object",
+      "required": [
+        "normalized_value",
+        "candidate_auditor_verdicts",
+        "is_deterministic",
+        "is_lossy",
+        "requires_false_positive_cause",
+        "source_url",
+        "note"
+      ],
+      "properties": {
+        "normalized_value": {
+          "type": "string",
+          "enum": [
+            "recorded_true_positive",
+            "recorded_benign_positive",
+            "recorded_false_positive",
+            "recorded_unassessed"
+          ]
+        },
+        "candidate_auditor_verdicts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/auditorVerdict" }
+        },
+        "is_deterministic": { "type": "boolean" },
+        "is_lossy": { "type": "boolean" },
+        "requires_false_positive_cause": { "type": "boolean" },
+        "source_url": { "type": "string", "pattern": "^https://learn\\.microsoft\\.com/" },
+        "note": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "auditorAssessment": {
+      "type": "object",
+      "required": ["assessment_state", "auditor_verdict", "evidence_ids", "reasoning"],
+      "properties": {
+        "assessment_state": { "type": "string", "enum": ["assessed", "insufficient_evidence"] },
+        "auditor_verdict": { "anyOf": [{ "$ref": "#/$defs/auditorVerdict" }, { "type": "null" }] },
+        "evidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "reasoning": { "anyOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "assessment_state": { "const": "assessed" }
+            },
+            "required": ["assessment_state"]
+          },
+          "then": {
+            "properties": {
+              "auditor_verdict": { "$ref": "#/$defs/auditorVerdict" },
+              "evidence_ids": { "minItems": 1 },
+              "reasoning": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "assessment_state": { "const": "insufficient_evidence" }
+            },
+            "required": ["assessment_state"]
+          },
+          "then": {
+            "properties": {
+              "auditor_verdict": { "type": "null" }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "gapRecord": {
+      "type": "object",
+      "required": ["gap_id", "gap_type", "description", "affected_claim_ids", "follow_up"],
+      "properties": {
+        "gap_id": { "type": "string", "minLength": 1 },
+        "gap_type": {
+          "type": "string",
+          "enum": [
+            "unknown_or_unverified_product_enum",
+            "coverage_gap_controls_verdict",
+            "false_positive_cause_required",
+            "securityincident_table_enum_unverified",
+            "unknown_auditor_evidence_id",
+            "citations_unverified",
+            "invalid_owner_protected_reference"
+          ]
+        },
+        "description": { "type": "string", "minLength": 1 },
+        "product_value": { "type": "string" },
+        "affected_claim_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "follow_up": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "discrepancyRecord": {
+      "type": "object",
+      "required": ["discrepancy_id", "discrepancy_type", "recorded_classification", "auditor_verdict", "product_value", "evidence_ids", "message"],
+      "properties": {
+        "discrepancy_id": { "type": "string", "minLength": 1 },
+        "discrepancy_type": {
+          "type": "string",
+          "enum": [
+            "product_auditor_assessment_disagreement",
+            "severity_mismatch",
+            "status_mismatch",
+            "closure_rationale_gap"
+          ]
+        },
+        "recorded_classification": { "type": "string", "minLength": 1 },
+        "auditor_verdict": { "$ref": "#/$defs/auditorVerdict" },
+        "product_value": { "type": "string", "minLength": 1 },
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "message": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "taxonomyAuditRecord": {
+      "type": "object",
+      "required": [
+        "audit_id",
+        "taxonomy_version",
+        "source",
+        "product_fields",
+        "recorded_classification",
+        "auditor_assessment",
+        "agreement",
+        "severity_history",
+        "coverage_gap_ids",
+        "discrepancies",
+        "gap_records",
+        "claim_ids",
+        "evidence_ids",
+        "behavior_bases"
+      ],
+      "properties": {
+        "audit_id": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$" },
+        "taxonomy_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "source": { "$ref": "#/$defs/sourceName" },
+        "product_fields": {
+          "type": "object",
+          "required": ["severity", "status", "title", "classification", "owner", "comments_present", "duplicate_handling"],
+          "properties": {
+            "severity": { "type": "string", "minLength": 1 },
+            "status": { "type": "string", "minLength": 1 },
+            "title": { "type": "string", "minLength": 1 },
+            "category": { "type": "string", "minLength": 1 },
+            "mitre_mapping": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+            "grouping": { "type": "string", "minLength": 1 },
+            "classification": { "type": "string", "minLength": 1 },
+            "determination": { "type": "string", "minLength": 1 },
+            "classification_reason": { "type": "string", "minLength": 1 },
+            "owner": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(?:protected(?:-link|-request|-evidence)?|not-applicable):(?!(?:[a-z0-9._/-]*[./])?(?:bearer|token|secret|password|credential|apikey|api-key|authorization|access_token|access-token)(?:[./]|$))[a-z0-9][a-z0-9._/-]*$"
+                },
+                { "type": "null" }
+              ]
+            },
+            "comments_present": { "type": "boolean" },
+            "closure_reason": { "type": "string", "minLength": 1 },
+            "duplicate_handling": { "type": "string", "enum": ["not_duplicate", "duplicate_source", "merged", "redirected", "split", "unknown"] }
+          },
+          "additionalProperties": false
+        },
+        "recorded_classification": { "$ref": "#/$defs/recordedClassification" },
+        "auditor_assessment": { "$ref": "#/$defs/auditorAssessment" },
+        "agreement": { "type": "string", "enum": ["agrees", "disagrees", "not_assessed", "indeterminate"] },
+        "severity_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["observed_at", "severity", "evidence_ids"],
+            "properties": {
+              "observed_at": { "type": "string", "format": "date-time" },
+              "severity": { "type": "string", "minLength": 1 },
+              "evidence_ids": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+            },
+            "additionalProperties": false
+          }
+        },
+        "coverage_gap_ids": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "discrepancies": { "type": "array", "items": { "$ref": "#/$defs/discrepancyRecord" } },
+        "gap_records": { "type": "array", "items": { "$ref": "#/$defs/gapRecord" } },
+        "claim_ids": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "evidence_ids": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "behavior_bases": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "enum": ["guaranteed_behavior", "configurable_project_policy", "conditional_capability", "explicit_gap"] } }
+      },
+      "additionalProperties": false
+    },
+    "incidentTaxonomyMap": {
+      "type": "object",
+      "required": ["$schema", "taxonomy_version", "generated_for", "source_urls", "auditor_verdicts", "product_enums", "mappings", "verification_gaps"],
+      "properties": {
+        "$schema": { "type": "string" },
+        "taxonomy_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "generated_for": { "type": "string", "minLength": 1 },
+        "source_urls": { "type": "object" },
+        "auditor_verdicts": { "type": "array", "items": { "$ref": "#/$defs/auditorVerdict" } },
+        "product_enums": { "type": "object" },
+        "mappings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["source", "field", "value", "recorded_classification"],
+            "properties": {
+              "source": { "$ref": "#/$defs/sourceName" },
+              "field": { "type": "string", "minLength": 1 },
+              "value": { "type": "string", "minLength": 1 },
+              "recorded_classification": { "$ref": "#/$defs/recordedClassification" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "verification_gaps": { "type": "array" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

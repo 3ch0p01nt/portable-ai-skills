@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "automation-provenance.schema.json",
+  "title": "Automation provenance and decision-authorship kernel record",
+  "type": "object",
+  "required": [
+    "automation_id",
+    "action",
+    "action_time",
+    "source_product",
+    "actor_type",
+    "actor_ref",
+    "actor",
+    "running_as_actor_type",
+    "running_as_actor_ref",
+    "is_human_actor",
+    "authorship_class",
+    "unknown_authorship_explicit",
+    "analyst_reasoning_credit_allowed",
+    "ai_generated_content",
+    "evidence_trust_label",
+    "playbook_rule_version",
+    "version",
+    "execution_state",
+    "recommendation",
+    "override",
+    "retry",
+    "handoff_chain",
+    "interactive_human_action_evidence_ids",
+    "input_evidence_ids",
+    "output_summary",
+    "human_action",
+    "claim_ids",
+    "gap_ids",
+    "error_ids",
+    "behavior_bases"
+  ],
+  "properties": {
+    "automation_id": {"$ref": "#/$defs/identifier"},
+    "action": {"type": "string", "minLength": 1},
+    "action_time": {"$ref": "#/$defs/timestamp"},
+    "source_product": {"type": "string", "minLength": 1},
+    "actor_type": {"$ref": "#/$defs/actorType"},
+    "actor_ref": {"$ref": "#/$defs/protectedReference"},
+    "actor": {"type": "string", "minLength": 1},
+    "running_as_actor_type": {"$ref": "#/$defs/actorType"},
+    "running_as_actor_ref": {"$ref": "#/$defs/protectedReference"},
+    "is_human_actor": {"type": "boolean"},
+    "authorship_class": {"$ref": "#/$defs/authorshipClass"},
+    "unknown_authorship_explicit": {"type": "boolean"},
+    "analyst_reasoning_credit_allowed": {"type": "boolean"},
+    "ai_generated_content": {"type": "boolean"},
+    "evidence_trust_label": {"enum": ["untrusted_evidence", "untrusted_ai_generated_evidence"]},
+    "playbook_rule_version": {"$ref": "#/$defs/playbookRuleVersion"},
+    "version": {"type": "string", "minLength": 1},
+    "execution_state": {"enum": ["recommendation_only", "executed", "failed", "not_observed", "unknown"]},
+    "recommendation": {"$ref": "#/$defs/statusOrRecommendation"},
+    "override": {"$ref": "#/$defs/statusOrOverride"},
+    "retry": {"$ref": "#/$defs/retry"},
+    "handoff_chain": {"type": "array", "items": {"$ref": "#/$defs/handoff"}},
+    "interactive_human_action_evidence_ids": {"$ref": "#/$defs/idArray"},
+    "input_evidence_ids": {"$ref": "#/$defs/idArray"},
+    "output_summary": {"type": "string", "minLength": 1},
+    "human_action": {"type": "string", "minLength": 1},
+    "claim_ids": {"$ref": "#/$defs/idArray"},
+    "gap_ids": {"$ref": "#/$defs/idArray"},
+    "error_ids": {"$ref": "#/$defs/idArray"},
+    "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"actor_type": {"enum": ["service principal", "managed identity", "Sentinel automation rule", "Logic App playbook", "Defender AIR/automated investigation", "Copilot for Security or other AI assistant"]}}, "required": ["actor_type"]},
+      "then": {"properties": {"is_human_actor": {"const": false}, "authorship_class": {"not": {"const": "human-authored"}}}}
+    },
+    {
+      "if": {"properties": {"actor_type": {"const": "unknown"}}, "required": ["actor_type"]},
+      "then": {"properties": {"authorship_class": {"const": "unknown"}, "unknown_authorship_explicit": {"const": true}, "is_human_actor": {"const": false}}}
+    },
+    {
+      "if": {"properties": {"authorship_class": {"const": "human-authored"}}, "required": ["authorship_class"]},
+      "then": {"properties": {"actor_type": {"const": "user"}, "is_human_actor": {"const": true}, "interactive_human_action_evidence_ids": {"minItems": 1}, "analyst_reasoning_credit_allowed": {"const": true}}}
+    },
+    {
+      "if": {"properties": {"authorship_class": {"const": "unverified_actor"}}, "required": ["authorship_class"]},
+      "then": {"properties": {"is_human_actor": {"const": false}, "unknown_authorship_explicit": {"const": true}, "analyst_reasoning_credit_allowed": {"const": false}, "interactive_human_action_evidence_ids": {"maxItems": 0}}}
+    },
+    {
+      "if": {"properties": {"ai_generated_content": {"const": true}}, "required": ["ai_generated_content"]},
+      "then": {"properties": {"evidence_trust_label": {"const": "untrusted_ai_generated_evidence"}, "analyst_reasoning_credit_allowed": {"const": false}}}
+    },
+    {
+      "if": {"properties": {"authorship_class": {"const": "human-overridden-automation"}}, "required": ["authorship_class"]},
+      "then": {"properties": {"recommendation": {"required": ["recommended_action", "recommended_at", "recommendation_ref"]}, "override": {"required": ["override_action", "overridden_by_actor_type", "overridden_by_ref", "overridden_at", "override_reason_ref"]}}}
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "protectedReference": {"type": "string", "minLength": 1, "pattern": "^(?:protected(?:-link|-request|-evidence)?|not-applicable):(?!(?:[a-z0-9._/-]*[./])?(?:bearer|token|secret|password|credential|apikey|api-key|authorization|access_token|access-token)(?:[./]|$))[a-z0-9][a-z0-9._/-]*$"},
+    "idArray": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+    "behaviorBases": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["guaranteed_behavior", "configurable_project_policy", "conditional_capability", "explicit_gap"]}},
+    "actorType": {"enum": ["user", "service principal", "managed identity", "Sentinel automation rule", "Logic App playbook", "Defender AIR/automated investigation", "Copilot for Security or other AI assistant", "unknown"]},
+    "authorshipClass": {"enum": ["human-authored", "automation-authored", "automation-recommended-human-approved", "human-overridden-automation", "automation-retried", "inherited-via-playbook", "unverified_actor", "unknown"]},
+    "playbookRuleVersion": {
+      "type": "object",
+      "required": ["identity_ref", "effective_version_ref", "current_version_ref", "effective_version", "current_version", "version_selection"],
+      "properties": {
+        "identity_ref": {"$ref": "#/$defs/protectedReference"},
+        "effective_version_ref": {"$ref": "#/$defs/protectedReference"},
+        "current_version_ref": {"$ref": "#/$defs/protectedReference"},
+        "effective_version": {"type": "string", "minLength": 1},
+        "current_version": {"type": "string", "minLength": 1},
+        "version_selection": {"enum": ["effective_at_action_time", "current_version_used_effective_missing", "not_observed"]}
+      },
+      "additionalProperties": false
+    },
+    "statusOnly": {
+      "type": "object",
+      "required": ["status", "detail"],
+      "properties": {"status": {"const": "not_observed"}, "detail": {"type": "string", "minLength": 1}},
+      "additionalProperties": false
+    },
+    "recommendation": {
+      "type": "object",
+      "required": ["recommended_action", "recommended_at", "recommendation_ref"],
+      "properties": {"recommended_action": {"type": "string", "minLength": 1}, "recommended_at": {"$ref": "#/$defs/timestamp"}, "recommendation_ref": {"$ref": "#/$defs/protectedReference"}},
+      "additionalProperties": false
+    },
+    "override": {
+      "type": "object",
+      "required": ["override_action", "overridden_by_actor_type", "overridden_by_ref", "overridden_at", "override_reason_ref"],
+      "properties": {"override_action": {"type": "string", "minLength": 1}, "overridden_by_actor_type": {"$ref": "#/$defs/actorType"}, "overridden_by_ref": {"$ref": "#/$defs/protectedReference"}, "overridden_at": {"$ref": "#/$defs/timestamp"}, "override_reason_ref": {"$ref": "#/$defs/protectedReference"}},
+      "additionalProperties": false
+    },
+    "statusOrRecommendation": {"oneOf": [{"$ref": "#/$defs/statusOnly"}, {"$ref": "#/$defs/recommendation"}]},
+    "statusOrOverride": {"oneOf": [{"$ref": "#/$defs/statusOnly"}, {"$ref": "#/$defs/override"}]},
+    "retry": {
+      "type": "object",
+      "required": ["retry_count", "retry_state"],
+      "properties": {"retry_count": {"type": "integer", "minimum": 0}, "retry_state": {"enum": ["observed", "not_observed"]}},
+      "additionalProperties": false
+    },
+    "handoff": {
+      "type": "object",
+      "required": ["from_actor_ref", "to_actor_ref", "handoff_time", "basis"],
+      "properties": {"from_actor_ref": {"$ref": "#/$defs/protectedReference"}, "to_actor_ref": {"$ref": "#/$defs/protectedReference"}, "handoff_time": {"$ref": "#/$defs/timestamp"}, "basis": {"type": "string", "minLength": 1}},
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "interfaceVersion": "2.0.0",
+  "transportImplemented": true,
+  "purpose": "Reference contract for optional read-only provider adapters.",
+  "requiredInputs": [
+    "typed_request_intent",
+    "trusted_auth_context_provider",
+    "trusted_transport_contract",
+    "protected_store",
+    "clock",
+    "sleeper"
+  ],
+  "requiredEnvelopeFields": [
+    "adapter",
+    "status",
+    "queryLedger",
+    "protectedResponseRef",
+    "times",
+    "pagination",
+    "counts",
+    "integrity",
+    "throttling",
+    "schema",
+    "lineage",
+    "coverage",
+    "errors",
+    "provenance"
+  ],
+  "constraints": [
+    "mandatory authenticated transport matching trusted-transport-interface.json",
+    "no default unauthenticated HTTP transport",
+    "hard cancellation and deadline support are mandatory",
+    "no mutation operations",
+    "no caller-supplied trust material",
+    "auth context must match auth-context-provider-interface.json exactly",
+    "tenant context is represented only by a protected non-bearer reference",
+    "all required provenance fields use protected references or explicit unknown/not_applicable states",
+    "explicit unsupported_capability until separately approved"
+  ]
+}

@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "baseline.schema.json",
+  "title": "Baseline Kernel Records",
+  "description": "Closed Task 6 baseline and peer-comparison records for commercial Microsoft security incident auditing.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "baseline_definition",
+    "poisoning_assessment",
+    "baseline_confidence",
+    "peer_comparison_result",
+    "gap_records"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "const": "1.0.0"},
+    "baseline_definition": {"$ref": "#/$defs/baselineDefinition"},
+    "poisoning_assessment": {"$ref": "#/$defs/poisoningAssessment"},
+    "baseline_confidence": {"$ref": "#/$defs/baselineConfidence"},
+    "peer_comparison_result": {"$ref": "#/$defs/peerComparisonResult"},
+    "gap_records": {"type": "array", "items": {"$ref": "#/$defs/baselineGapRecord"}}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "behaviorBases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "enum": ["guaranteed_behavior", "configurable_project_policy", "conditional_capability", "explicit_gap"]}
+    },
+    "idArray": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+    "stringArray": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "analyticConfidence": {"type": "string", "enum": ["low", "moderate", "high", "not_assessed"]},
+    "boundedWindow": {
+      "type": "object",
+      "required": ["start_inclusive", "end_exclusive"],
+      "properties": {
+        "start_inclusive": {"$ref": "#/$defs/timestamp"},
+        "end_exclusive": {"$ref": "#/$defs/timestamp"}
+      },
+      "additionalProperties": false
+    },
+    "metric": {
+      "type": "object",
+      "required": ["name", "unit", "aggregation"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "unit": {"type": "string", "minLength": 1},
+        "aggregation": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "peerGroup": {
+      "type": "object",
+      "required": ["peer_group_id", "definition", "membership_basis", "members", "exclusions", "behavior_bases"],
+      "properties": {
+        "peer_group_id": {"$ref": "#/$defs/identifier"},
+        "definition": {"type": "string", "minLength": 1},
+        "membership_basis": {"type": "string", "minLength": 1},
+        "members": {"$ref": "#/$defs/idArray"},
+        "exclusions": {"$ref": "#/$defs/stringArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": false
+    },
+    "coverage": {
+      "type": "object",
+      "required": ["expected_days", "observed_days", "coverage_percent", "missing_days", "telemetry_gaps"],
+      "properties": {
+        "expected_days": {"type": "integer", "minimum": 0},
+        "observed_days": {"type": "integer", "minimum": 0},
+        "coverage_percent": {"type": "number", "minimum": 0, "maximum": 1},
+        "missing_days": {"$ref": "#/$defs/stringArray"},
+        "telemetry_gaps": {"$ref": "#/$defs/stringArray"}
+      },
+      "additionalProperties": false
+    },
+    "baselineDefinition": {
+      "type": "object",
+      "required": ["baseline_definition_id", "entity_ref", "source_id", "metric", "baseline_window", "sample_size", "peer_group", "coverage", "ledger_item_ids", "behavior_bases"],
+      "properties": {
+        "baseline_definition_id": {"$ref": "#/$defs/identifier"},
+        "entity_ref": {"$ref": "#/$defs/identifier"},
+        "source_id": {"$ref": "#/$defs/identifier"},
+        "metric": {"$ref": "#/$defs/metric"},
+        "baseline_window": {"$ref": "#/$defs/boundedWindow"},
+        "sample_size": {"type": "integer", "minimum": 0},
+        "peer_group": {"$ref": "#/$defs/peerGroup"},
+        "coverage": {"$ref": "#/$defs/coverage"},
+        "ledger_item_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": false
+    },
+    "poisoningAssessment": {
+      "type": "object",
+      "required": ["poisoning_assessment_id", "baseline_definition_id", "earliest_suspected_compromise", "detection_time", "overlaps_possible_dwell", "poisoning_state", "confidence_cap", "rationale", "behavior_bases"],
+      "properties": {
+        "poisoning_assessment_id": {"$ref": "#/$defs/identifier"},
+        "baseline_definition_id": {"$ref": "#/$defs/identifier"},
+        "earliest_suspected_compromise": {"$ref": "#/$defs/timestamp"},
+        "detection_time": {"$ref": "#/$defs/timestamp"},
+        "overlaps_possible_dwell": {"type": "boolean"},
+        "poisoning_state": {"type": "string", "enum": ["not_poisoned", "potentially_poisoned", "not_assessed"]},
+        "confidence_cap": {"type": "string", "enum": ["none", "low", "moderate", "high"]},
+        "rationale": {"type": "string", "minLength": 1},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": false
+    },
+    "evidenceRecordProjection": {
+      "type": "object",
+      "required": ["evidence_id", "material_claim_id", "evidence_class", "source_id", "source_type", "provenance", "raw_ref", "normalized_value", "transformation", "transformation_version", "source_confidence", "baseline_confidence", "upstream_evidence_ids", "limitations", "handling_marking", "claim_ids", "behavior_bases"],
+      "properties": {
+        "evidence_id": {"$ref": "#/$defs/identifier"},
+        "material_claim_id": {"$ref": "#/$defs/identifier"},
+        "evidence_class": {"type": "string", "const": "fact"},
+        "source_id": {"$ref": "#/$defs/identifier"},
+        "source_type": {"type": "string", "minLength": 1},
+        "provenance": {"type": "string", "minLength": 1},
+        "raw_ref": {"type": "string", "minLength": 1},
+        "normalized_value": {"type": "object"},
+        "transformation": {"type": "string", "minLength": 1},
+        "transformation_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "source_confidence": {"$ref": "#/$defs/analyticConfidence"},
+        "baseline_confidence": {"$ref": "#/$defs/analyticConfidence"},
+        "upstream_evidence_ids": {"$ref": "#/$defs/idArray"},
+        "limitations": {"$ref": "#/$defs/stringArray"},
+        "handling_marking": {"type": "string", "minLength": 1},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "baselineConfidence": {
+      "type": "object",
+      "required": ["baseline_confidence_id", "baseline_definition_id", "analytic_confidence", "capped_by_poisoning", "cap_reason", "sample_size_state", "coverage_state", "gap_ids", "evidence_ids", "behavior_bases", "rationale", "evidence_record_projection"],
+      "properties": {
+        "baseline_confidence_id": {"$ref": "#/$defs/identifier"},
+        "baseline_definition_id": {"$ref": "#/$defs/identifier"},
+        "analytic_confidence": {"$ref": "#/$defs/analyticConfidence"},
+        "capped_by_poisoning": {"type": "boolean"},
+        "cap_reason": {"type": "string", "minLength": 1},
+        "sample_size_state": {"type": "string", "enum": ["meets_minimum", "below_minimum"]},
+        "coverage_state": {"type": "string", "enum": ["meets_minimum", "below_minimum"]},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"},
+        "rationale": {"type": "string", "minLength": 1},
+        "evidence_record_projection": {"$ref": "#/$defs/evidenceRecordProjection"}
+      },
+      "additionalProperties": false
+    },
+    "peerComparisonResult": {
+      "type": "object",
+      "required": ["comparison_id", "baseline_definition_id", "observed_entity_ref", "peer_group_id", "metric", "observed_value", "baseline_value", "comparison_direction", "rarity_state", "analytic_role", "verdict_boundary", "ledger_item_ids", "evidence_ids", "claim_ids", "behavior_bases"],
+      "properties": {
+        "comparison_id": {"$ref": "#/$defs/identifier"},
+        "baseline_definition_id": {"$ref": "#/$defs/identifier"},
+        "observed_entity_ref": {"$ref": "#/$defs/identifier"},
+        "peer_group_id": {"$ref": "#/$defs/identifier"},
+        "metric": {"type": "string", "minLength": 1},
+        "observed_value": {"type": "number"},
+        "baseline_value": {"type": "number"},
+        "comparison_direction": {"type": "string", "enum": ["above_baseline", "below_baseline", "matches_baseline"]},
+        "rarity_state": {"type": "string", "enum": ["first_seen", "rare", "common", "not_assessed"]},
+        "analytic_role": {"type": "string", "enum": ["lead", "context"]},
+        "verdict_boundary": {"type": "string", "minLength": 1},
+        "ledger_item_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": false
+    },
+    "baselineGapRecord": {
+      "type": "object",
+      "required": ["gap_id", "gap_type", "description", "behavior_bases"],
+      "properties": {
+        "gap_id": {"$ref": "#/$defs/identifier"},
+        "gap_type": {"type": "string", "enum": ["missing_days", "telemetry_gap"]},
+        "description": {"type": "string", "minLength": 1},
+        "affected_days": {"$ref": "#/$defs/stringArray"},
+        "affected_telemetry": {"$ref": "#/$defs/stringArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

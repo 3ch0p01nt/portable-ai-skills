@@ -1,0 +1,341 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "decision-snapshot.schema.json",
+  "title": "Analyst Decision-Time Evidence Snapshot",
+  "description": "Closed schema for reconstructing SOC analyst decision-time evidence without hindsight bias. The core decisionRecord fields are compatible with audit-output.schema.json#/$defs/decisionRecord.",
+  "type": "object",
+  "required": [
+    "decision_id",
+    "decision_time",
+    "decision_type",
+    "actor_type",
+    "soc_assessment_label",
+    "alert_payload_version_available",
+    "queue_state",
+    "automation_results_available",
+    "notes_comments_present",
+    "playbook_version",
+    "telemetry_available",
+    "later_evidence_excluded",
+    "available_evidence_ids",
+    "later_evidence_ids",
+    "reasonable_analyst_assessment",
+    "process_defects",
+    "individual_fault",
+    "timeliness_quality_pairings",
+    "cognitive_bias_flags",
+    "finding_assessments",
+    "claim_ids",
+    "gap_ids",
+    "error_ids",
+    "behavior_bases"
+  ],
+  "properties": {
+    "decision_id": { "$ref": "#/$defs/identifier" },
+    "decision_time": { "$ref": "#/$defs/timestamp" },
+    "decision_type": {
+      "type": "string",
+      "enum": [
+        "assign",
+        "severity_change",
+        "classify",
+        "escalate",
+        "contain_request",
+        "close",
+        "reopen"
+      ]
+    },
+    "actor_type": {
+      "type": "string",
+      "enum": ["human_analyst", "automation", "hybrid", "unknown"]
+    },
+    "soc_assessment_label": {
+      "type": "string",
+      "enum": [
+        "reasonable_with_available_evidence",
+        "questionable_with_available_evidence",
+        "not_assessable",
+        "outcome_only_hindsight"
+      ]
+    },
+    "alert_payload_version_available": { "type": "string", "minLength": 1 },
+    "queue_state": { "$ref": "#/$defs/queueState" },
+    "automation_results_available": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/automationResult" }
+    },
+    "notes_comments_present": { "type": "boolean" },
+    "playbook_version": { "type": "string", "minLength": 1 },
+    "telemetry_available": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/telemetryItem" }
+    },
+    "later_evidence_excluded": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/excludedEvidence" }
+    },
+    "available_evidence_ids": { "$ref": "#/$defs/idArray" },
+    "later_evidence_ids": { "$ref": "#/$defs/idArray" },
+    "reasonable_analyst_assessment": { "$ref": "#/$defs/reasonableAnalystAssessment" },
+    "process_defects": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/processDefect" }
+    },
+    "individual_fault": { "$ref": "#/$defs/individualFault" },
+    "timeliness_quality_pairings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/timelinessQualityPairing" }
+    },
+    "cognitive_bias_flags": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/cognitiveBiasFlag" }
+    },
+    "finding_assessments": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/findingAssessment" }
+    },
+    "claim_ids": { "$ref": "#/$defs/idArray" },
+    "gap_ids": { "$ref": "#/$defs/idArray" },
+    "error_ids": { "$ref": "#/$defs/idArray" },
+    "behavior_bases": { "$ref": "#/$defs/behaviorBases" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "idArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "behaviorBases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "guaranteed_behavior",
+          "configurable_project_policy",
+          "conditional_capability",
+          "explicit_gap"
+        ]
+      }
+    },
+    "queueState": {
+      "type": "object",
+      "required": [
+        "queue_depth",
+        "oldest_alert_age_minutes",
+        "active_analysts",
+        "source_evidence_ids"
+      ],
+      "properties": {
+        "queue_depth": { "type": "integer", "minimum": 0 },
+        "oldest_alert_age_minutes": { "type": "integer", "minimum": 0 },
+        "active_analysts": { "type": "integer", "minimum": 0 },
+        "source_evidence_ids": { "$ref": "#/$defs/idArray" }
+      },
+      "additionalProperties": false
+    },
+    "automationResult": {
+      "type": "object",
+      "required": [
+        "automation_id",
+        "version",
+        "availability_time",
+        "evidence_id",
+        "summary"
+      ],
+      "properties": {
+        "automation_id": { "$ref": "#/$defs/identifier" },
+        "version": { "type": "string", "minLength": 1 },
+        "availability_time": { "$ref": "#/$defs/timestamp" },
+        "evidence_id": { "$ref": "#/$defs/identifier" },
+        "summary": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "telemetryItem": {
+      "type": "object",
+      "required": [
+        "evidence_id",
+        "source_id",
+        "telemetry_type",
+        "event_time",
+        "availability_time",
+        "availability_kind",
+        "summary"
+      ],
+      "properties": {
+        "evidence_id": { "$ref": "#/$defs/identifier" },
+        "source_id": { "$ref": "#/$defs/identifier" },
+        "telemetry_type": { "type": "string", "minLength": 1 },
+        "event_time": { "$ref": "#/$defs/timestamp" },
+        "availability_time": { "$ref": "#/$defs/timestamp" },
+        "availability_kind": {
+          "type": "string",
+          "enum": [
+            "ingestion_time",
+            "first_visible_time",
+            "retrieval_time",
+            "provided_time"
+          ]
+        },
+        "summary": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "excludedEvidence": {
+      "type": "object",
+      "required": [
+        "evidence_id",
+        "availability_time",
+        "exclusion_reason"
+      ],
+      "properties": {
+        "evidence_id": { "$ref": "#/$defs/identifier" },
+        "availability_time": { "$ref": "#/$defs/timestamp" },
+        "exclusion_reason": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "reasonableAnalystAssessment": {
+      "type": "object",
+      "required": ["label", "rationale", "cited_evidence_ids"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "enum": [
+            "reasonable_with_available_evidence",
+            "questionable_with_available_evidence",
+            "not_assessable",
+            "outcome_only_hindsight"
+          ]
+        },
+        "rationale": { "type": "string", "minLength": 1 },
+        "cited_evidence_ids": { "$ref": "#/$defs/idArray" }
+      },
+      "additionalProperties": false
+    },
+    "processDefect": {
+      "type": "object",
+      "required": [
+        "defect_id",
+        "defect_type",
+        "summary",
+        "cited_evidence_ids"
+      ],
+      "properties": {
+        "defect_id": { "$ref": "#/$defs/identifier" },
+        "defect_type": {
+          "type": "string",
+          "enum": [
+            "telemetry",
+            "playbook",
+            "training",
+            "workload",
+            "tooling",
+            "handoff",
+            "automation",
+            "queue",
+            "staffing"
+          ]
+        },
+        "summary": { "type": "string", "minLength": 1 },
+        "cited_evidence_ids": { "$ref": "#/$defs/idArray" }
+      },
+      "additionalProperties": false
+    },
+    "individualFault": {
+      "type": "object",
+      "required": [
+        "fault_asserted",
+        "fault_supported",
+        "available_information_evidence_ids",
+        "required_action_documented_evidence_ids",
+        "rationale"
+      ],
+      "properties": {
+        "fault_asserted": { "type": "boolean" },
+        "fault_supported": { "type": "boolean" },
+        "available_information_evidence_ids": { "$ref": "#/$defs/idArray" },
+        "required_action_documented_evidence_ids": { "$ref": "#/$defs/idArray" },
+        "rationale": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "timelinessQualityPairing": {
+      "type": "object",
+      "required": [
+        "metric_id",
+        "metric_type",
+        "value",
+        "quality_indicator_ids",
+        "cited_evidence_ids"
+      ],
+      "properties": {
+        "metric_id": { "$ref": "#/$defs/identifier" },
+        "metric_type": { "type": "string", "minLength": 1 },
+        "value": { "type": "number" },
+        "quality_indicator_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        },
+        "cited_evidence_ids": { "$ref": "#/$defs/idArray" }
+      },
+      "additionalProperties": false
+    },
+    "cognitiveBiasFlag": {
+      "type": "object",
+      "required": ["bias_type", "summary", "cited_evidence_ids"],
+      "properties": {
+        "bias_type": {
+          "type": "string",
+          "enum": [
+            "anchoring",
+            "premature_closure",
+            "automation_bias",
+            "alert_fatigue",
+            "handoff_loss"
+          ]
+        },
+        "summary": { "type": "string", "minLength": 1 },
+        "cited_evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "findingAssessment": {
+      "type": "object",
+      "required": [
+        "finding_id",
+        "summary",
+        "cited_evidence_ids",
+        "valid_for_decision_time_assessment",
+        "invalid_reason"
+      ],
+      "properties": {
+        "finding_id": { "$ref": "#/$defs/identifier" },
+        "summary": { "type": "string", "minLength": 1 },
+        "cited_evidence_ids": { "$ref": "#/$defs/idArray" },
+        "valid_for_decision_time_assessment": { "type": "boolean" },
+        "invalid_reason": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

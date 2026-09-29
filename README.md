@@ -1,6 +1,6 @@
 # Portable AI Skills
 
-Portable technical AI skills for compatible skill loaders. The repository includes KQL cloud hunting, identity-threat investigation, and authorized Cisco network-device incident-response workflows without embedding endpoints, tenant identifiers, credentials, or deployment-specific secrets.
+Portable technical AI skills for compatible skill loaders. The repository includes KQL cloud hunting, identity-threat investigation, and authorized Cisco network-device incident-response workflows without embedding tenant identifiers, credentials, or deployment-specific secrets. Most skills contain no endpoints; the HAVOC auditor pins public Microsoft service hosts in a read-only allowlist for Graph, ARM, and Log Analytics across commercial and US Gov DoD clouds.
 
 ## Installed Skills
 
@@ -45,6 +45,18 @@ Capabilities:
 - Treats MDI/MDE as sensor evidence and never claims direct host clearance without host artifacts.
 - Remains read-only; containment and tenant changes require separate human authorization.
 
+### auditing-microsoft-security-incidents
+
+Audit Microsoft Defender XDR and Microsoft Sentinel incidents with an evidence-bounded, read-only HAVOC incident auditor that challenges classifications, reviews coverage, reconstructs analyst decisions, and separates evidence from hypotheses.
+
+Capabilities:
+
+- Routes incident, alert, entity, timeline, detection, SOC handling, recurrence, containment, recovery, privacy, and quality-assurance questions through a shared evidence kernel.
+- Uses bounded read-only adapters for Microsoft Graph security, Azure Resource Manager, Log Analytics, Resource Graph, and Purview when explicitly authorized.
+- Pins only public Microsoft service hosts in an allowlist for commercial and US Gov DoD Graph, ARM, and Log Analytics access; it includes no tenant identifiers, credentials, API keys, or deployment-specific secrets.
+- Treats missing telemetry as a coverage gap, not proof of absence.
+- Produces reports without modifying incidents, alerts, identities, devices, rules, connectors, tickets, recovery state, or tenant configuration.
+
 ### Microsoft identity hunting skill family
 
 Seven coordinated, read-only skills decompose complex Microsoft identity attacks into evidence-bounded specialist lanes:
@@ -74,6 +86,7 @@ New-Item -ItemType Directory -Force $ProjectSkills | Out-Null
 Copy-Item -Recurse -Force '.\skills\kql-m365-azure-hunting' $ProjectSkills
 Copy-Item -Recurse -Force '.\skills\cisco-device-compromise-investigation' $ProjectSkills
 Copy-Item -Recurse -Force '.\skills\identity-threat-investigator' $ProjectSkills
+Copy-Item -Recurse -Force '.\skills\auditing-microsoft-security-incidents' $ProjectSkills
 Copy-Item -Recurse -Force '.\skills\identity-signin-anomaly-hunter' $ProjectSkills
 Copy-Item -Recurse -Force '.\skills\conditional-access-exposure-analyzer' $ProjectSkills
 Copy-Item -Recurse -Force '.\skills\m365-phishing-conversion-hunter' $ProjectSkills
@@ -81,10 +94,10 @@ Copy-Item -Recurse -Force '.\skills\oauth-app-abuse-hunter' $ProjectSkills
 Copy-Item -Recurse -Force '.\skills\service-principal-mail-hunter' $ProjectSkills
 Copy-Item -Recurse -Force '.\skills\cloud-privilege-persistence-hunter' $ProjectSkills
 Copy-Item -Recurse -Force '.\skills\identity-spear-phishing-hunter' $ProjectSkills
-Test-Path (Join-Path $ProjectSkills 'cisco-device-compromise-investigation\SKILL.md')
+Test-Path (Join-Path $ProjectSkills 'auditing-microsoft-security-incidents\SKILL.md')
 ```
 
-The final command must return `True`. Do not replace `$ProjectRoot` or `$ProjectSkills` with example placeholder text.
+The final command must return `True`. Change the final path if you are verifying a different copied skill. Do not replace `$ProjectRoot` or `$ProjectSkills` with example placeholder text.
 
 ### Verify skill discovery
 
@@ -142,6 +155,12 @@ portable-ai-skills/
       rules/
       schemas/
       scripts/
+    auditing-microsoft-security-incidents/
+      SKILL.md
+      references/
+      scripts/
+      docs/
+        operator/
     identity-signin-anomaly-hunter/
       SKILL.md
     conditional-access-exposure-analyzer/
@@ -206,7 +225,7 @@ python skills/cisco-device-compromise-investigation/scripts/check_sources.py --s
 - No credentials are included.
 - No tenant-specific IDs are included.
 - No AOAI endpoints, API keys, deployment names, or model-host secrets are included.
-- No live Azure or M365 validation scripts are included in v1.
+- No live Azure or M365 validation scripts are included in v1, except the HAVOC auditor read-only adapters that require explicit caller authorization and injected trusted transport/auth providers.
 - The AI must state assumptions when schema or connector context is missing.
 - Sentinel tables depend on enabled connectors.
 - Device Query is a separate KQL-like surface from Sentinel and Defender Advanced Hunting.
@@ -215,6 +234,7 @@ python skills/cisco-device-compromise-investigation/scripts/check_sources.py --s
 - Cisco evidence and reports can contain sensitive incident data; sanitize them and never publish real evidence or secrets.
 - Cisco tooling processes local artifacts only and never connects to a live device.
 - Identity investigations are read-only and do not modify accounts, sessions, credentials, devices, applications, consent, Conditional Access, or tenant configuration.
+- HAVOC incident audits are read-only and allow only pinned public Microsoft service hosts for commercial and US Gov DoD Graph, ARM, and Log Analytics reads.
 - MDI, MDE, and Advanced Hunting are sensor-fed evidence sources, not substitutes for unavailable host, domain-controller, AD FS, memory, disk, registry, or packet artifacts.
 - Empty identity-query results are inconclusive until source availability, schema, ingestion, license, and retention are validated.
 - Identity reports must redact credentials, bearer tokens, cookies, private keys, and unnecessary personal data.

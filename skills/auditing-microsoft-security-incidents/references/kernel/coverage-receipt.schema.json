@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "coverage-receipt.schema.json",
+  "title": "HAVOC kernel coverage receipt",
+  "description": "Closed Task 6 kernel schema for coverage receipts. Compatible with audit-output coverageReceipt.",
+  "allOf": [
+    { "$ref": "../audit-output.schema.json#/$defs/coverageReceipt" },
+    {
+      "type": "object",
+      "required": [
+        "coverage_id",
+        "source_id",
+        "source_identity",
+        "coverage_state",
+        "configured_state",
+        "observed_state",
+        "scope",
+        "health_state",
+        "freshness_state",
+        "delay_state",
+        "retention_state",
+        "effective_window",
+        "permission_state",
+        "licensing_state",
+        "capability_state",
+        "parser_health",
+        "schema_health",
+        "connector_health",
+        "transformation_health",
+        "time_bounds",
+        "completeness",
+        "limitations",
+        "claim_ids",
+        "evidence_ids",
+        "gap_ids",
+        "error_ids",
+        "behavior_bases",
+        "negative_evidence_boundary",
+        "limitation_dimensions",
+        "adapter_error_mappings",
+        "retrieval_integrity"
+      ],
+      "properties": {
+        "coverage_id": { "$ref": "../audit-output.schema.json#/$defs/identifier" },
+        "source_id": { "$ref": "../audit-output.schema.json#/$defs/identifier" },
+        "source_identity": { "type": "string", "minLength": 1 },
+        "coverage_state": { "$ref": "../contract-vocabulary.json#/$defs/coverageState" },
+        "configured_state": { "$ref": "../audit-output.schema.json#/$defs/explicitState" },
+        "observed_state": { "$ref": "../audit-output.schema.json#/$defs/explicitState" },
+        "scope": { "type": "string", "minLength": 1 },
+        "health_state": { "$ref": "../audit-output.schema.json#/$defs/explicitState" },
+        "freshness_state": { "$ref": "../audit-output.schema.json#/$defs/explicitState" },
+        "delay_state": { "$ref": "../audit-output.schema.json#/$defs/explicitState" },
+        "retention_state": { "$ref": "../audit-output.schema.json#/$defs/explicitState" },
+        "effective_window": { "$ref": "../audit-output.schema.json#/$defs/boundedWindow" },
+        "permission_state": { "$ref": "../audit-output.schema.json#/$defs/explicitState" },
+        "licensing_state": { "$ref": "../audit-output.schema.json#/$defs/explicitState" },
+        "capability_state": { "$ref": "../audit-output.schema.json#/$defs/explicitState" },
+        "parser_health": { "$ref": "../audit-output.schema.json#/$defs/explicitState" },
+        "schema_health": { "$ref": "../audit-output.schema.json#/$defs/explicitState" },
+        "connector_health": { "$ref": "../audit-output.schema.json#/$defs/explicitState" },
+        "transformation_health": { "$ref": "../audit-output.schema.json#/$defs/explicitState" },
+        "time_bounds": { "$ref": "../audit-output.schema.json#/$defs/boundedWindow" },
+        "completeness": { "$ref": "../contract-vocabulary.json#/$defs/evidenceCompleteness" },
+        "gap_id": { "$ref": "../audit-output.schema.json#/$defs/identifier" },
+        "limitations": { "$ref": "../audit-output.schema.json#/$defs/stringArray" },
+        "claim_ids": { "$ref": "../audit-output.schema.json#/$defs/idArray" },
+        "evidence_ids": { "$ref": "../audit-output.schema.json#/$defs/idArray" },
+        "gap_ids": { "$ref": "../audit-output.schema.json#/$defs/idArray" },
+        "error_ids": { "$ref": "../audit-output.schema.json#/$defs/idArray" },
+        "behavior_bases": { "$ref": "../audit-output.schema.json#/$defs/behaviorBases" },
+        "negative_evidence_boundary": {
+          "type": "object",
+          "required": ["source_health", "audit_enablement", "licensing", "retention", "parser_quality", "sensor_coverage"],
+          "properties": {
+            "source_health": { "type": "string", "enum": ["applicable", "unknown"] },
+            "audit_enablement": { "type": "string", "enum": ["applicable", "unknown"] },
+            "licensing": { "type": "string", "enum": ["applicable", "unknown"] },
+            "retention": { "type": "string", "enum": ["applicable", "unknown"] },
+            "parser_quality": { "type": "string", "enum": ["applicable", "unknown"] },
+            "sensor_coverage": { "type": "string", "enum": ["applicable", "unknown"] }
+          },
+          "additionalProperties": false
+        },
+        "limitation_dimensions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "enum": ["permission_state", "licensing_state", "retention_state", "capability_state", "health_state", "connector_health"] }
+        },
+        "adapter_error_mappings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["error_id", "error_category", "error_code", "coverage_dimension", "limitation"],
+            "properties": {
+              "error_id": { "$ref": "../audit-output.schema.json#/$defs/identifier" },
+              "error_category": { "$ref": "../contract-vocabulary.json#/$defs/errorCategory" },
+              "error_code": { "type": "string", "minLength": 1 },
+              "coverage_dimension": { "type": "string", "enum": ["permission_state", "licensing_state", "retention_state", "capability_state", "health_state", "connector_health"] },
+              "limitation": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "retrieval_integrity": {
+          "type": "object",
+          "required": ["response_classification", "pagination_state", "continuation_state", "truncation_state", "row_count", "byte_count"],
+          "properties": {
+            "response_classification": { "$ref": "../contract-vocabulary.json#/$defs/queryResponseClassification" },
+            "pagination_state": { "type": "string", "minLength": 1 },
+            "continuation_state": { "type": "string", "enum": ["applicable", "not_applicable", "unknown"] },
+            "truncation_state": { "type": "string", "enum": ["applicable", "not_applicable", "unknown"] },
+            "row_count": { "type": "integer", "minimum": 0 },
+            "byte_count": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}

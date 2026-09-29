@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1.0.0",
+  "profiles": [
+    {
+      "name": "Commercial",
+      "azEnvironment": "AzureCloud",
+      "authorityHost": "https://login.microsoftonline.com/",
+      "allowedIssuerPrefixes": [
+        "https://login.microsoftonline.com/",
+        "https://sts.windows.net/"
+      ],
+      "allowedIssuerTemplates": [
+        "https://login.microsoftonline.com/{tenantId}/v2.0",
+        "https://sts.windows.net/{tenantId}/"
+      ],
+      "graphHost": "graph.microsoft.com",
+      "graphAudiences": [
+        "https://graph.microsoft.com"
+      ],
+      "graphScopes": [
+        "https://graph.microsoft.com/SecurityIncident.Read.All",
+        "https://graph.microsoft.com/SecurityAlert.Read.All"
+      ],
+      "armHost": "management.azure.com",
+      "armAudiences": [
+        "https://management.azure.com/"
+      ],
+      "logAnalyticsHost": "api.loganalytics.azure.com",
+      "logAnalyticsAudience": "https://api.loganalytics.io",
+      "requestScopes": {
+        "graphSecurityIncidentRead": "SecurityIncident.Read.All",
+        "graphSecurityAlertRead": "SecurityIncident.Read.All",
+        "graphDirectoryRead": "Directory.Read.All",
+        "graphApplicationRead": "Application.Read.All",
+        "armDefault": "https://management.azure.com/.default",
+        "logAnalyticsDefault": "https://api.loganalytics.io/.default",
+        "purviewAuditRead": "AuditLogsQuery-Entra.Read.All"
+      },
+      "resourceGraph": {
+        "enabled": true,
+        "host": "management.azure.com",
+        "audience": "https://management.azure.com/"
+      },
+      "purview": {
+        "enabled": true,
+        "host": "graph.microsoft.com",
+        "audience": "https://graph.microsoft.com"
+      },
+      "expectedCoverageGaps": []
+    },
+    {
+      "name": "USGovDoD",
+      "azEnvironment": "AzureUSGovernment",
+      "authorityHost": "https://login.microsoftonline.us/",
+      "allowedIssuerPrefixes": [
+        "https://login.microsoftonline.us/",
+        "https://sts.windows.net/"
+      ],
+      "allowedIssuerTemplates": [
+        "https://login.microsoftonline.us/{tenantId}/v2.0",
+        "https://sts.windows.net/{tenantId}/"
+      ],
+      "graphHost": "dod-graph.microsoft.us",
+      "graphAudiences": [
+        "https://dod-graph.microsoft.us",
+        "00000003-0000-0000-c000-000000000000"
+      ],
+      "graphScopes": [
+        "https://dod-graph.microsoft.us/SecurityIncident.Read.All",
+        "https://dod-graph.microsoft.us/SecurityAlert.Read.All"
+      ],
+      "armHost": "management.usgovcloudapi.net",
+      "armAudiences": [
+        "https://management.usgovcloudapi.net/",
+        "https://management.core.usgovcloudapi.net/"
+      ],
+      "logAnalyticsHost": "api.loganalytics.us",
+      "logAnalyticsAudience": "https://api.loganalytics.us",
+      "requestScopes": {
+        "graphSecurityIncidentRead": "https://dod-graph.microsoft.us/SecurityIncident.Read.All",
+        "graphSecurityAlertRead": "https://dod-graph.microsoft.us/SecurityIncident.Read.All",
+        "graphDirectoryRead": "https://dod-graph.microsoft.us/Directory.Read.All",
+        "graphApplicationRead": "https://dod-graph.microsoft.us/Application.Read.All",
+        "armDefault": "https://management.usgovcloudapi.net/.default",
+        "logAnalyticsDefault": "https://api.loganalytics.us/.default",
+        "purviewAuditRead": "disabled"
+      },
+      "resourceGraph": {
+        "enabled": false,
+        "host": null,
+        "audience": null
+      },
+      "purview": {
+        "enabled": false,
+        "host": null,
+        "audience": null
+      },
+      "expectedCoverageGaps": [
+        "purview_unconfirmed_in_cloud",
+        "resource_graph_unconfirmed_in_cloud",
+        "sentinel_to_defender_portal_onboarding_dependency"
+      ]
+    }
+  ]
+}

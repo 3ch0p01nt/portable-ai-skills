@@ -1,0 +1,627 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:havoc:schemas:request-policy",
+  "title": "HAVOC read-only request policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "policyVersion",
+    "cloud",
+    "canonicalHosts",
+    "cloudProfiles",
+    "redirectPolicy",
+    "globalBounds",
+    "allowedTimespanFormats",
+    "crossResourceFunctions",
+    "responseAdapterCapabilities",
+    "capabilityTrust",
+    "knownMutationPathPatterns",
+    "conditionalCapabilities",
+    "odata",
+    "operations"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*\\.[0-9]+$"
+    },
+    "policyVersion": {
+      "type": "string",
+      "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}\\.[1-9][0-9]*$"
+    },
+    "cloud": {
+      "const": "commercial"
+    },
+    "canonicalHosts": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9.-]+\\.com$"
+      }
+    },
+    "redirectPolicy": {
+      "type": "string",
+      "minLength": 1
+    },
+    "globalBounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxTimeRangeDays",
+        "maxRows",
+        "maxBytes",
+        "maxRuntimeSeconds",
+        "maxWorkspaces",
+        "maxSubscriptions",
+        "maxBatchRequests"
+      ],
+      "properties": {
+        "maxTimeRangeDays": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "maxRows": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "maxBytes": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "maxRuntimeSeconds": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "maxWorkspaces": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "maxSubscriptions": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "maxBatchRequests": {
+          "$ref": "#/$defs/positiveInteger"
+        }
+      }
+    },
+    "allowedTimespanFormats": {
+      "type": "array",
+      "const": [
+        "start/end"
+      ]
+    },
+    "crossResourceFunctions": {
+      "type": "array",
+      "const": [
+        "adx",
+        "app",
+        "arg",
+        "cluster",
+        "database",
+        "externaldata",
+        "resource",
+        "workspace"
+      ]
+    },
+    "responseAdapterCapabilities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "adapterId",
+          "adapterVersion"
+        ],
+        "properties": {
+          "adapterId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{2,127}$"
+          },
+          "adapterVersion": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+          }
+        }
+      }
+    },
+    "capabilityTrust": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxLifetimeSeconds",
+        "maxClockSkewSeconds",
+        "issuers"
+      ],
+      "properties": {
+        "maxLifetimeSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 900
+        },
+        "maxClockSkewSeconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60
+        },
+        "issuers": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "issuerId",
+              "issuerVersion",
+              "keyId"
+            ],
+            "properties": {
+              "issuerId": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]{2,127}$"
+              },
+              "issuerVersion": {
+                "type": "string",
+                "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+              },
+              "keyId": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]{2,127}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "knownMutationPathPatterns": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^\\^.*\\$$"
+      }
+    },
+    "conditionalCapabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "graphSecurityHunting",
+        "defenderLegacyHunting"
+      ],
+      "properties": {
+        "graphSecurityHunting": {
+          "$ref": "#/$defs/capability"
+        },
+        "defenderLegacyHunting": {
+          "$ref": "#/$defs/capability"
+        }
+      }
+    },
+    "odata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "builderRequired",
+        "allowedFields",
+        "allowedOperators",
+        "maxLiteralLength"
+      ],
+      "properties": {
+        "builderRequired": {
+          "const": true
+        },
+        "allowedFields": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "string",
+                "datetime"
+              ]
+            }
+          }
+        },
+        "allowedOperators": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "eq",
+              "ne",
+              "ge",
+              "gt",
+              "le",
+              "lt"
+            ]
+          }
+        },
+        "maxLiteralLength": {
+          "$ref": "#/$defs/positiveInteger"
+        }
+      }
+    },
+    "operations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/operation"
+      }
+    },
+    "cloudProfiles": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "profileReference",
+          "profileCatalogSha256",
+          "requestScopes"
+        ],
+        "properties": {
+          "name": {
+            "enum": [
+              "Commercial",
+              "USGovDoD"
+            ]
+          },
+          "profileReference": {
+            "type": "string",
+            "pattern": "^cloud-profiles\\.json#/profiles/(Commercial|USGovDoD)$"
+          },
+          "profileCatalogSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "requestScopes": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "graphSecurityIncidentRead",
+              "graphSecurityAlertRead",
+              "graphDirectoryRead",
+              "graphApplicationRead",
+              "armDefault",
+              "logAnalyticsDefault",
+              "purviewAuditRead"
+            ],
+            "properties": {
+              "graphSecurityIncidentRead": { "type": "string", "minLength": 1 },
+              "graphSecurityAlertRead": { "type": "string", "minLength": 1 },
+              "graphDirectoryRead": { "type": "string", "minLength": 1 },
+              "graphApplicationRead": { "type": "string", "minLength": 1 },
+              "armDefault": { "type": "string", "minLength": 1 },
+              "logAnalyticsDefault": { "type": "string", "minLength": 1 },
+              "purviewAuditRead": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "positiveInteger": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "stringSet": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "stringArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "reason"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "apiVersionPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "location",
+        "allowedValues"
+      ],
+      "properties": {
+        "location": {
+          "enum": [
+            "path",
+            "query"
+          ]
+        },
+        "allowedValues": {
+          "$ref": "#/$defs/stringSet"
+        }
+      }
+    },
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operationId",
+        "host",
+        "method",
+        "semanticClass",
+        "ruleId",
+        "requiredRequestedScopes",
+        "requiredTokenPermissions",
+        "allowedRequestedScopes",
+        "allowedTokenPermissions",
+        "allowedQueryKeys",
+        "maxRows"
+      ],
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{2,127}$"
+        },
+        "host": {
+          "type": "string",
+          "pattern": "^[a-z0-9.-]+\\.com$"
+        },
+        "method": {
+          "enum": [
+            "GET",
+            "POST"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^/"
+        },
+        "pathPattern": {
+          "type": "string",
+          "pattern": "^\\^.*\\$$"
+        },
+        "apiVersionPolicy": {
+          "$ref": "#/$defs/apiVersionPolicy"
+        },
+        "semanticClass": {
+          "enum": [
+            "read",
+            "read_batch",
+            "read_query",
+            "retrieval_job_state"
+          ]
+        },
+        "safeSemantics": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ruleId": {
+          "type": "string",
+          "pattern": "^ALLOW-[A-Z0-9-]+$"
+        },
+        "requiredRequestedScopes": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "requiredTokenPermissions": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "allowedRequestedScopes": {
+          "$ref": "#/$defs/stringSet"
+        },
+        "allowedTokenPermissions": {
+          "$ref": "#/$defs/stringSet"
+        },
+        "retryableTransportExceptions": {
+          "type": "boolean"
+        },
+        "allowedQueryKeys": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^(?:\\$[A-Za-z]+|api-version)$"
+          }
+        },
+        "fixedQueryValues": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/$defs/stringSet"
+          }
+        },
+        "allowedApiVersions": {
+          "$ref": "#/$defs/stringSet"
+        },
+        "allowedBodyProperties": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "requiredPreconditions": {
+          "$ref": "#/$defs/stringSet"
+        },
+        "bodyValidator": {
+          "enum": [
+            "genericBoundedQuery",
+            "emptyBody",
+            "graphBatch",
+            "graphHuntingQuery",
+            "logAnalyticsQuery",
+            "purviewRetrievalJob",
+            "resourceGraphQuery",
+            "sentinelIncidentEntities"
+          ]
+        },
+        "responseEnforcementRequired": {
+          "type": "boolean"
+        },
+        "conditionalCapability": {
+          "enum": [
+            "graphSecurityHunting",
+            "defenderLegacyHunting"
+          ]
+        },
+        "preview": {
+          "type": "boolean"
+        },
+        "sourceRefs": {
+          "$ref": "#/$defs/stringSet"
+        },
+        "requireTop": {
+          "type": "boolean"
+        },
+        "maxRows": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "estimatedBytesPerRow": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "hardSafeResponseBytes": {
+          "$ref": "#/$defs/positiveInteger"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "path"
+          ],
+          "not": {
+            "required": [
+              "pathPattern"
+            ]
+          }
+        },
+        {
+          "required": [
+            "pathPattern"
+          ],
+          "not": {
+            "required": [
+              "path"
+            ]
+          }
+        }
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "method": {
+                "const": "POST"
+              }
+            },
+            "required": [
+              "method"
+            ]
+          },
+          "then": {
+            "required": [
+              "bodyValidator"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "method": {
+                "const": "POST"
+              },
+              "semanticClass": {
+                "const": "read_query"
+              }
+            },
+            "required": [
+              "method",
+              "semanticClass"
+            ]
+          },
+          "then": {
+            "required": [
+              "responseEnforcementRequired"
+            ],
+            "properties": {
+              "responseEnforcementRequired": {
+                "const": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "method": {
+                "const": "GET"
+              }
+            },
+            "required": [
+              "method"
+            ]
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": [
+                  "estimatedBytesPerRow"
+                ]
+              },
+              {
+                "required": [
+                  "hardSafeResponseBytes"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "method": {
+                "const": "GET"
+              },
+              "requireTop": {
+                "const": true
+              }
+            },
+            "required": [
+              "method",
+              "requireTop"
+            ]
+          },
+          "then": {
+            "required": [
+              "estimatedBytesPerRow"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
