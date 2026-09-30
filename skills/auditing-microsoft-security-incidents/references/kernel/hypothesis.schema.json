@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hypothesis.schema.json",
+  "title": "Hypothesis and Diagnostic Evidence Kernel",
+  "type": "object",
+  "required": ["evidence", "hypotheses", "diagnostic_evidence_matrix"],
+  "properties": {
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/evidenceItem" }
+    },
+    "hypotheses": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/hypothesisRecord" },
+      "allOf": [
+        { "contains": { "properties": { "hypothesis_type": { "const": "malicious" } }, "required": ["hypothesis_type"] } },
+        { "contains": { "properties": { "hypothesis_type": { "const": "benign_expected" } }, "required": ["hypothesis_type"] } }
+      ]
+    },
+    "diagnostic_evidence_matrix": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/diagnosticEvidenceRow" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": { "type": "string", "minLength": 1, "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "idArray": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
+    "behaviorBases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "enum": ["guaranteed_behavior", "configurable_project_policy", "conditional_capability", "explicit_gap"] }
+    },
+    "likelihood": { "type": "string", "enum": ["highly_unlikely", "unlikely", "roughly_even", "likely", "highly_likely", "not_assessed"] },
+    "analyticConfidence": { "type": "string", "enum": ["low", "moderate", "high", "not_assessed"] },
+    "evidenceItem": {
+      "type": "object",
+      "required": ["evidence_id", "upstream_lineage_id", "event_time"],
+      "properties": {
+        "evidence_id": { "$ref": "#/$defs/identifier" },
+        "upstream_lineage_id": { "$ref": "#/$defs/identifier" },
+        "event_time": { "$ref": "#/$defs/timestamp" }
+      },
+      "additionalProperties": false
+    },
+    "hypothesisRecord": {
+      "type": "object",
+      "required": [
+        "hypothesis_id", "hypothesis_type", "statement", "likelihood", "analytic_confidence",
+        "supporting_evidence_ids", "contradicting_evidence_ids", "information_needed",
+        "claim_ids", "gap_ids", "error_ids", "behavior_bases", "ruled_out", "rule_out_evidence_ids",
+        "technical_identification_confidence", "human_attribution_confidence", "intent_confidence",
+        "accountability_confidence", "attribution_basis"
+      ],
+      "properties": {
+        "hypothesis_id": { "$ref": "#/$defs/identifier" },
+        "hypothesis_type": { "type": "string", "enum": ["malicious", "benign_expected", "detection_defect", "data_defect", "systemic"] },
+        "statement": { "type": "string", "minLength": 1 },
+        "likelihood": { "$ref": "#/$defs/likelihood" },
+        "analytic_confidence": { "$ref": "#/$defs/analyticConfidence" },
+        "supporting_evidence_ids": { "$ref": "#/$defs/idArray" },
+        "contradicting_evidence_ids": { "$ref": "#/$defs/idArray" },
+        "information_needed": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "claim_ids": { "$ref": "#/$defs/idArray" },
+        "gap_ids": { "$ref": "#/$defs/idArray" },
+        "error_ids": { "$ref": "#/$defs/idArray" },
+        "behavior_bases": { "$ref": "#/$defs/behaviorBases" },
+        "ruled_out": { "type": "boolean" },
+        "rule_out_evidence_ids": { "$ref": "#/$defs/idArray" },
+        "technical_identification_confidence": { "$ref": "#/$defs/analyticConfidence" },
+        "human_attribution_confidence": { "$ref": "#/$defs/analyticConfidence" },
+        "intent_confidence": { "$ref": "#/$defs/analyticConfidence" },
+        "accountability_confidence": { "$ref": "#/$defs/analyticConfidence" },
+        "attribution_basis": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "ruled_out": { "const": true } }, "required": ["ruled_out"] },
+          "then": { "properties": { "rule_out_evidence_ids": { "minItems": 1 } } }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "diagnosticEvidenceRow": {
+      "type": "object",
+      "required": ["evidence_id", "upstream_lineage_id", "consistency_by_hypothesis", "diagnosticity", "rationale", "cited_evidence_ids"],
+      "properties": {
+        "evidence_id": { "$ref": "#/$defs/identifier" },
+        "upstream_lineage_id": { "$ref": "#/$defs/identifier" },
+        "consistency_by_hypothesis": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "type": "string", "enum": ["consistent", "contradicts", "neutral", "not_applicable"] }
+        },
+        "diagnosticity": { "type": "string", "enum": ["low", "moderate", "high"] },
+        "rationale": { "type": "string", "minLength": 1 },
+        "cited_evidence_ids": { "$ref": "#/$defs/idArray" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

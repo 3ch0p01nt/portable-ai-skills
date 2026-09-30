@@ -1,0 +1,130 @@
+{
+  "interfaceVersion": "4.0.0",
+  "purpose": "Trusted commercial-cloud authorization bound to the adapter-supplied canonical resource string. The provider returns no bearer material or raw resource identifier.",
+  "approvedProvider": {
+    "provider_id": "havoc-auth-context-provider",
+    "minimum_provider_version": "3.0.0"
+  },
+  "input": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "operationId", "requestId", "correlationId", "cloud", "audience",
+      "requiredPermissions", "canonical_resource_string",
+      "expected_principal_ref", "expected_source_scope_refs"
+    ],
+    "properties": {
+      "canonical_resource_string": {
+        "type": "string",
+        "minLength": 1,
+        "description": "In-memory adapter-derived canonical operation, commercial host, actual canonical path, structural query keys, and API version."
+      },
+      "expected_source_scope_refs": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": { "$ref": "#/$defs/protectedContextRef" },
+        "description": "For Azure Resource Graph, one adapter-derived protected ref per body.subscriptions[] and body.managementGroups[] entry; the provider output must match this exact set."
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "cloud", "audience", "tenant_context_ref", "authorized_tenant",
+      "expires_at", "recognized_permissions", "principal_ref", "credential_class",
+      "autonomous_read_approved", "source_scope_refs",
+      "arm_rbac_read_approved", "resource_bindings",
+      "excess_privilege_present", "license_capabilities",
+      "effective_retention_days_by_source", "auth_context_issued_at",
+      "provider_id", "provider_version"
+    ],
+    "properties": {
+      "cloud": { "const": "commercial" },
+      "audience": { "type": "string", "minLength": 1 },
+      "tenant_context_ref": { "$ref": "#/$defs/protectedContextRef" },
+      "authorized_tenant": { "type": "boolean", "const": true },
+      "expires_at": { "type": "string", "format": "date-time" },
+      "recognized_permissions": {
+        "type": "array", "minItems": 1, "uniqueItems": true,
+        "items": { "type": "string", "minLength": 1 }
+      },
+      "principal_ref": { "$ref": "#/$defs/protectedContextRef" },
+      "credential_class": { "enum": ["application", "delegated"] },
+      "autonomous_read_approved": { "type": "boolean", "const": true },
+      "source_scope_refs": {
+        "type": "array", "minItems": 1, "uniqueItems": true,
+        "items": { "$ref": "#/$defs/protectedContextRef" },
+        "description": "Must exactly equal expected_source_scope_refs. For Resource Graph this is one protected scope ref per requested subscription or management group."
+      },
+      "arm_rbac_read_approved": { "type": "boolean" },
+      "resource_bindings": {
+        "type": "array", "minItems": 1,
+        "items": { "$ref": "#/$defs/resourceBinding" },
+        "description": "Must contain exactly one binding for each source_scope_refs member and no other bindings for the request."
+      },
+      "excess_privilege_present": { "type": "boolean", "const": false },
+      "license_capabilities": {
+        "type": "array", "uniqueItems": true,
+        "items": {
+          "enum": ["entra_free", "entra_p1", "entra_p2", "sentinel"]
+        }
+      },
+      "effective_retention_days_by_source": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "entra_signins": { "$ref": "#/$defs/retention" },
+          "entra_directory_audits": { "$ref": "#/$defs/retention" }
+        }
+      },
+      "auth_context_issued_at": { "type": "string", "format": "date-time" },
+      "provider_id": { "const": "havoc-auth-context-provider" },
+      "provider_version": {
+        "type": "string",
+        "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$",
+        "description": "Stable semantic version greater than or equal to 3.0.0."
+      }
+    }
+  },
+  "$defs": {
+    "protectedContextRef": {
+      "type": "string",
+      "pattern": "^protected-context:[a-z0-9][a-z0-9._/-]*$"
+    },
+    "retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["days", "evidence_ref"],
+      "properties": {
+        "days": { "type": "integer", "minimum": 1 },
+        "evidence_ref": {
+          "type": "string",
+          "pattern": "^protected-evidence:[a-z0-9][a-z0-9._/-]*$"
+        }
+      }
+    },
+    "resourceBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation_id", "resource_binding_hmac", "resource_identifier_ref",
+        "principal_ref", "source_scope_ref"
+      ],
+      "properties": {
+        "operation_id": {
+          "type": "string", "pattern": "^[a-z][a-z0-9-]{2,127}$"
+        },
+        "resource_binding_hmac": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]{43}=$",
+          "description": "In-memory-only HMAC-SHA256 over canonical_resource_string."
+        },
+        "resource_identifier_ref": { "$ref": "#/$defs/protectedContextRef" },
+        "principal_ref": { "$ref": "#/$defs/protectedContextRef" },
+        "source_scope_ref": { "$ref": "#/$defs/protectedContextRef" }
+      }
+    }
+  }
+}

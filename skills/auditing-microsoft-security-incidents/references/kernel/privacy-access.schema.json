@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "privacy-access.schema.json",
+  "title": "Privacy and Access Classification Kernel Packet",
+  "description": "Closed synthetic kernel schema for privacy/access classifications compatible with audit-output privacyRecord.",
+  "type": "object",
+  "required": ["privacy_records"],
+  "properties": {
+    "packet_state": {
+      "type": "string",
+      "enum": ["facts_provided", "no_facts_provided"]
+    },
+    "valid_for_reporting": {
+      "type": "boolean"
+    },
+    "privacy_records": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/privacyAccessKernelRecord"}
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "privacy_records": {"maxItems": 0}
+        },
+        "required": ["privacy_records"]
+      },
+      "then": {
+        "required": ["packet_state", "valid_for_reporting"],
+        "properties": {
+          "packet_state": {"const": "no_facts_provided"},
+          "valid_for_reporting": {"const": false}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"packet_state": {"const": "no_facts_provided"}},
+        "required": ["packet_state"]
+      },
+      "then": {
+        "required": ["valid_for_reporting"],
+        "properties": {
+          "privacy_records": {"maxItems": 0},
+          "valid_for_reporting": {"const": false}
+        }
+      }
+    },
+    {
+      "not": {
+        "properties": {
+          "privacy_records": {"maxItems": 0}
+        },
+        "required": ["privacy_records"],
+        "not": {"required": ["packet_state"]}
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$"},
+    "idArray": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+    "stringArray": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "behaviorBases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "enum": ["guaranteed_behavior", "configurable_project_policy", "conditional_capability", "explicit_gap"]}
+    },
+    "protectedReference": {
+      "type": "string",
+      "pattern": "^(?:protected(?:-link|-request|-evidence)?|not-applicable):(?!(?:[a-z0-9._/-]*[./])?(?:bearer|token|secret|password|credential|apikey|api-key|authorization|access_token|access-token)(?:[./]|$))[a-z0-9][a-z0-9._/-]*$"
+    },
+    "insiderAlternative": {
+      "type": "string",
+      "enum": ["malicious_intent", "compromised_account", "negligence", "policy_violation", "authorized_activity"]
+    },
+    "insiderRiskClassification": {
+      "type": "object",
+      "required": ["is_insider_risk_context", "identity_reveal_authorized", "identity_reveal_state", "subject_pseudonym_ref"],
+      "properties": {
+        "is_insider_risk_context": {"type": "boolean"},
+        "identity_reveal_authorized": {"type": "boolean"},
+        "identity_reveal_state": {"type": "string", "enum": ["pseudonym_only", "identity_revealed"]},
+        "subject_pseudonym_ref": {"$ref": "#/$defs/protectedReference"},
+        "subject_identity_ref": {"$ref": "#/$defs/protectedReference"},
+        "authorization_record_ref": {"$ref": "#/$defs/protectedReference"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"identity_reveal_state": {"const": "identity_revealed"}}, "required": ["identity_reveal_state"]},
+          "then": {
+            "required": ["subject_identity_ref", "authorization_record_ref"],
+            "properties": {"identity_reveal_authorized": {"const": true}}
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "privacyAccessKernelRecord": {
+      "type": "object",
+      "required": [
+        "privacy_id", "purpose", "minimization", "pseudonymization_state", "protected_store_use", "export_state",
+        "role_based_visibility", "export_restrictions", "identity_revealing_boundaries", "insider_risk",
+        "insider_alternatives_considered", "protected_evidence_refs", "claim_ids", "evidence_ids", "gap_ids", "error_ids", "behavior_bases"
+      ],
+      "properties": {
+        "privacy_id": {"$ref": "#/$defs/identifier"},
+        "purpose": {"type": "string", "minLength": 1},
+        "minimization": {"type": "string", "minLength": 1},
+        "pseudonymization_state": {"type": "string", "enum": ["pseudonymized_by_default", "identity_revealed_by_authority", "not_identity_bearing"]},
+        "protected_store_use": {"type": "string", "minLength": 1},
+        "export_state": {"type": "string", "enum": ["export_prohibited", "export_requires_authorized_privacy_or_legal_route", "protected_reference_only", "restricted"]},
+        "role_based_visibility": {"$ref": "#/$defs/stringArray"},
+        "export_restrictions": {"$ref": "#/$defs/stringArray"},
+        "identity_revealing_boundaries": {"$ref": "#/$defs/stringArray"},
+        "insider_risk": {"$ref": "#/$defs/insiderRiskClassification"},
+        "insider_alternatives_considered": {
+          "type": "array",
+          "minItems": 5,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/insiderAlternative"},
+          "allOf": [
+            {"contains": {"const": "malicious_intent"}},
+            {"contains": {"const": "compromised_account"}},
+            {"contains": {"const": "negligence"}},
+            {"contains": {"const": "policy_violation"}},
+            {"contains": {"const": "authorized_activity"}}
+          ]
+        },
+        "protected_evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/protectedReference"}},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

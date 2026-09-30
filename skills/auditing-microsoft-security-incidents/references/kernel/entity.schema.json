@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "entity.schema.json",
+  "title": "HAVOC Entity Resolution Kernel Records",
+  "type": "object",
+  "required": ["entity_resolution_record", "entity_record"],
+  "properties": {
+    "entity_resolution_record": { "$ref": "#/$defs/entityResolutionRecord" },
+    "entity_record": { "$ref": "#/$defs/entityRecord" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "protectedReference": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?:protected(?:-link|-request|-evidence)?|not-applicable):(?!(?:[a-z0-9._/-]*[./])?(?:bearer|token|secret|password|credential|apikey|api-key|authorization|access_token|access-token)(?:[./]|$))[a-z0-9][a-z0-9._/-]*$"
+    },
+    "idArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "behaviorBases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "guaranteed_behavior",
+          "configurable_project_policy",
+          "conditional_capability",
+          "explicit_gap"
+        ]
+      }
+    },
+    "validityWindow": {
+      "type": "object",
+      "required": ["start_inclusive", "end_exclusive"],
+      "properties": {
+        "start_inclusive": { "$ref": "#/$defs/timestamp" },
+        "end_exclusive": { "$ref": "#/$defs/timestamp" }
+      },
+      "additionalProperties": false
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["low", "moderate", "high", "not_assessed"]
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["merge", "split", "distinct"]
+    },
+    "identifierStrength": {
+      "type": "string",
+      "enum": ["strong", "weak"]
+    },
+    "identifierKind": {
+      "type": "string",
+      "enum": [
+        "entra_object_id",
+        "device_id",
+        "sid",
+        "mde_machine_id",
+        "certificate_thumbprint",
+        "application_object_id",
+        "service_principal_object_id",
+        "hardware_identity",
+        "workload_identity",
+        "display_name",
+        "hostname",
+        "upn_prefix",
+        "upn",
+        "ip_address",
+        "process_id",
+        "shared_infrastructure"
+      ]
+    },
+    "lifecycleEventType": {
+      "type": "string",
+      "enum": [
+        "rename",
+        "disable",
+        "delete",
+        "recreate",
+        "reimage",
+        "vdi_reset",
+        "secret_rollover",
+        "certificate_rollover",
+        "tenant_transfer",
+        "ownership_change"
+      ]
+    },
+    "identifierEvidence": {
+      "type": "object",
+      "required": ["identifier_kind", "strength", "protected_identifier_ref", "evidence_ids"],
+      "properties": {
+        "identifier_kind": { "$ref": "#/$defs/identifierKind" },
+        "strength": { "$ref": "#/$defs/identifierStrength" },
+        "protected_identifier_ref": { "$ref": "#/$defs/protectedReference" },
+        "normalized_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "validity_window": { "$ref": "#/$defs/validityWindow" },
+        "evidence_ids": { "$ref": "#/$defs/idArray" }
+      },
+      "additionalProperties": false
+    },
+    "aliasHistory": {
+      "type": "object",
+      "required": ["alias_ref", "alias_kind", "validity_window", "evidence_ids"],
+      "properties": {
+        "alias_ref": { "$ref": "#/$defs/protectedReference" },
+        "alias_kind": { "$ref": "#/$defs/identifierKind" },
+        "normalized_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "validity_window": { "$ref": "#/$defs/validityWindow" },
+        "evidence_ids": { "$ref": "#/$defs/idArray" }
+      },
+      "additionalProperties": false
+    },
+    "lifecycleEvent": {
+      "type": "object",
+      "required": ["event_id", "event_type", "event_time", "affected_entity_id", "evidence_ids"],
+      "properties": {
+        "event_id": { "$ref": "#/$defs/identifier" },
+        "event_type": { "$ref": "#/$defs/lifecycleEventType" },
+        "event_time": { "$ref": "#/$defs/timestamp" },
+        "affected_entity_id": { "$ref": "#/$defs/identifier" },
+        "previous_entity_ref": { "$ref": "#/$defs/protectedReference" },
+        "new_entity_ref": { "$ref": "#/$defs/protectedReference" },
+        "evidence_ids": { "$ref": "#/$defs/idArray" }
+      },
+      "additionalProperties": false
+    },
+    "identityContinuityRecord": {
+      "type": "object",
+      "required": [
+        "continuity_id",
+        "subject_entity_id",
+        "is_continuous",
+        "confidence",
+        "basis",
+        "supporting_evidence_ids",
+        "contradicting_evidence_ids"
+      ],
+      "properties": {
+        "continuity_id": { "$ref": "#/$defs/identifier" },
+        "subject_entity_id": { "$ref": "#/$defs/identifier" },
+        "is_continuous": { "type": "boolean" },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "basis": { "type": "string", "minLength": 1 },
+        "supporting_evidence_ids": { "$ref": "#/$defs/idArray" },
+        "contradicting_evidence_ids": { "$ref": "#/$defs/idArray" }
+      },
+      "additionalProperties": false
+    },
+    "entityResolutionRecord": {
+      "type": "object",
+      "required": [
+        "resolution_id",
+        "decision",
+        "confidence",
+        "source_entity_ids",
+        "basis_identifiers",
+        "contradictory_identifiers",
+        "provenance_evidence_ids",
+        "reversible",
+        "claim_ids",
+        "evidence_ids",
+        "gap_ids",
+        "error_ids",
+        "behavior_bases"
+      ],
+      "properties": {
+        "resolution_id": { "$ref": "#/$defs/identifier" },
+        "decision": { "$ref": "#/$defs/decision" },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "source_entity_ids": { "$ref": "#/$defs/idArray" },
+        "result_entity_id": { "$ref": "#/$defs/identifier" },
+        "basis_identifiers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/identifierEvidence" }
+        },
+        "contradictory_identifiers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/identifierEvidence" }
+        },
+        "provenance_evidence_ids": { "$ref": "#/$defs/idArray" },
+        "reversible": { "type": "boolean" },
+        "reversal_of_resolution_id": { "$ref": "#/$defs/identifier" },
+        "limitations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "claim_ids": { "$ref": "#/$defs/idArray" },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "gap_ids": { "$ref": "#/$defs/idArray" },
+        "error_ids": { "$ref": "#/$defs/idArray" },
+        "behavior_bases": { "$ref": "#/$defs/behaviorBases" }
+      },
+      "additionalProperties": false
+    },
+    "entityRecord": {
+      "type": "object",
+      "required": [
+        "entity_id",
+        "entity_type",
+        "aliases",
+        "lifecycle_summary",
+        "attribution_boundary",
+        "claim_ids",
+        "evidence_ids",
+        "gap_ids",
+        "error_ids",
+        "behavior_bases"
+      ],
+      "properties": {
+        "entity_id": { "$ref": "#/$defs/identifier" },
+        "entity_type": { "type": "string", "minLength": 1 },
+        "aliases": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/protectedReference" }
+        },
+        "lifecycle_summary": { "type": "string", "minLength": 1 },
+        "attribution_boundary": { "type": "string", "minLength": 1 },
+        "strong_identifiers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/identifierEvidence" }
+        },
+        "weak_identifiers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/identifierEvidence" }
+        },
+        "alias_history": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/aliasHistory" }
+        },
+        "lifecycle_events": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/lifecycleEvent" }
+        },
+        "identity_continuity": { "$ref": "#/$defs/identityContinuityRecord" },
+        "claim_ids": { "$ref": "#/$defs/idArray" },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "gap_ids": { "$ref": "#/$defs/idArray" },
+        "error_ids": { "$ref": "#/$defs/idArray" },
+        "behavior_bases": { "$ref": "#/$defs/behaviorBases" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

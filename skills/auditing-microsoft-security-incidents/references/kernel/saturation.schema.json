@@ -1,0 +1,738 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "saturation.schema.json",
+  "title": "HAVOC Evidence Saturation and Loop Control Kernel Records",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "policy_version",
+    "branches",
+    "frontier_items",
+    "pivot_records",
+    "saturation_state"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "#/$defs/semanticVersion"
+    },
+    "policy_version": {
+      "$ref": "#/$defs/semanticVersion"
+    },
+    "branches": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/investigationBranch"
+      }
+    },
+    "frontier_items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/frontierItem"
+      }
+    },
+    "pivot_records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pivotRecord"
+      }
+    },
+    "saturation_state": {
+      "$ref": "#/$defs/saturationState"
+    },
+    "stop_receipt": {
+      "$ref": "#/$defs/saturationStopReceipt"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$"
+    },
+    "semanticVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "behaviorBasis": {
+      "type": "string",
+      "enum": [
+        "guaranteed_behavior",
+        "configurable_project_policy",
+        "conditional_capability",
+        "explicit_gap"
+      ]
+    },
+    "behaviorBases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/behaviorBasis"
+      }
+    },
+    "idArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+    "stringArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "protectedReference": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?:protected(?:-link|-request|-evidence)?|not-applicable):(?!(?:[a-z0-9._/-]*[./])?(?:bearer|token|secret|password|credential|apikey|api-key|authorization|access_token|access-token)(?:[./]|$))[a-z0-9][a-z0-9._/-]*$"
+    },
+    "materialEffect": {
+      "type": "string",
+      "enum": [
+        "hypothesis",
+        "scope",
+        "severity",
+        "root_cause",
+        "control_gap"
+      ]
+    },
+    "assetClass": {
+      "type": "string",
+      "enum": [
+        "ordinary",
+        "tier0_identity",
+        "critical_service",
+        "recovery_infrastructure",
+        "reachable_high_impact_asset"
+      ]
+    },
+    "noveltyReason": {
+      "type": "string",
+      "enum": [
+        "new_material_entity",
+        "new_causal_node",
+        "new_causal_edge",
+        "hypothesis_ranking_or_confidence_change",
+        "new_control_gap",
+        "scope_change",
+        "blast_radius_change"
+      ]
+    },
+    "investigationBranch": {
+      "type": "object",
+      "required": [
+        "branch_id",
+        "incident_ref",
+        "branch_name",
+        "branch_status",
+        "created_at",
+        "updated_at",
+        "hypothesis_ids",
+        "frontier_item_ids",
+        "pivot_ids",
+        "claim_ids",
+        "evidence_ids",
+        "behavior_bases"
+      ],
+      "properties": {
+        "branch_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "incident_ref": {
+          "$ref": "#/$defs/protectedReference"
+        },
+        "branch_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "branch_status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "saturated",
+            "stopped",
+            "blocked"
+          ]
+        },
+        "created_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "updated_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "hypothesis_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "frontier_item_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "pivot_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "claim_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "behavior_bases": {
+          "$ref": "#/$defs/behaviorBases"
+        }
+      },
+      "additionalProperties": false
+    },
+    "frontierItem": {
+      "type": "object",
+      "required": [
+        "frontier_item_id",
+        "entity_ref",
+        "entity_type",
+        "material_effects",
+        "asset_class",
+        "expected_information_gain",
+        "priority",
+        "priority_rationale",
+        "source_id",
+        "created_at",
+        "claim_ids",
+        "evidence_ids",
+        "behavior_bases"
+      ],
+      "properties": {
+        "frontier_item_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "entity_ref": {
+          "$ref": "#/$defs/identifier"
+        },
+        "entity_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "material_effects": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/materialEffect"
+          }
+        },
+        "asset_class": {
+          "$ref": "#/$defs/assetClass"
+        },
+        "expected_information_gain": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "priority_rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "created_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "claim_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "behavior_bases": {
+          "$ref": "#/$defs/behaviorBases"
+        }
+      },
+      "additionalProperties": false
+    },
+    "pivotRecord": {
+      "type": "object",
+      "required": [
+        "pivot_id",
+        "branch_id",
+        "executed_at",
+        "entity_ref",
+        "source_id",
+        "query_family",
+        "query_scope",
+        "query_approach",
+        "query_signature",
+        "duplicate_status",
+        "equivalent_to_pivot_id",
+        "novelty_score",
+        "novelty_reasons",
+        "new_material_entities",
+        "new_causal_nodes",
+        "new_causal_edges",
+        "hypothesis_changes",
+        "new_control_gaps",
+        "scope_changes",
+        "blast_radius_changes",
+        "claim_ids",
+        "evidence_ids",
+        "behavior_bases"
+      ],
+      "properties": {
+        "pivot_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "branch_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "executed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "entity_ref": {
+          "$ref": "#/$defs/identifier"
+        },
+        "source_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "query_family": {
+          "type": "string",
+          "minLength": 1
+        },
+        "query_scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "query_approach": {
+          "type": "string",
+          "minLength": 1
+        },
+        "query_signature": {
+          "type": "string",
+          "minLength": 1
+        },
+        "duplicate_status": {
+          "type": "string",
+          "enum": [
+            "unique",
+            "duplicate",
+            "equivalent"
+          ]
+        },
+        "equivalent_to_pivot_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "novelty_score": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "novelty_reasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/noveltyReason"
+          }
+        },
+        "new_material_entities": {
+          "$ref": "#/$defs/idArray"
+        },
+        "new_causal_nodes": {
+          "$ref": "#/$defs/idArray"
+        },
+        "new_causal_edges": {
+          "$ref": "#/$defs/idArray"
+        },
+        "hypothesis_changes": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "new_control_gaps": {
+          "$ref": "#/$defs/idArray"
+        },
+        "scope_changes": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "blast_radius_changes": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "claim_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "behavior_bases": {
+          "$ref": "#/$defs/behaviorBases"
+        }
+      },
+      "additionalProperties": false
+    },
+    "saturationState": {
+      "type": "object",
+      "required": [
+        "saturation_state_id",
+        "branch_id",
+        "policy_version",
+        "consecutive_zero_novelty_threshold",
+        "consecutive_zero_novelty_count",
+        "duplicate_pivot_count",
+        "novel_pivot_count",
+        "frontier_limit",
+        "frontier_count",
+        "sensitivity_stable",
+        "saturated",
+        "last_pivot_id",
+        "measured_thresholds",
+        "coverage_limitations",
+        "unresolved_frontier",
+        "hypothesis_state",
+        "behavior_bases"
+      ],
+      "properties": {
+        "saturation_state_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "branch_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "policy_version": {
+          "$ref": "#/$defs/semanticVersion"
+        },
+        "consecutive_zero_novelty_threshold": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "consecutive_zero_novelty_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duplicate_pivot_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "novel_pivot_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "frontier_limit": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "frontier_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sensitivity_stable": {
+          "type": "boolean"
+        },
+        "saturated": {
+          "type": "boolean"
+        },
+        "last_pivot_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "measured_thresholds": {
+          "type": "object",
+          "required": [
+            "consecutive_zero_novelty",
+            "required_consecutive_zero_novelty",
+            "unresolved_frontier",
+            "sensitivity_stable"
+          ],
+          "properties": {
+            "consecutive_zero_novelty": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "required_consecutive_zero_novelty": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "unresolved_frontier": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "sensitivity_stable": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "coverage_limitations": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "unresolved_frontier": {
+          "$ref": "#/$defs/idArray"
+        },
+        "hypothesis_state": {
+          "type": "string",
+          "minLength": 1
+        },
+        "behavior_bases": {
+          "$ref": "#/$defs/behaviorBases"
+        }
+      },
+      "additionalProperties": false
+    },
+    "saturationStopReceipt": {
+      "type": "object",
+      "required": [
+        "stop_receipt_id",
+        "branch_id",
+        "domain_stop_reason",
+        "audit_stop_cause",
+        "trigger",
+        "measured_thresholds",
+        "unresolved_frontier",
+        "hypothesis_state",
+        "coverage_limitations",
+        "behavior_bases"
+      ],
+      "properties": {
+        "stop_receipt_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "branch_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "domain_stop_reason": {
+          "type": "string",
+          "enum": [
+            "saturation",
+            "coverage_boundary",
+            "quota",
+            "risk_budget",
+            "hard_cap"
+          ]
+        },
+        "audit_stop_cause": {
+          "type": "string",
+          "enum": [
+            "evidence_sufficient",
+            "coverage_boundary",
+            "quota",
+            "budget_exhausted",
+            "circuit_breaker"
+          ]
+        },
+        "trigger": {
+          "type": "string",
+          "minLength": 1
+        },
+        "missing_source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "affected_claim_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "follow_up": {
+          "type": "string",
+          "minLength": 1
+        },
+        "measured_thresholds": {
+          "type": "object",
+          "properties": {
+            "stop_reason": {
+              "type": "string"
+            },
+            "audit_stop_cause": {
+              "type": "string"
+            },
+            "consecutive_zero_novelty": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "required_consecutive_zero_novelty": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "sensitivity_stable": {
+              "type": "boolean"
+            },
+            "unresolved_frontier": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": {
+            "type": [
+              "string",
+              "integer",
+              "boolean",
+              "number"
+            ]
+          }
+        },
+        "unresolved_frontier": {
+          "$ref": "#/$defs/idArray"
+        },
+        "hypothesis_state": {
+          "type": "string",
+          "minLength": 1
+        },
+        "coverage_limitations": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "behavior_bases": {
+          "$ref": "#/$defs/behaviorBases"
+        },
+        "stop_cause": {
+          "type": "string",
+          "enum": [
+            "evidence_sufficient",
+            "coverage_boundary",
+            "quota",
+            "budget_exhausted",
+            "circuit_breaker"
+          ]
+        },
+        "stopped_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "actor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_version": {
+          "$ref": "#/$defs/semanticVersion"
+        },
+        "configured_values": {
+          "type": "object"
+        },
+        "consumption": {
+          "type": "object"
+        },
+        "coverage_summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unresolved_material_frontier": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "duplicate_lineage_groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/idArray"
+          }
+        },
+        "novel_evidence_summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hypothesis_stability": {
+          "type": "string",
+          "minLength": 1
+        },
+        "circuit_breaker_state": {
+          "type": "string",
+          "minLength": 1
+        },
+        "last_successful_operation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "gap_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "error_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "restart_conditions": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "gap_records": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "domain_stop_reason": {
+                "const": "saturation"
+              }
+            },
+            "required": [
+              "domain_stop_reason"
+            ]
+          },
+          "then": {
+            "properties": {
+              "unresolved_frontier": {
+                "maxItems": 0
+              },
+              "unresolved_material_frontier": {
+                "maxItems": 0
+              },
+              "measured_thresholds": {
+                "properties": {
+                  "unresolved_frontier": {
+                    "const": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "domain_stop_reason": {
+                "const": "coverage_boundary"
+              }
+            },
+            "required": [
+              "domain_stop_reason"
+            ]
+          },
+          "then": {
+            "required": [
+              "missing_source",
+              "affected_claim_ids",
+              "follow_up"
+            ],
+            "properties": {
+              "affected_claim_ids": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "domain_stop_reason": {
+                "const": "hard_cap"
+              }
+            },
+            "required": [
+              "domain_stop_reason"
+            ]
+          },
+          "then": {
+            "properties": {
+              "audit_stop_cause": {
+                "const": "circuit_breaker"
+              }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

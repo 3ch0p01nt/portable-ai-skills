@@ -1,0 +1,1111 @@
+{
+  "schemaVersion": "1.0",
+  "policyVersion": "2026-09-28.1",
+  "cloud": "commercial",
+  "canonicalHosts": [
+    "api.loganalytics.azure.com",
+    "api.security.microsoft.com",
+    "graph.microsoft.com",
+    "management.azure.com"
+  ],
+  "redirectPolicy": "manual-reauthorization-required;automatic-follow-disabled;cross-origin-authorization-forwarding-disabled",
+  "globalBounds": {
+    "maxTimeRangeDays": 31,
+    "maxRows": 10000,
+    "maxBytes": 10485760,
+    "maxRuntimeSeconds": 300,
+    "maxWorkspaces": 1,
+    "maxSubscriptions": 20,
+    "maxBatchRequests": 20
+  },
+  "allowedTimespanFormats": [
+    "start/end"
+  ],
+  "crossResourceFunctions": [
+    "adx",
+    "app",
+    "arg",
+    "cluster",
+    "database",
+    "externaldata",
+    "resource",
+    "workspace"
+  ],
+  "responseAdapterCapabilities": [
+    {
+      "adapterId": "havoc-protected-store-adapter",
+      "adapterVersion": "1.0.0"
+    }
+  ],
+  "capabilityTrust": {
+    "maxLifetimeSeconds": 300,
+    "maxClockSkewSeconds": 30,
+    "issuers": [
+      {
+        "issuerId": "havoc-adapter-orchestrator",
+        "issuerVersion": "1.0.0",
+        "keyId": "havoc-capability-hmac-v1"
+      }
+    ]
+  },
+  "knownMutationPathPatterns": [
+    "^.*(?:/comments?|/sendmail|/revokesigninsessions|/members/\\$ref|/tiindicators|/retire|/wipe|/isolate|/unisolate|/release|/quarantine|/purge|/remediate|/resetpassword|/sharedkeys|/listkeys)(?:/|$|\\?).*$",
+    "^.*/informationprotection/threatassessmentrequests(?:/|$|\\?).*$",
+    "^.*/security/incidents/[^/]+/(?:update|comments?)(?:/|$|\\?).*$"
+  ],
+  "conditionalCapabilities": {
+    "graphSecurityHunting": {
+      "enabled": false,
+      "reason": "preview_policy_profile_required"
+    },
+    "defenderLegacyHunting": {
+      "enabled": false,
+      "reason": "compatibility_disabled"
+    }
+  },
+  "odata": {
+    "builderRequired": true,
+    "allowedFields": {
+      "status": [
+        "string"
+      ],
+      "severity": [
+        "string"
+      ],
+      "assignedTo": [
+        "string"
+      ],
+      "createdDateTime": [
+        "datetime"
+      ],
+      "activityDateTime": [
+        "datetime"
+      ],
+      "detectedDateTime": [
+        "datetime"
+      ],
+      "userId": [
+        "string"
+      ],
+      "appId": [
+        "string"
+      ],
+      "ipAddress": [
+        "string"
+      ],
+      "riskState": [
+        "string"
+      ],
+      "riskLevel": [
+        "string"
+      ]
+    },
+    "allowedOperators": [
+      "eq",
+      "ne",
+      "ge",
+      "gt",
+      "le",
+      "lt"
+    ],
+    "maxLiteralLength": 128
+  },
+  "operations": [
+    {
+      "operationId": "graph-security-incidents-list",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "path": "/v1.0/security/incidents",
+      "semanticClass": "read",
+      "ruleId": "ALLOW-GRAPH-SECURITY-READ",
+      "requiredRequestedScopes": [
+        "SecurityIncident.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "SecurityIncident.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "SecurityIncident.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "SecurityIncident.Read.All"
+      ],
+      "allowedQueryKeys": [
+        "$count",
+        "$filter",
+        "$skip",
+        "$top",
+        "$expand"
+      ],
+      "retryableTransportExceptions": true,
+      "requireTop": true,
+      "maxRows": 1000,
+      "estimatedBytesPerRow": 1024
+    },
+    {
+      "operationId": "graph-security-alerts-list",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "path": "/v1.0/security/alerts_v2",
+      "semanticClass": "read",
+      "ruleId": "ALLOW-GRAPH-SECURITY-ALERTS-READ",
+      "requiredRequestedScopes": [
+        "SecurityIncident.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "SecurityIncident.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "SecurityIncident.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "SecurityIncident.Read.All"
+      ],
+      "allowedQueryKeys": [
+        "$count",
+        "$filter",
+        "$skip",
+        "$top"
+      ],
+      "retryableTransportExceptions": true,
+      "requireTop": true,
+      "maxRows": 1000,
+      "estimatedBytesPerRow": 1024
+    },
+    {
+      "operationId": "graph-security-incident-with-alerts-get",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "pathPattern": "^/v1\\.0/security/incidents/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "apiVersionPolicy": {
+        "location": "path",
+        "allowedValues": [
+          "v1.0"
+        ]
+      },
+      "semanticClass": "read",
+      "safeSemantics": "single_incident_with_documented_alerts_relationship",
+      "ruleId": "ALLOW-GRAPH-SECURITY-INCIDENT-DETAIL",
+      "requiredRequestedScopes": [
+        "SecurityIncident.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "SecurityIncident.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "SecurityIncident.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "SecurityIncident.Read.All"
+      ],
+      "allowedQueryKeys": [
+        "$expand"
+      ],
+      "retryableTransportExceptions": true,
+      "fixedQueryValues": {
+        "$expand": [
+          "alerts"
+        ]
+      },
+      "requireTop": false,
+      "maxRows": 1,
+      "estimatedBytesPerRow": 65536
+    },
+    {
+      "operationId": "graph-batch",
+      "host": "graph.microsoft.com",
+      "method": "POST",
+      "path": "/v1.0/$batch",
+      "semanticClass": "read_batch",
+      "ruleId": "ALLOW-GRAPH-BATCH",
+      "requiredRequestedScopes": [
+        "SecurityIncident.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "SecurityIncident.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "SecurityIncident.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "SecurityIncident.Read.All"
+      ],
+      "allowedQueryKeys": [],
+      "retryableTransportExceptions": true,
+      "bodyValidator": "graphBatch",
+      "maxRows": 10000
+    },
+    {
+      "operationId": "log-analytics-query",
+      "host": "api.loganalytics.azure.com",
+      "method": "POST",
+      "pathPattern": "^/v1/workspaces/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/query$",
+      "semanticClass": "read_query",
+      "ruleId": "ALLOW-LOG-ANALYTICS-QUERY",
+      "requiredRequestedScopes": [
+        "https://api.loganalytics.io/.default"
+      ],
+      "requiredTokenPermissions": [
+        "user_impersonation"
+      ],
+      "allowedRequestedScopes": [
+        "https://api.loganalytics.io/.default"
+      ],
+      "allowedTokenPermissions": [
+        "user_impersonation"
+      ],
+      "allowedQueryKeys": [],
+      "retryableTransportExceptions": true,
+      "allowedBodyProperties": [
+        "query",
+        "resultLimit",
+        "timespan"
+      ],
+      "bodyValidator": "logAnalyticsQuery",
+      "responseEnforcementRequired": true,
+      "maxRows": 10000,
+      "sourceRefs": [
+        "MS-LA-ACCESS",
+        "MS-SENTINEL-AUDIT"
+      ]
+    },
+    {
+      "operationId": "azure-resource-graph-query",
+      "host": "management.azure.com",
+      "method": "POST",
+      "path": "/providers/Microsoft.ResourceGraph/resources",
+      "semanticClass": "read_query",
+      "ruleId": "ALLOW-RESOURCE-GRAPH-QUERY",
+      "requiredRequestedScopes": [
+        "https://management.azure.com/.default"
+      ],
+      "requiredTokenPermissions": [
+        "user_impersonation"
+      ],
+      "allowedRequestedScopes": [
+        "https://management.azure.com/.default"
+      ],
+      "allowedTokenPermissions": [
+        "user_impersonation"
+      ],
+      "allowedQueryKeys": [
+        "api-version"
+      ],
+      "retryableTransportExceptions": true,
+      "allowedApiVersions": [
+        "2022-10-01"
+      ],
+      "allowedBodyProperties": [
+        "options",
+        "query",
+        "resultLimit",
+        "subscriptions"
+      ],
+      "bodyValidator": "resourceGraphQuery",
+      "responseEnforcementRequired": true,
+      "maxRows": 1000
+    },
+    {
+      "operationId": "purview-audit-query-create",
+      "host": "graph.microsoft.com",
+      "method": "POST",
+      "path": "/v1.0/security/auditLog/queries",
+      "semanticClass": "retrieval_job_state",
+      "ruleId": "ALLOW-PURVIEW-RETRIEVAL-JOB",
+      "requiredRequestedScopes": [],
+      "requiredTokenPermissions": [],
+      "allowedRequestedScopes": [
+        "AuditLogsQuery-Entra.Read.All",
+        "AuditLogsQuery-Exchange.Read.All",
+        "AuditLogsQuery-OneDrive.Read.All",
+        "AuditLogsQuery-SharePoint.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "AuditLogsQuery-Entra.Read.All",
+        "AuditLogsQuery-Exchange.Read.All",
+        "AuditLogsQuery-OneDrive.Read.All",
+        "AuditLogsQuery-SharePoint.Read.All"
+      ],
+      "allowedQueryKeys": [],
+      "retryableTransportExceptions": false,
+      "allowedBodyProperties": [
+        "displayName",
+        "filterEndDateTime",
+        "filterStartDateTime",
+        "ipAddressFilters",
+        "objectIdFilters",
+        "operationFilters",
+        "recordTypeFilters",
+        "serviceFilter",
+        "userPrincipalNameFilters"
+      ],
+      "bodyValidator": "purviewRetrievalJob",
+      "maxRows": 10000,
+      "requiredPreconditions": [
+        "operationalNecessityVerified",
+        "lifecycleVerified",
+        "persistenceVerified",
+        "visibilitySharingVerified",
+        "retentionExpiryVerified",
+        "sideEffectsVerified",
+        "leastPrivilegeVerified",
+        "boundedRequestVerified",
+        "commercialEndpointVerified",
+        "reportDisclosurePlanned"
+      ]
+    },
+    {
+      "operationId": "purview-audit-query-get",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "pathPattern": "^/v1\\.0/security/auditLog/queries/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "apiVersionPolicy": {
+        "location": "path",
+        "allowedValues": [
+          "v1.0"
+        ]
+      },
+      "semanticClass": "read",
+      "safeSemantics": "single_retrieval_job_status_read",
+      "ruleId": "ALLOW-PURVIEW-AUDIT-QUERY-GET",
+      "requiredRequestedScopes": [],
+      "requiredTokenPermissions": [],
+      "allowedRequestedScopes": [
+        "AuditLogsQuery-Entra.Read.All",
+        "AuditLogsQuery-Exchange.Read.All",
+        "AuditLogsQuery-OneDrive.Read.All",
+        "AuditLogsQuery-SharePoint.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "AuditLogsQuery-Entra.Read.All",
+        "AuditLogsQuery-Exchange.Read.All",
+        "AuditLogsQuery-OneDrive.Read.All",
+        "AuditLogsQuery-SharePoint.Read.All"
+      ],
+      "allowedQueryKeys": [],
+      "retryableTransportExceptions": true,
+      "requireTop": false,
+      "maxRows": 1,
+      "estimatedBytesPerRow": 65536
+    },
+    {
+      "operationId": "purview-audit-query-records-list",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "pathPattern": "^/v1\\.0/security/auditLog/queries/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/records$",
+      "apiVersionPolicy": {
+        "location": "path",
+        "allowedValues": [
+          "v1.0"
+        ]
+      },
+      "semanticClass": "read",
+      "safeSemantics": "bounded_retrieval_job_results_read",
+      "ruleId": "ALLOW-PURVIEW-AUDIT-RECORDS-LIST",
+      "requiredRequestedScopes": [],
+      "requiredTokenPermissions": [],
+      "allowedRequestedScopes": [
+        "AuditLogsQuery-Entra.Read.All",
+        "AuditLogsQuery-Exchange.Read.All",
+        "AuditLogsQuery-OneDrive.Read.All",
+        "AuditLogsQuery-SharePoint.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "AuditLogsQuery-Entra.Read.All",
+        "AuditLogsQuery-Exchange.Read.All",
+        "AuditLogsQuery-OneDrive.Read.All",
+        "AuditLogsQuery-SharePoint.Read.All"
+      ],
+      "allowedQueryKeys": [
+        "$top"
+      ],
+      "retryableTransportExceptions": true,
+      "requireTop": true,
+      "maxRows": 10000,
+      "estimatedBytesPerRow": 4096
+    },
+    {
+      "operationId": "sentinel-incident-get",
+      "host": "management.azure.com",
+      "method": "GET",
+      "pathPattern": "^/subscriptions/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/resourceGroups/(?![.])(?!.*[.]$)[A-Za-z0-9._()\\-]{1,90}/providers/Microsoft\\.OperationalInsights/workspaces/[A-Za-z0-9](?:[A-Za-z0-9-]{2,61}[A-Za-z0-9])/providers/Microsoft\\.SecurityInsights/incidents/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+      "apiVersionPolicy": {
+        "location": "query",
+        "allowedValues": [
+          "2025-09-01"
+        ]
+      },
+      "semanticClass": "read",
+      "ruleId": "ALLOW-SENTINEL-INCIDENT-GET",
+      "requiredRequestedScopes": [
+        "https://management.azure.com/.default"
+      ],
+      "requiredTokenPermissions": [
+        "user_impersonation"
+      ],
+      "allowedRequestedScopes": [
+        "https://management.azure.com/.default"
+      ],
+      "allowedTokenPermissions": [
+        "user_impersonation"
+      ],
+      "allowedQueryKeys": [
+        "api-version"
+      ],
+      "fixedQueryValues": {
+        "api-version": [
+          "2025-09-01"
+        ]
+      },
+      "retryableTransportExceptions": true,
+      "requireTop": false,
+      "maxRows": 1,
+      "estimatedBytesPerRow": 65536,
+      "sourceRefs": [
+        "MS-SENTINEL-INCIDENT-GET"
+      ]
+    },
+    {
+      "operationId": "sentinel-incident-relations-list",
+      "host": "management.azure.com",
+      "method": "GET",
+      "pathPattern": "^/subscriptions/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/resourceGroups/(?![.])(?!.*[.]$)[A-Za-z0-9._()\\-]{1,90}/providers/Microsoft\\.OperationalInsights/workspaces/[A-Za-z0-9](?:[A-Za-z0-9-]{2,61}[A-Za-z0-9])/providers/Microsoft\\.SecurityInsights/incidents/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/relations$",
+      "apiVersionPolicy": {
+        "location": "query",
+        "allowedValues": [
+          "2025-09-01"
+        ]
+      },
+      "semanticClass": "read",
+      "ruleId": "ALLOW-SENTINEL-INCIDENT-RELATIONS",
+      "requiredRequestedScopes": [
+        "https://management.azure.com/.default"
+      ],
+      "requiredTokenPermissions": [
+        "user_impersonation"
+      ],
+      "allowedRequestedScopes": [
+        "https://management.azure.com/.default"
+      ],
+      "allowedTokenPermissions": [
+        "user_impersonation"
+      ],
+      "allowedQueryKeys": [
+        "api-version",
+        "$filter",
+        "$orderby",
+        "$top",
+        "$skipToken"
+      ],
+      "fixedQueryValues": {
+        "api-version": [
+          "2025-09-01"
+        ]
+      },
+      "retryableTransportExceptions": true,
+      "requireTop": true,
+      "maxRows": 1000,
+      "estimatedBytesPerRow": 4096,
+      "sourceRefs": [
+        "MS-SENTINEL-INCIDENT-RELATIONS"
+      ]
+    },
+    {
+      "operationId": "sentinel-incident-entities-list",
+      "host": "management.azure.com",
+      "method": "POST",
+      "pathPattern": "^/subscriptions/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/resourceGroups/(?![.])(?!.*[.]$)[A-Za-z0-9._()\\-]{1,90}/providers/Microsoft\\.OperationalInsights/workspaces/[A-Za-z0-9](?:[A-Za-z0-9-]{2,61}[A-Za-z0-9])/providers/Microsoft\\.SecurityInsights/incidents/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/entities$",
+      "apiVersionPolicy": {
+        "location": "query",
+        "allowedValues": [
+          "2025-09-01"
+        ]
+      },
+      "semanticClass": "read",
+      "safeSemantics": "documented_incident_entities_read_semantic_post",
+      "ruleId": "ALLOW-SENTINEL-INCIDENT-ENTITIES",
+      "requiredRequestedScopes": [
+        "https://management.azure.com/.default"
+      ],
+      "requiredTokenPermissions": [
+        "user_impersonation"
+      ],
+      "allowedRequestedScopes": [
+        "https://management.azure.com/.default"
+      ],
+      "allowedTokenPermissions": [
+        "user_impersonation"
+      ],
+      "allowedQueryKeys": [
+        "api-version"
+      ],
+      "fixedQueryValues": {
+        "api-version": [
+          "2025-09-01"
+        ]
+      },
+      "retryableTransportExceptions": true,
+      "allowedBodyProperties": [],
+      "bodyValidator": "emptyBody",
+      "maxRows": 1000,
+      "sourceRefs": [
+        "MS-SENTINEL-INCIDENT-ENTITIES"
+      ]
+    },
+    {
+      "operationId": "sentinel-incident-comments-list",
+      "host": "management.azure.com",
+      "method": "GET",
+      "pathPattern": "^/subscriptions/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/resourceGroups/(?![.])(?!.*[.]$)[A-Za-z0-9._()\\-]{1,90}/providers/Microsoft\\.OperationalInsights/workspaces/[A-Za-z0-9](?:[A-Za-z0-9-]{2,61}[A-Za-z0-9])/providers/Microsoft\\.SecurityInsights/incidents/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/comments$",
+      "apiVersionPolicy": {
+        "location": "query",
+        "allowedValues": [
+          "2025-09-01"
+        ]
+      },
+      "semanticClass": "read",
+      "ruleId": "ALLOW-SENTINEL-INCIDENT-COMMENTS",
+      "requiredRequestedScopes": [
+        "https://management.azure.com/.default"
+      ],
+      "requiredTokenPermissions": [
+        "user_impersonation"
+      ],
+      "allowedRequestedScopes": [
+        "https://management.azure.com/.default"
+      ],
+      "allowedTokenPermissions": [
+        "user_impersonation"
+      ],
+      "allowedQueryKeys": [
+        "api-version",
+        "$filter",
+        "$orderby",
+        "$top",
+        "$skipToken"
+      ],
+      "fixedQueryValues": {
+        "api-version": [
+          "2025-09-01"
+        ]
+      },
+      "retryableTransportExceptions": true,
+      "requireTop": true,
+      "maxRows": 1000,
+      "estimatedBytesPerRow": 8192,
+      "sourceRefs": [
+        "MS-SENTINEL-INCIDENT-COMMENTS"
+      ]
+    },
+    {
+      "operationId": "sentinel-analytics-rule-get",
+      "host": "management.azure.com",
+      "method": "GET",
+      "pathPattern": "^/subscriptions/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/resourceGroups/(?![.])(?!.*[.]$)[A-Za-z0-9._()\\-]{1,90}/providers/Microsoft\\.OperationalInsights/workspaces/[A-Za-z0-9](?:[A-Za-z0-9-]{2,61}[A-Za-z0-9])/providers/Microsoft\\.SecurityInsights/alertRules/[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "apiVersionPolicy": {
+        "location": "query",
+        "allowedValues": [
+          "2025-09-01"
+        ]
+      },
+      "semanticClass": "read",
+      "ruleId": "ALLOW-SENTINEL-ALERT-RULE-GET",
+      "requiredRequestedScopes": [
+        "https://management.azure.com/.default"
+      ],
+      "requiredTokenPermissions": [
+        "user_impersonation"
+      ],
+      "allowedRequestedScopes": [
+        "https://management.azure.com/.default"
+      ],
+      "allowedTokenPermissions": [
+        "user_impersonation"
+      ],
+      "allowedQueryKeys": [
+        "api-version"
+      ],
+      "fixedQueryValues": {
+        "api-version": [
+          "2025-09-01"
+        ]
+      },
+      "retryableTransportExceptions": true,
+      "requireTop": false,
+      "maxRows": 1,
+      "estimatedBytesPerRow": 65536,
+      "sourceRefs": [
+        "MS-SENTINEL-ALERT-RULE-GET"
+      ]
+    },
+    {
+      "operationId": "graph-signins-list",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "path": "/v1.0/auditLogs/signIns",
+      "semanticClass": "read",
+      "ruleId": "ALLOW-GRAPH-SIGNINS",
+      "requiredRequestedScopes": [
+        "AuditLog.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "AuditLog.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "AuditLog.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "AuditLog.Read.All"
+      ],
+      "allowedQueryKeys": [
+        "$filter",
+        "$top",
+        "$skiptoken"
+      ],
+      "retryableTransportExceptions": true,
+      "requireTop": true,
+      "maxRows": 1000,
+      "estimatedBytesPerRow": 4096,
+      "sourceRefs": [
+        "MS-GRAPH-SIGNINS",
+        "MS-ENTRA-RETENTION"
+      ]
+    },
+    {
+      "operationId": "graph-directory-audits-list",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "path": "/v1.0/auditLogs/directoryAudits",
+      "semanticClass": "read",
+      "ruleId": "ALLOW-GRAPH-DIRECTORY-AUDITS",
+      "requiredRequestedScopes": [
+        "AuditLog.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "AuditLog.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "AuditLog.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "AuditLog.Read.All"
+      ],
+      "allowedQueryKeys": [
+        "$filter",
+        "$orderby",
+        "$top",
+        "$skiptoken"
+      ],
+      "retryableTransportExceptions": true,
+      "requireTop": true,
+      "maxRows": 1000,
+      "estimatedBytesPerRow": 4096,
+      "sourceRefs": [
+        "MS-GRAPH-DIRECTORY-AUDITS",
+        "MS-ENTRA-RETENTION"
+      ]
+    },
+    {
+      "operationId": "graph-risk-detections-list",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "path": "/v1.0/identityProtection/riskDetections",
+      "semanticClass": "read",
+      "ruleId": "ALLOW-GRAPH-RISK-DETECTIONS",
+      "requiredRequestedScopes": [
+        "IdentityRiskEvent.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "IdentityRiskEvent.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "IdentityRiskEvent.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "IdentityRiskEvent.Read.All"
+      ],
+      "allowedQueryKeys": [
+        "$filter",
+        "$select",
+        "$top"
+      ],
+      "retryableTransportExceptions": true,
+      "requireTop": true,
+      "maxRows": 500,
+      "estimatedBytesPerRow": 4096,
+      "sourceRefs": [
+        "MS-GRAPH-RISK-DETECTIONS"
+      ]
+    },
+    {
+      "operationId": "graph-user-get",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "pathPattern": "^/v1\\.0/users/[A-Za-z0-9][A-Za-z0-9._@:-]{0,255}$",
+      "apiVersionPolicy": {
+        "location": "path",
+        "allowedValues": [
+          "v1.0"
+        ]
+      },
+      "semanticClass": "read",
+      "ruleId": "ALLOW-GRAPH-USER-GET",
+      "requiredRequestedScopes": [
+        "User.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "User.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "User.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "User.Read.All"
+      ],
+      "allowedQueryKeys": [
+        "$select"
+      ],
+      "retryableTransportExceptions": true,
+      "requireTop": false,
+      "maxRows": 1,
+      "estimatedBytesPerRow": 32768,
+      "sourceRefs": [
+        "MS-GRAPH-USER-GET"
+      ]
+    },
+    {
+      "operationId": "graph-application-get",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "pathPattern": "^/v1\\.0/applications/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "apiVersionPolicy": {
+        "location": "path",
+        "allowedValues": [
+          "v1.0"
+        ]
+      },
+      "semanticClass": "read",
+      "ruleId": "ALLOW-GRAPH-APPLICATION-GET",
+      "requiredRequestedScopes": [
+        "Application.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "Application.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "Application.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "Application.Read.All"
+      ],
+      "allowedQueryKeys": [],
+      "retryableTransportExceptions": true,
+      "requireTop": false,
+      "maxRows": 1,
+      "estimatedBytesPerRow": 32768,
+      "sourceRefs": [
+        "MS-GRAPH-APPLICATION-GET"
+      ]
+    },
+    {
+      "operationId": "graph-service-principal-get",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "pathPattern": "^/v1\\.0/servicePrincipals/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "apiVersionPolicy": {
+        "location": "path",
+        "allowedValues": [
+          "v1.0"
+        ]
+      },
+      "semanticClass": "read",
+      "ruleId": "ALLOW-GRAPH-SERVICE-PRINCIPAL-GET",
+      "requiredRequestedScopes": [
+        "Application.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "Application.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "Application.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "Application.Read.All"
+      ],
+      "allowedQueryKeys": [],
+      "retryableTransportExceptions": true,
+      "requireTop": false,
+      "maxRows": 1,
+      "estimatedBytesPerRow": 32768,
+      "sourceRefs": [
+        "MS-GRAPH-SERVICE-PRINCIPAL-GET"
+      ]
+    },
+    {
+      "operationId": "graph-service-principal-app-role-assignments-list",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "pathPattern": "^/v1\\.0/servicePrincipals/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/appRoleAssignments$",
+      "apiVersionPolicy": {
+        "location": "path",
+        "allowedValues": [
+          "v1.0"
+        ]
+      },
+      "semanticClass": "read",
+      "ruleId": "ALLOW-GRAPH-SP-APP-ROLE-ASSIGNMENTS",
+      "requiredRequestedScopes": [
+        "Application.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "Application.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "Application.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "Application.Read.All"
+      ],
+      "allowedQueryKeys": [
+        "$filter",
+        "$top",
+        "$skiptoken"
+      ],
+      "retryableTransportExceptions": true,
+      "requireTop": true,
+      "maxRows": 1000,
+      "estimatedBytesPerRow": 2048,
+      "sourceRefs": [
+        "MS-GRAPH-APP-ROLE-ASSIGNMENTS"
+      ]
+    },
+    {
+      "operationId": "graph-user-app-role-assignments-list",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "pathPattern": "^/v1\\.0/users/[A-Za-z0-9][A-Za-z0-9._@:-]{0,255}/appRoleAssignments$",
+      "apiVersionPolicy": {
+        "location": "path",
+        "allowedValues": [
+          "v1.0"
+        ]
+      },
+      "semanticClass": "read",
+      "ruleId": "ALLOW-GRAPH-USER-APP-ROLE-ASSIGNMENTS",
+      "requiredRequestedScopes": [
+        "Directory.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "Directory.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "Directory.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "Directory.Read.All"
+      ],
+      "allowedQueryKeys": [
+        "$filter",
+        "$top",
+        "$skiptoken"
+      ],
+      "retryableTransportExceptions": true,
+      "requireTop": true,
+      "maxRows": 1000,
+      "estimatedBytesPerRow": 2048,
+      "sourceRefs": [
+        "MS-GRAPH-APP-ROLE-ASSIGNMENTS"
+      ]
+    },
+    {
+      "operationId": "graph-application-owners-list",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "pathPattern": "^/v1\\.0/applications/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/owners$",
+      "apiVersionPolicy": {
+        "location": "path",
+        "allowedValues": [
+          "v1.0"
+        ]
+      },
+      "semanticClass": "read",
+      "ruleId": "ALLOW-GRAPH-APPLICATION-OWNERS",
+      "requiredRequestedScopes": [
+        "Application.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "Application.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "Application.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "Application.Read.All"
+      ],
+      "allowedQueryKeys": [
+        "$top",
+        "$skiptoken",
+        "$select"
+      ],
+      "retryableTransportExceptions": true,
+      "requireTop": true,
+      "maxRows": 1000,
+      "estimatedBytesPerRow": 2048,
+      "sourceRefs": [
+        "MS-GRAPH-APPLICATION-OWNERS"
+      ]
+    },
+    {
+      "operationId": "graph-service-principal-owners-list",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "pathPattern": "^/v1\\.0/servicePrincipals/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/owners$",
+      "apiVersionPolicy": {
+        "location": "path",
+        "allowedValues": [
+          "v1.0"
+        ]
+      },
+      "semanticClass": "read",
+      "ruleId": "ALLOW-GRAPH-SERVICE-PRINCIPAL-OWNERS",
+      "requiredRequestedScopes": [
+        "Application.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "Application.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "Application.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "Application.Read.All"
+      ],
+      "allowedQueryKeys": [
+        "$top",
+        "$skiptoken",
+        "$select"
+      ],
+      "retryableTransportExceptions": true,
+      "requireTop": true,
+      "maxRows": 1000,
+      "estimatedBytesPerRow": 2048,
+      "sourceRefs": [
+        "MS-GRAPH-SERVICE-PRINCIPAL-OWNERS"
+      ]
+    },
+    {
+      "operationId": "graph-application-credentials-metadata-get",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "pathPattern": "^/v1\\.0/applications/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "apiVersionPolicy": {
+        "location": "path",
+        "allowedValues": [
+          "v1.0"
+        ]
+      },
+      "semanticClass": "read",
+      "safeSemantics": "credential_metadata_only_no_secret_values",
+      "ruleId": "ALLOW-GRAPH-APPLICATION-CREDENTIAL-METADATA",
+      "requiredRequestedScopes": [
+        "Application.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "Application.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "Application.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "Application.Read.All"
+      ],
+      "allowedQueryKeys": [
+        "$select"
+      ],
+      "fixedQueryValues": {
+        "$select": [
+          "keyCredentials,passwordCredentials"
+        ]
+      },
+      "retryableTransportExceptions": true,
+      "requireTop": false,
+      "maxRows": 1,
+      "estimatedBytesPerRow": 32768,
+      "sourceRefs": [
+        "MS-GRAPH-CREDENTIAL-METADATA"
+      ]
+    },
+    {
+      "operationId": "graph-service-principal-credentials-metadata-get",
+      "host": "graph.microsoft.com",
+      "method": "GET",
+      "pathPattern": "^/v1\\.0/servicePrincipals/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "apiVersionPolicy": {
+        "location": "path",
+        "allowedValues": [
+          "v1.0"
+        ]
+      },
+      "semanticClass": "read",
+      "safeSemantics": "credential_metadata_only_no_secret_values",
+      "ruleId": "ALLOW-GRAPH-SERVICE-PRINCIPAL-CREDENTIAL-METADATA",
+      "requiredRequestedScopes": [
+        "Application.Read.All"
+      ],
+      "requiredTokenPermissions": [
+        "Application.Read.All"
+      ],
+      "allowedRequestedScopes": [
+        "Application.Read.All"
+      ],
+      "allowedTokenPermissions": [
+        "Application.Read.All"
+      ],
+      "allowedQueryKeys": [
+        "$select"
+      ],
+      "fixedQueryValues": {
+        "$select": [
+          "keyCredentials,passwordCredentials"
+        ]
+      },
+      "retryableTransportExceptions": true,
+      "requireTop": false,
+      "maxRows": 1,
+      "estimatedBytesPerRow": 32768,
+      "sourceRefs": [
+        "MS-GRAPH-CREDENTIAL-METADATA"
+      ]
+    }
+  ],
+  "cloudProfiles": [
+    {
+      "name": "Commercial",
+      "profileReference": "cloud-profiles.json#/profiles/Commercial",
+      "profileCatalogSha256": "997ddf176158acae9061a8b536fa4da59a59ff75b9436404c8fdefef58c99359",
+      "requestScopes": {
+        "graphSecurityIncidentRead": "SecurityIncident.Read.All",
+        "graphSecurityAlertRead": "SecurityIncident.Read.All",
+        "graphDirectoryRead": "Directory.Read.All",
+        "graphApplicationRead": "Application.Read.All",
+        "armDefault": "https://management.azure.com/.default",
+        "logAnalyticsDefault": "https://api.loganalytics.io/.default",
+        "purviewAuditRead": "AuditLogsQuery-Entra.Read.All"
+      }
+    },
+    {
+      "name": "USGovDoD",
+      "profileReference": "cloud-profiles.json#/profiles/USGovDoD",
+      "profileCatalogSha256": "997ddf176158acae9061a8b536fa4da59a59ff75b9436404c8fdefef58c99359",
+      "requestScopes": {
+        "graphSecurityIncidentRead": "https://dod-graph.microsoft.us/SecurityIncident.Read.All",
+        "graphSecurityAlertRead": "https://dod-graph.microsoft.us/SecurityIncident.Read.All",
+        "graphDirectoryRead": "https://dod-graph.microsoft.us/Directory.Read.All",
+        "graphApplicationRead": "https://dod-graph.microsoft.us/Application.Read.All",
+        "armDefault": "https://management.usgovcloudapi.net/.default",
+        "logAnalyticsDefault": "https://api.loganalytics.us/.default",
+        "purviewAuditRead": "disabled"
+      }
+    }
+  ]
+}

@@ -1,0 +1,349 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "telemetry-health.schema.json",
+  "title": "Telemetry health and drift kernel records",
+  "type": "object",
+  "required": [
+    "incident_window",
+    "telemetry_health_records",
+    "claim_records",
+    "schema_parser_drift_records",
+    "dcr_lineage_records",
+    "detection_input_records",
+    "volume_measurements"
+  ],
+  "properties": {
+    "incident_window": { "$ref": "#/$defs/boundedWindow" },
+    "telemetry_health_records": { "type": "array", "items": { "$ref": "#/$defs/telemetryHealthRecord" } },
+    "claim_records": { "type": "array", "items": { "$ref": "#/$defs/claimRecord" } },
+    "schema_parser_drift_records": { "type": "array", "items": { "$ref": "#/$defs/schemaParserDriftRecord" } },
+    "dcr_lineage_records": { "type": "array", "items": { "$ref": "#/$defs/dcrLineageRecord" } },
+    "detection_input_records": { "type": "array", "items": { "$ref": "#/$defs/detectionInputRecord" } },
+    "volume_measurements": { "type": "array", "items": { "$ref": "#/$defs/volumeMeasurement" } },
+    "kernel_outputs": { "$ref": "#/$defs/kernelOutputs" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": { "type": "string", "minLength": 1, "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "semanticVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "stringArray": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "idArray": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/identifier" } },
+    "behaviorBases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "enum": ["guaranteed_behavior", "configurable_project_policy", "conditional_capability", "explicit_gap"] }
+    },
+    "boundedWindow": {
+      "type": "object",
+      "required": ["start_inclusive", "end_exclusive"],
+      "properties": {
+        "start_inclusive": { "$ref": "#/$defs/timestamp" },
+        "end_exclusive": { "$ref": "#/$defs/timestamp" }
+      },
+      "additionalProperties": false
+    },
+    "explicitState": {
+      "type": "object",
+      "required": ["status", "detail"],
+      "properties": {
+        "status": { "type": "string", "enum": ["applicable", "not_applicable", "unknown"] },
+        "detail": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "healthGap": {
+      "type": "object",
+      "required": ["gap_id", "start_inclusive", "end_exclusive", "evidence_source_table", "reason"],
+      "properties": {
+        "gap_id": { "$ref": "#/$defs/identifier" },
+        "start_inclusive": { "$ref": "#/$defs/timestamp" },
+        "end_exclusive": { "$ref": "#/$defs/timestamp" },
+        "evidence_source_table": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "latencyObservation": {
+      "type": "object",
+      "required": ["latency_id", "observed_seconds", "threshold_seconds", "observed_at"],
+      "properties": {
+        "latency_id": { "$ref": "#/$defs/identifier" },
+        "observed_seconds": { "type": "number", "minimum": 0 },
+        "threshold_seconds": { "type": "number", "minimum": 0 },
+        "observed_at": { "$ref": "#/$defs/timestamp" }
+      },
+      "additionalProperties": false
+    },
+    "volumeAnomaly": {
+      "oneOf": [
+        { "$ref": "#/$defs/recordedVolumeAnomaly" },
+        { "$ref": "#/$defs/calculatedVolumeDropGap" },
+        { "$ref": "#/$defs/unknownBaselineVolumeGap" }
+      ]
+    },
+    "recordedVolumeAnomaly": {
+      "type": "object",
+      "required": ["gap_id", "baseline_count", "observed_count", "drop_percent", "threshold_percent", "start_inclusive", "end_exclusive"],
+      "properties": {
+        "gap_id": { "$ref": "#/$defs/identifier" },
+        "baseline_count": { "type": "number", "minimum": 0 },
+        "observed_count": { "type": "number", "minimum": 0 },
+        "drop_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "threshold_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "start_inclusive": { "$ref": "#/$defs/timestamp" },
+        "end_exclusive": { "$ref": "#/$defs/timestamp" }
+      },
+      "additionalProperties": false
+    },
+    "calculatedVolumeDropGap": {
+      "type": "object",
+      "required": ["gap_id", "gap_type", "source_id", "table_name", "start_inclusive", "end_exclusive", "baseline_count", "observed_count", "drop_percent", "threshold_percent", "coverage_state"],
+      "properties": {
+        "gap_id": { "$ref": "#/$defs/identifier" },
+        "gap_type": { "type": "string", "const": "volume_drop" },
+        "source_id": { "$ref": "#/$defs/identifier" },
+        "table_name": { "type": "string", "minLength": 1 },
+        "start_inclusive": { "$ref": "#/$defs/timestamp" },
+        "end_exclusive": { "$ref": "#/$defs/timestamp" },
+        "baseline_count": { "type": "number", "exclusiveMinimum": 0 },
+        "observed_count": { "type": "number", "minimum": 0 },
+        "drop_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "threshold_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "coverage_state": { "type": "string", "const": "degraded" }
+      },
+      "additionalProperties": false
+    },
+    "unknownBaselineVolumeGap": {
+      "type": "object",
+      "required": ["gap_id", "gap_type", "source_id", "table_name", "start_inclusive", "end_exclusive", "baseline_count", "observed_count", "drop_percent", "threshold_percent", "coverage_state"],
+      "properties": {
+        "gap_id": { "$ref": "#/$defs/identifier" },
+        "gap_type": { "type": "string", "const": "unknown_baseline" },
+        "source_id": { "$ref": "#/$defs/identifier" },
+        "table_name": { "type": "string", "minLength": 1 },
+        "start_inclusive": { "$ref": "#/$defs/timestamp" },
+        "end_exclusive": { "$ref": "#/$defs/timestamp" },
+        "baseline_count": { "type": ["number", "null"], "maximum": 0 },
+        "observed_count": { "type": "number", "minimum": 0 },
+        "drop_percent": { "type": "null" },
+        "threshold_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "coverage_state": { "type": "string", "const": "unknown" }
+      },
+      "additionalProperties": false
+    },
+    "dcrTransformationLineage": {
+      "type": "object",
+      "required": ["dcr_id", "transformation_stage", "filters_records", "dropped_fields", "filtered_fields", "lineage_summary"],
+      "properties": {
+        "dcr_id": { "type": "string", "minLength": 1 },
+        "transformation_stage": { "type": "string", "enum": ["none", "client_side", "ingestion_time", "multi_stage", "unknown"] },
+        "filters_records": { "type": "boolean" },
+        "dropped_fields": { "$ref": "#/$defs/stringArray" },
+        "filtered_fields": { "$ref": "#/$defs/stringArray" },
+        "lineage_summary": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "coverageProjection": {
+      "type": "object",
+      "required": [
+        "coverage_id", "source_id", "source_identity", "coverage_state", "configured_state", "observed_state", "scope",
+        "health_state", "freshness_state", "delay_state", "retention_state", "effective_window", "permission_state",
+        "licensing_state", "capability_state", "parser_health", "schema_health", "connector_health", "transformation_health",
+        "time_bounds", "completeness", "limitations", "claim_ids", "evidence_ids", "gap_ids", "error_ids", "behavior_bases"
+      ],
+      "properties": {
+        "coverage_id": { "$ref": "#/$defs/identifier" },
+        "source_id": { "$ref": "#/$defs/identifier" },
+        "source_identity": { "type": "string", "minLength": 1 },
+        "coverage_state": { "type": "string", "enum": ["healthy", "degraded", "failed", "unmonitored", "structurally_absent", "unknown"] },
+        "configured_state": { "$ref": "#/$defs/explicitState" },
+        "observed_state": { "$ref": "#/$defs/explicitState" },
+        "scope": { "type": "string", "minLength": 1 },
+        "health_state": { "$ref": "#/$defs/explicitState" },
+        "freshness_state": { "$ref": "#/$defs/explicitState" },
+        "delay_state": { "$ref": "#/$defs/explicitState" },
+        "retention_state": { "$ref": "#/$defs/explicitState" },
+        "effective_window": { "$ref": "#/$defs/boundedWindow" },
+        "permission_state": { "$ref": "#/$defs/explicitState" },
+        "licensing_state": { "$ref": "#/$defs/explicitState" },
+        "capability_state": { "$ref": "#/$defs/explicitState" },
+        "parser_health": { "$ref": "#/$defs/explicitState" },
+        "schema_health": { "$ref": "#/$defs/explicitState" },
+        "connector_health": { "$ref": "#/$defs/explicitState" },
+        "transformation_health": { "$ref": "#/$defs/explicitState" },
+        "time_bounds": { "$ref": "#/$defs/boundedWindow" },
+        "completeness": { "type": "string", "enum": ["complete", "partial", "insufficient", "not_assessed", "not_applicable"] },
+        "gap_id": { "$ref": "#/$defs/identifier" },
+        "limitations": { "$ref": "#/$defs/stringArray" },
+        "claim_ids": { "$ref": "#/$defs/idArray" },
+        "evidence_ids": { "$ref": "#/$defs/idArray" },
+        "gap_ids": { "$ref": "#/$defs/idArray" },
+        "error_ids": { "$ref": "#/$defs/idArray" },
+        "behavior_bases": { "$ref": "#/$defs/behaviorBases" }
+      },
+      "additionalProperties": false
+    },
+    "telemetryHealthRecord": {
+      "type": "object",
+      "required": [
+        "health_record_id", "source_id", "connector_id", "table_name", "sensor_or_agent_id", "sensor_agent_onboarding_state",
+        "coverage_state", "health_sources", "schema_version", "parser_version", "observed_at", "heartbeat_gaps",
+        "ingestion_latency_observations", "volume_anomalies", "dcr_transformation_lineage", "coverage_projection"
+      ],
+      "properties": {
+        "health_record_id": { "$ref": "#/$defs/identifier" },
+        "source_id": { "$ref": "#/$defs/identifier" },
+        "connector_id": { "$ref": "#/$defs/identifier" },
+        "table_name": { "type": "string", "minLength": 1 },
+        "sensor_or_agent_id": { "$ref": "#/$defs/identifier" },
+        "sensor_agent_onboarding_state": { "type": "string", "enum": ["enabled", "disabled", "degraded", "unknown"] },
+        "coverage_state": { "type": "string", "enum": ["healthy", "degraded", "failed", "unmonitored", "structurally_absent", "unknown"] },
+        "health_sources": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "enum": ["SentinelHealth", "SentinelAudit", "Usage", "Heartbeat"] } },
+        "schema_version": { "type": "string", "minLength": 1 },
+        "parser_version": { "$ref": "#/$defs/semanticVersion" },
+        "observed_at": { "$ref": "#/$defs/timestamp" },
+        "heartbeat_gaps": { "type": "array", "items": { "$ref": "#/$defs/healthGap" } },
+        "ingestion_latency_observations": { "type": "array", "items": { "$ref": "#/$defs/latencyObservation" } },
+        "volume_anomalies": { "type": "array", "items": { "$ref": "#/$defs/volumeAnomaly" } },
+        "dcr_transformation_lineage": { "$ref": "#/$defs/dcrTransformationLineage" },
+        "coverage_projection": { "$ref": "#/$defs/coverageProjection" }
+      },
+      "additionalProperties": false
+    },
+    "claimRecord": {
+      "type": "object",
+      "required": ["claim_id", "source_id", "table_name", "claim_scope", "finding_type", "window"],
+      "properties": {
+        "claim_id": { "$ref": "#/$defs/identifier" },
+        "source_id": { "$ref": "#/$defs/identifier" },
+        "table_name": { "type": "string", "minLength": 1 },
+        "claim_scope": { "type": "string", "minLength": 1 },
+        "finding_type": { "type": "string", "enum": ["negative", "positive", "analytic"] },
+        "window": { "$ref": "#/$defs/boundedWindow" }
+      },
+      "additionalProperties": false
+    },
+    "schemaParserDriftRecord": {
+      "type": "object",
+      "required": ["drift_record_id", "source_id", "table_name", "drift_type", "previous_version", "current_version", "changed_fields", "observed_at"],
+      "properties": {
+        "drift_record_id": { "$ref": "#/$defs/identifier" },
+        "source_id": { "$ref": "#/$defs/identifier" },
+        "table_name": { "type": "string", "minLength": 1 },
+        "drift_type": { "type": "string", "enum": ["schema_changed", "parser_version_changed"] },
+        "previous_version": { "type": "string", "minLength": 1 },
+        "current_version": { "type": "string", "minLength": 1 },
+        "changed_fields": { "$ref": "#/$defs/stringArray" },
+        "observed_at": { "$ref": "#/$defs/timestamp" }
+      },
+      "additionalProperties": false
+    },
+    "dcrLineageRecord": {
+      "type": "object",
+      "required": ["lineage_id", "source_id", "table_name", "dcr_id", "transformation_stage", "filters_records", "dropped_fields", "filtered_fields", "start_inclusive", "end_exclusive"],
+      "properties": {
+        "lineage_id": { "$ref": "#/$defs/identifier" },
+        "source_id": { "$ref": "#/$defs/identifier" },
+        "table_name": { "type": "string", "minLength": 1 },
+        "dcr_id": { "$ref": "#/$defs/identifier" },
+        "transformation_stage": { "type": "string", "enum": ["client_side", "ingestion_time", "multi_stage", "unknown"] },
+        "filters_records": { "type": "boolean" },
+        "dropped_fields": { "$ref": "#/$defs/stringArray" },
+        "filtered_fields": { "$ref": "#/$defs/stringArray" },
+        "start_inclusive": { "$ref": "#/$defs/timestamp" },
+        "end_exclusive": { "$ref": "#/$defs/timestamp" }
+      },
+      "additionalProperties": false
+    },
+    "detectionInputRecord": {
+      "type": "object",
+      "required": ["detection_input_id", "analytics_rule_id", "source_id", "table_name", "required_fields", "expected_schema_version", "expected_parser_version"],
+      "properties": {
+        "detection_input_id": { "$ref": "#/$defs/identifier" },
+        "analytics_rule_id": { "$ref": "#/$defs/identifier" },
+        "source_id": { "$ref": "#/$defs/identifier" },
+        "table_name": { "type": "string", "minLength": 1 },
+        "required_fields": { "$ref": "#/$defs/stringArray" },
+        "expected_schema_version": { "type": "string", "minLength": 1 },
+        "expected_parser_version": { "$ref": "#/$defs/semanticVersion" }
+      },
+      "additionalProperties": false
+    },
+    "volumeMeasurement": {
+      "type": "object",
+      "required": ["source_id", "table_name", "start_inclusive", "end_exclusive", "baseline_count", "observed_count", "threshold_percent", "gap_id"],
+      "properties": {
+        "source_id": { "$ref": "#/$defs/identifier" },
+        "table_name": { "type": "string", "minLength": 1 },
+        "start_inclusive": { "$ref": "#/$defs/timestamp" },
+        "end_exclusive": { "$ref": "#/$defs/timestamp" },
+        "baseline_count": { "type": "number", "minimum": 0 },
+        "observed_count": { "type": "number", "minimum": 0 },
+        "threshold_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "gap_id": { "$ref": "#/$defs/identifier" }
+      },
+      "additionalProperties": false
+    },
+    "affectedClaimScope": {
+      "type": "object",
+      "required": ["claim_id", "claim_scope", "source_id", "table_name", "health_record_id", "gap_ids", "absence_language", "affected_start", "affected_end"],
+      "properties": {
+        "claim_id": { "$ref": "#/$defs/identifier" },
+        "claim_scope": { "type": "string", "minLength": 1 },
+        "source_id": { "$ref": "#/$defs/identifier" },
+        "table_name": { "type": "string", "minLength": 1 },
+        "health_record_id": { "$ref": "#/$defs/identifier" },
+        "gap_ids": { "$ref": "#/$defs/idArray" },
+        "absence_language": { "type": "string", "enum": ["not_found_within_unverified_coverage"] },
+        "affected_start": { "$ref": "#/$defs/timestamp" },
+        "affected_end": { "$ref": "#/$defs/timestamp" }
+      },
+      "additionalProperties": false
+    },
+    "detectionInputDriftResult": {
+      "type": "object",
+      "required": ["detection_input_id", "analytics_rule_id", "source_id", "table_name", "drift_record_ids", "drift_types", "affected_fields", "detection_health_state"],
+      "properties": {
+        "detection_input_id": { "$ref": "#/$defs/identifier" },
+        "analytics_rule_id": { "$ref": "#/$defs/identifier" },
+        "source_id": { "$ref": "#/$defs/identifier" },
+        "table_name": { "type": "string", "minLength": 1 },
+        "drift_record_ids": { "$ref": "#/$defs/idArray" },
+        "drift_types": { "type": "array", "uniqueItems": true, "items": { "type": "string", "enum": ["schema_changed", "parser_version_changed"] } },
+        "affected_fields": { "$ref": "#/$defs/stringArray" },
+        "detection_health_state": { "type": "string", "const": "requires_review" }
+      },
+      "additionalProperties": false
+    },
+    "dcrAbsenceBoundary": {
+      "type": "object",
+      "required": ["claim_id", "source_id", "table_name", "dcr_id", "lineage_id", "evidence_boundary", "dropped_or_filtered_fields", "affected_start", "affected_end"],
+      "properties": {
+        "claim_id": { "$ref": "#/$defs/identifier" },
+        "source_id": { "$ref": "#/$defs/identifier" },
+        "table_name": { "type": "string", "minLength": 1 },
+        "dcr_id": { "$ref": "#/$defs/identifier" },
+        "lineage_id": { "$ref": "#/$defs/identifier" },
+        "evidence_boundary": { "type": "string", "const": "not_observed_is_not_absence" },
+        "dropped_or_filtered_fields": { "$ref": "#/$defs/stringArray" },
+        "affected_start": { "$ref": "#/$defs/timestamp" },
+        "affected_end": { "$ref": "#/$defs/timestamp" }
+      },
+      "additionalProperties": false
+    },
+    "kernelOutputs": {
+      "type": "object",
+      "required": ["affected_claim_scopes", "detection_input_drift_results", "dcr_absence_boundaries", "volume_gap_records"],
+      "properties": {
+        "affected_claim_scopes": { "type": "array", "items": { "$ref": "#/$defs/affectedClaimScope" } },
+        "detection_input_drift_results": { "type": "array", "items": { "$ref": "#/$defs/detectionInputDriftResult" } },
+        "dcr_absence_boundaries": { "type": "array", "items": { "$ref": "#/$defs/dcrAbsenceBoundary" } },
+        "volume_gap_records": { "type": "array", "items": { "$ref": "#/$defs/volumeAnomaly" } }
+      },
+      "additionalProperties": false
+    }
+  }
+}

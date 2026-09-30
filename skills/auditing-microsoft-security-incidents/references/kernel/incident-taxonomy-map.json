@@ -1,0 +1,974 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "taxonomy_version": "1.0.0",
+  "generated_for": "HAVOC Task 6 and Task 10 incident taxonomy audit",
+  "source_urls": {
+    "graph_incident": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+    "graph_alert": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+    "graph_enums": "https://learn.microsoft.com/en-us/graph/api/resources/enums-security?view=graph-rest-1.0",
+    "sentinel_arm": "https://learn.microsoft.com/en-us/rest/api/securityinsights/incidents/create-or-update?view=rest-securityinsights-2025-06-01",
+    "securityincident_table": "https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/securityincident"
+  },
+  "auditor_verdicts": [
+    "true_positive_malicious_activity",
+    "informational_benign_positive_expected_activity",
+    "false_positive_detection_logic",
+    "false_positive_incorrect_data",
+    "inconclusive_evidence_or_coverage_gap"
+  ],
+  "product_enums": {
+    "microsoft_graph_security_incident": {
+      "status": [
+        "active",
+        "resolved",
+        "inProgress",
+        "redirected",
+        "unknownFutureValue",
+        "awaitingAction"
+      ],
+      "severity": [
+        "unknown",
+        "informational",
+        "low",
+        "medium",
+        "high",
+        "unknownFutureValue"
+      ],
+      "classification": [
+        "unknown",
+        "falsePositive",
+        "truePositive",
+        "informationalExpectedActivity",
+        "unknownFutureValue"
+      ],
+      "determination": [
+        "unknown",
+        "apt",
+        "malware",
+        "securityPersonnel",
+        "securityTesting",
+        "unwantedSoftware",
+        "other",
+        "multiStagedAttack",
+        "compromisedUser",
+        "phishing",
+        "maliciousUserActivity",
+        "clean",
+        "insufficientData",
+        "confirmedActivity",
+        "lineOfBusinessApplication",
+        "unknownFutureValue"
+      ]
+    },
+    "microsoft_graph_security_alert": {
+      "status": [
+        "unknown",
+        "new",
+        "inProgress",
+        "resolved",
+        "unknownFutureValue"
+      ],
+      "severity": [
+        "unknown",
+        "informational",
+        "low",
+        "medium",
+        "high",
+        "unknownFutureValue"
+      ],
+      "classification": [
+        "unknown",
+        "falsePositive",
+        "truePositive",
+        "informationalExpectedActivity",
+        "unknownFutureValue"
+      ],
+      "determination": [
+        "unknown",
+        "apt",
+        "malware",
+        "securityPersonnel",
+        "securityTesting",
+        "unwantedSoftware",
+        "other",
+        "multiStagedAttack",
+        "compromisedAccount",
+        "phishing",
+        "maliciousUserActivity",
+        "notMalicious",
+        "notEnoughDataToValidate",
+        "confirmedActivity",
+        "lineOfBusinessApplication",
+        "unknownFutureValue"
+      ]
+    },
+    "microsoft_sentinel_incident_arm": {
+      "severity": [
+        "High",
+        "Medium",
+        "Low",
+        "Informational"
+      ],
+      "status": [
+        "New",
+        "Active",
+        "Closed"
+      ],
+      "classification": [
+        "Undetermined",
+        "TruePositive",
+        "BenignPositive",
+        "FalsePositive"
+      ],
+      "classificationReason": [
+        "SuspiciousActivity",
+        "SuspiciousButExpected",
+        "IncorrectAlertLogic",
+        "InaccurateData"
+      ]
+    },
+    "securityincident_log_analytics_table": {
+      "Severity": {
+        "type": "string",
+        "verified_enum_values": [],
+        "verification_gap": "SecurityIncident table reference documents this column as string and does not list enum values."
+      },
+      "Status": {
+        "type": "string",
+        "verified_enum_values": [],
+        "verification_gap": "SecurityIncident table reference documents this column as string and does not list enum values."
+      },
+      "Classification": {
+        "type": "string",
+        "verified_enum_values": [],
+        "verification_gap": "SecurityIncident table reference documents this column as string and does not list enum values."
+      },
+      "ClassificationReason": {
+        "type": "string",
+        "verified_enum_values": [],
+        "verification_gap": "SecurityIncident table reference documents this column as string and does not list enum values."
+      }
+    }
+  },
+  "mappings": [
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "classification",
+      "value": "unknown",
+      "recorded_classification": {
+        "normalized_value": "recorded_unassessed",
+        "candidate_auditor_verdicts": [
+          "inconclusive_evidence_or_coverage_gap"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": "No classification set yet."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "classification",
+      "value": "truePositive",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "classification",
+      "value": "informationalExpectedActivity",
+      "recorded_classification": {
+        "normalized_value": "recorded_benign_positive",
+        "candidate_auditor_verdicts": [
+          "informational_benign_positive_expected_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "classification",
+      "value": "falsePositive",
+      "recorded_classification": {
+        "normalized_value": "recorded_false_positive",
+        "candidate_auditor_verdicts": [
+          "false_positive_detection_logic",
+          "false_positive_incorrect_data"
+        ],
+        "is_deterministic": false,
+        "is_lossy": true,
+        "requires_false_positive_cause": true,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": "Product classification alone does not distinguish detection logic from data cause."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "classification",
+      "value": "unknownFutureValue",
+      "recorded_classification": {
+        "normalized_value": "recorded_unassessed",
+        "candidate_auditor_verdicts": [
+          "inconclusive_evidence_or_coverage_gap"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": "Documented evolvable enum sentinel; treat as verification gap, not a guessed value."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "classification",
+      "value": "unknown",
+      "recorded_classification": {
+        "normalized_value": "recorded_unassessed",
+        "candidate_auditor_verdicts": [
+          "inconclusive_evidence_or_coverage_gap"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": "No classification set yet."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "classification",
+      "value": "truePositive",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "classification",
+      "value": "informationalExpectedActivity",
+      "recorded_classification": {
+        "normalized_value": "recorded_benign_positive",
+        "candidate_auditor_verdicts": [
+          "informational_benign_positive_expected_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "classification",
+      "value": "falsePositive",
+      "recorded_classification": {
+        "normalized_value": "recorded_false_positive",
+        "candidate_auditor_verdicts": [
+          "false_positive_detection_logic",
+          "false_positive_incorrect_data"
+        ],
+        "is_deterministic": false,
+        "is_lossy": true,
+        "requires_false_positive_cause": true,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": "Product classification alone does not distinguish detection logic from data cause."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "classification",
+      "value": "unknownFutureValue",
+      "recorded_classification": {
+        "normalized_value": "recorded_unassessed",
+        "candidate_auditor_verdicts": [
+          "inconclusive_evidence_or_coverage_gap"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": "Documented evolvable enum sentinel; treat as verification gap, not a guessed value."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "apt",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "malware",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "unwantedSoftware",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "multiStagedAttack",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "compromisedAccount",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "phishing",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "maliciousUserActivity",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "securityPersonnel",
+      "recorded_classification": {
+        "normalized_value": "recorded_benign_positive",
+        "candidate_auditor_verdicts": [
+          "informational_benign_positive_expected_activity"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": "Valid suspicious or known internal activity; not proof of malicious human intent."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "securityTesting",
+      "recorded_classification": {
+        "normalized_value": "recorded_benign_positive",
+        "candidate_auditor_verdicts": [
+          "informational_benign_positive_expected_activity"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": "Valid suspicious or known internal activity; not proof of malicious human intent."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "confirmedActivity",
+      "recorded_classification": {
+        "normalized_value": "recorded_benign_positive",
+        "candidate_auditor_verdicts": [
+          "informational_benign_positive_expected_activity"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": "Valid suspicious or known internal activity; not proof of malicious human intent."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "lineOfBusinessApplication",
+      "recorded_classification": {
+        "normalized_value": "recorded_benign_positive",
+        "candidate_auditor_verdicts": [
+          "informational_benign_positive_expected_activity"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": "Valid suspicious or known internal activity; not proof of malicious human intent."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "unknown",
+      "recorded_classification": {
+        "normalized_value": "recorded_unassessed",
+        "candidate_auditor_verdicts": [
+          "inconclusive_evidence_or_coverage_gap"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "notEnoughDataToValidate",
+      "recorded_classification": {
+        "normalized_value": "recorded_unassessed",
+        "candidate_auditor_verdicts": [
+          "inconclusive_evidence_or_coverage_gap"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "other",
+      "recorded_classification": {
+        "normalized_value": "recorded_unassessed",
+        "candidate_auditor_verdicts": [
+          "inconclusive_evidence_or_coverage_gap"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "notMalicious",
+      "recorded_classification": {
+        "normalized_value": "recorded_unassessed",
+        "candidate_auditor_verdicts": [
+          "false_positive_detection_logic",
+          "false_positive_incorrect_data"
+        ],
+        "is_deterministic": false,
+        "is_lossy": true,
+        "requires_false_positive_cause": true,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": "False alert wording does not identify whether logic or data caused the false positive."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_alert",
+      "field": "determination",
+      "value": "unknownFutureValue",
+      "recorded_classification": {
+        "normalized_value": "recorded_unassessed",
+        "candidate_auditor_verdicts": [
+          "inconclusive_evidence_or_coverage_gap"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-alert?view=graph-rest-1.0",
+        "note": "Documented evolvable enum sentinel; treat as verification gap."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "apt",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "malware",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "unwantedSoftware",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "multiStagedAttack",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "compromisedUser",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "phishing",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "maliciousUserActivity",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "securityPersonnel",
+      "recorded_classification": {
+        "normalized_value": "recorded_benign_positive",
+        "candidate_auditor_verdicts": [
+          "informational_benign_positive_expected_activity"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": "Clean is an incident determination value distinct from alert notMalicious; retain source wording."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "securityTesting",
+      "recorded_classification": {
+        "normalized_value": "recorded_benign_positive",
+        "candidate_auditor_verdicts": [
+          "informational_benign_positive_expected_activity"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": "Clean is an incident determination value distinct from alert notMalicious; retain source wording."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "confirmedActivity",
+      "recorded_classification": {
+        "normalized_value": "recorded_benign_positive",
+        "candidate_auditor_verdicts": [
+          "informational_benign_positive_expected_activity"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": "Clean is an incident determination value distinct from alert notMalicious; retain source wording."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "lineOfBusinessApplication",
+      "recorded_classification": {
+        "normalized_value": "recorded_benign_positive",
+        "candidate_auditor_verdicts": [
+          "informational_benign_positive_expected_activity"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": "Clean is an incident determination value distinct from alert notMalicious; retain source wording."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "clean",
+      "recorded_classification": {
+        "normalized_value": "recorded_benign_positive",
+        "candidate_auditor_verdicts": [
+          "informational_benign_positive_expected_activity"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": "Clean is an incident determination value distinct from alert notMalicious; retain source wording."
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "unknown",
+      "recorded_classification": {
+        "normalized_value": "recorded_unassessed",
+        "candidate_auditor_verdicts": [
+          "inconclusive_evidence_or_coverage_gap"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "insufficientData",
+      "recorded_classification": {
+        "normalized_value": "recorded_unassessed",
+        "candidate_auditor_verdicts": [
+          "inconclusive_evidence_or_coverage_gap"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "other",
+      "recorded_classification": {
+        "normalized_value": "recorded_unassessed",
+        "candidate_auditor_verdicts": [
+          "inconclusive_evidence_or_coverage_gap"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_graph_security_incident",
+      "field": "determination",
+      "value": "unknownFutureValue",
+      "recorded_classification": {
+        "normalized_value": "recorded_unassessed",
+        "candidate_auditor_verdicts": [
+          "inconclusive_evidence_or_coverage_gap"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/graph/api/resources/security-incident?view=graph-rest-1.0",
+        "note": "Documented evolvable enum sentinel; treat as verification gap."
+      }
+    },
+    {
+      "source": "microsoft_sentinel_incident_arm",
+      "field": "classification",
+      "value": "Undetermined",
+      "recorded_classification": {
+        "normalized_value": "recorded_unassessed",
+        "candidate_auditor_verdicts": [
+          "inconclusive_evidence_or_coverage_gap"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/rest/api/securityinsights/incidents/create-or-update?view=rest-securityinsights-2025-06-01",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_sentinel_incident_arm",
+      "field": "classification",
+      "value": "TruePositive",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/rest/api/securityinsights/incidents/create-or-update?view=rest-securityinsights-2025-06-01",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_sentinel_incident_arm",
+      "field": "classification",
+      "value": "BenignPositive",
+      "recorded_classification": {
+        "normalized_value": "recorded_benign_positive",
+        "candidate_auditor_verdicts": [
+          "informational_benign_positive_expected_activity"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/rest/api/securityinsights/incidents/create-or-update?view=rest-securityinsights-2025-06-01",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_sentinel_incident_arm",
+      "field": "classification",
+      "value": "FalsePositive",
+      "recorded_classification": {
+        "normalized_value": "recorded_false_positive",
+        "candidate_auditor_verdicts": [
+          "false_positive_detection_logic",
+          "false_positive_incorrect_data"
+        ],
+        "is_deterministic": false,
+        "is_lossy": true,
+        "requires_false_positive_cause": true,
+        "source_url": "https://learn.microsoft.com/en-us/rest/api/securityinsights/incidents/create-or-update?view=rest-securityinsights-2025-06-01",
+        "note": "Sentinel classificationReason is required to distinguish IncorrectAlertLogic from InaccurateData."
+      }
+    },
+    {
+      "source": "microsoft_sentinel_incident_arm",
+      "field": "classificationReason",
+      "value": "SuspiciousActivity",
+      "recorded_classification": {
+        "normalized_value": "recorded_true_positive",
+        "candidate_auditor_verdicts": [
+          "true_positive_malicious_activity"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/rest/api/securityinsights/incidents/create-or-update?view=rest-securityinsights-2025-06-01",
+        "note": "Reason is strongest when interpreted with TruePositive classification."
+      }
+    },
+    {
+      "source": "microsoft_sentinel_incident_arm",
+      "field": "classificationReason",
+      "value": "SuspiciousButExpected",
+      "recorded_classification": {
+        "normalized_value": "recorded_benign_positive",
+        "candidate_auditor_verdicts": [
+          "informational_benign_positive_expected_activity"
+        ],
+        "is_deterministic": false,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/rest/api/securityinsights/incidents/create-or-update?view=rest-securityinsights-2025-06-01",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_sentinel_incident_arm",
+      "field": "classificationReason",
+      "value": "IncorrectAlertLogic",
+      "recorded_classification": {
+        "normalized_value": "recorded_false_positive",
+        "candidate_auditor_verdicts": [
+          "false_positive_detection_logic"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/rest/api/securityinsights/incidents/create-or-update?view=rest-securityinsights-2025-06-01",
+        "note": ""
+      }
+    },
+    {
+      "source": "microsoft_sentinel_incident_arm",
+      "field": "classificationReason",
+      "value": "InaccurateData",
+      "recorded_classification": {
+        "normalized_value": "recorded_false_positive",
+        "candidate_auditor_verdicts": [
+          "false_positive_incorrect_data"
+        ],
+        "is_deterministic": true,
+        "is_lossy": false,
+        "requires_false_positive_cause": false,
+        "source_url": "https://learn.microsoft.com/en-us/rest/api/securityinsights/incidents/create-or-update?view=rest-securityinsights-2025-06-01",
+        "note": ""
+      }
+    }
+  ],
+  "verification_gaps": [
+    {
+      "gap_id": "TAX-GAP-SecurityIncident-Enums",
+      "source": "securityincident_log_analytics_table",
+      "fields": [
+        "Classification",
+        "ClassificationReason",
+        "Severity",
+        "Status"
+      ],
+      "source_url": "https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/securityincident",
+      "description": "The table reference verifies the columns and their string type but does not publish closed enum values; do not infer closed values from ARM without runtime evidence."
+    }
+  ]
+}
+

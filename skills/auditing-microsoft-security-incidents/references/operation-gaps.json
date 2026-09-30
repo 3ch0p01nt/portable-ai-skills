@@ -1,0 +1,13 @@
+{
+  "version": "2026-09-25.2",
+  "cloud": "commercial",
+  "gaps": [
+    {
+      "operationId": "sentinel-incident-activity-list",
+      "surface": "sentinel-arm",
+      "status": "unsupported",
+      "reason": "dedicated_incident_activity_endpoint_not_documented",
+      "sourceRefs": ["MS-SENTINEL-REST", "MS-SENTINEL-AUDIT"]
+    }
+  ]
+}

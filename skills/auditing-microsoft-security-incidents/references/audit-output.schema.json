@@ -1,0 +1,801 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "audit-output.schema.json",
+  "title": "Microsoft Security Incident Auditor Output",
+  "description": "Normative machine-readable output contract. Null is not used: required values must be present with their declared type, while unavailable optional values are absent and explained through gaps, coverage, or errors.",
+  "type": "object",
+  "required": [
+    "report_metadata",
+    "incident_summary",
+    "evidence_records",
+    "coverage_receipts",
+    "query_records",
+    "entity_records",
+    "timeline_records",
+    "hypothesis_records",
+    "causal_records",
+    "decision_records",
+    "automation_records",
+    "recurrence_records",
+    "recovery_records",
+    "privacy_records",
+    "business_fact_records",
+    "legal_fact_records",
+    "qa_records",
+    "stop_receipt",
+    "errors",
+    "sections"
+  ],
+  "properties": {
+    "report_metadata": {"$ref": "#/$defs/reportMetadata"},
+    "incident_summary": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {"$ref": "#/$defs/incidentSummaryRecord"}
+    },
+    "evidence_records": {"type": "array", "items": {"$ref": "#/$defs/evidenceRecord"}},
+    "coverage_receipts": {"type": "array", "items": {"$ref": "#/$defs/coverageReceipt"}},
+    "query_records": {"type": "array", "items": {"$ref": "#/$defs/queryRecord"}},
+    "entity_records": {"type": "array", "items": {"$ref": "#/$defs/entityRecord"}},
+    "timeline_records": {"type": "array", "items": {"$ref": "#/$defs/timelineRecord"}},
+    "hypothesis_records": {"type": "array", "items": {"$ref": "#/$defs/hypothesisRecord"}},
+    "causal_records": {"type": "array", "items": {"$ref": "#/$defs/causalRecord"}},
+    "decision_records": {"type": "array", "items": {"$ref": "#/$defs/decisionRecord"}},
+    "automation_records": {"type": "array", "items": {"$ref": "#/$defs/automationRecord"}},
+    "recurrence_records": {"type": "array", "items": {"$ref": "#/$defs/recurrenceRecord"}},
+    "recovery_records": {"type": "array", "items": {"$ref": "#/$defs/recoveryRecord"}},
+    "privacy_records": {"type": "array", "items": {"$ref": "#/$defs/privacyRecord"}},
+    "business_fact_records": {"type": "array", "items": {"$ref": "#/$defs/businessFactRecord"}},
+    "legal_fact_records": {"type": "array", "items": {"$ref": "#/$defs/legalFactRecord"}},
+    "qa_records": {"type": "array", "items": {"$ref": "#/$defs/qaRecord"}},
+    "stop_receipt": {"$ref": "#/$defs/stopReceipt"},
+    "errors": {"type": "array", "items": {"$ref": "#/$defs/errorRecord"}},
+    "sections": {
+      "type": "array",
+      "minItems": 21,
+      "maxItems": 21,
+      "prefixItems": [
+        {"$ref": "contract-vocabulary.json#/$defs/section01"},
+        {"$ref": "contract-vocabulary.json#/$defs/section02"},
+        {"$ref": "contract-vocabulary.json#/$defs/section03"},
+        {"$ref": "contract-vocabulary.json#/$defs/section04"},
+        {"$ref": "contract-vocabulary.json#/$defs/section05"},
+        {"$ref": "contract-vocabulary.json#/$defs/section06"},
+        {"$ref": "contract-vocabulary.json#/$defs/section07"},
+        {"$ref": "contract-vocabulary.json#/$defs/section08"},
+        {"$ref": "contract-vocabulary.json#/$defs/section09"},
+        {"$ref": "contract-vocabulary.json#/$defs/section10"},
+        {"$ref": "contract-vocabulary.json#/$defs/section11"},
+        {"$ref": "contract-vocabulary.json#/$defs/section12"},
+        {"$ref": "contract-vocabulary.json#/$defs/section13"},
+        {"$ref": "contract-vocabulary.json#/$defs/section14"},
+        {"$ref": "contract-vocabulary.json#/$defs/section15"},
+        {"$ref": "contract-vocabulary.json#/$defs/section16"},
+        {"$ref": "contract-vocabulary.json#/$defs/section17"},
+        {"$ref": "contract-vocabulary.json#/$defs/section18"},
+        {"$ref": "contract-vocabulary.json#/$defs/section19"},
+        {"$ref": "contract-vocabulary.json#/$defs/section20"},
+        {"$ref": "contract-vocabulary.json#/$defs/section21"}
+      ],
+      "items": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "stringArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "idArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/identifier"}
+    },
+    "behaviorBases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "contract-vocabulary.json#/$defs/behaviorBasis"}
+    },
+    "boundedWindow": {
+      "type": "object",
+      "required": ["start_inclusive", "end_exclusive"],
+      "properties": {
+        "start_inclusive": {"$ref": "#/$defs/timestamp"},
+        "end_exclusive": {"$ref": "#/$defs/timestamp"}
+      },
+      "additionalProperties": false
+    },
+    "explicitState": {
+      "type": "object",
+      "required": ["status", "detail"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["applicable", "not_applicable", "unknown"]
+        },
+        "detail": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "protectedReference": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?:protected(?:-link|-request|-evidence)?|not-applicable):(?!(?:[a-z0-9._/-]*[./])?(?:bearer|token|secret|password|credential|apikey|api-key|authorization|access_token|access-token)(?:[./]|$))[a-z0-9][a-z0-9._/-]*$",
+      "description": "Opaque non-bearer locator that requires independently authorized protected-store access, or an explicit non-applicability marker. Credential-shaped standalone locator segments are prohibited anywhere in the locator."
+    },
+    "protectedIncidentReference": {
+      "type": "string",
+      "pattern": "^protected-link:(?!(?:[a-z0-9._/-]*[./])?(?:bearer|token|secret|password|credential|apikey|api-key|authorization|access_token|access-token)(?:[./]|$))[a-z0-9][a-z0-9._/-]*$",
+      "description": "Safe opaque incident locator in the allowed opaque_non_bearer_locator reference class. Credential-shaped standalone locator segments and URL query parameters are prohibited."
+    },
+    "canonicalRequestReference": {
+      "type": "string",
+      "pattern": "^protected-request:(?!(?:[a-z0-9._/-]*[./])?(?:bearer|token|secret|password|credential|apikey|api-key|authorization|access_token|access-token)(?:[./]|$))[a-z0-9][a-z0-9._/-]*$",
+      "description": "Safe opaque request locator in the allowed opaque_non_bearer_locator reference class. Credential-shaped standalone locator segments and URL query parameters are prohibited."
+    },
+    "claimReferences": {
+      "type": "object",
+      "required": ["claim_ids", "evidence_ids", "gap_ids", "error_ids", "behavior_bases"],
+      "properties": {
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      }
+    },
+    "reportMetadata": {
+      "type": "object",
+      "required": [
+        "report_id",
+        "created_at",
+        "audit_incident_ref",
+        "protected_incident_link_ref",
+        "operating_mode",
+        "reference_window",
+        "contract_version",
+        "schema_version",
+        "label_map_version",
+        "policy_version",
+        "adapter_versions",
+        "source_versions",
+        "report_status",
+        "report_locale",
+        "handling_marking",
+        "execution_identity",
+        "authorization_purpose",
+        "protected_evidence_store_reference_class",
+        "authorization_scope_ref"
+      ],
+      "properties": {
+        "report_id": {"$ref": "#/$defs/identifier"},
+        "created_at": {"$ref": "#/$defs/timestamp"},
+        "audit_incident_ref": {
+          "$ref": "#/$defs/identifier",
+          "description": "Audit-local pseudonym. It is not a raw product incident ID and is safe for an ordinary report."
+        },
+        "protected_incident_link_ref": {
+          "$ref": "#/$defs/protectedIncidentReference",
+          "description": "Non-bearer reference resolvable only through independently authorized access to the protected evidence store."
+        },
+        "operating_mode": {"$ref": "contract-vocabulary.json#/$defs/operatingMode"},
+        "reference_window": {
+          "type": "object",
+          "required": ["start_inclusive", "end_exclusive", "original_timezone", "reason"],
+          "properties": {
+            "start_inclusive": {"$ref": "#/$defs/timestamp"},
+            "end_exclusive": {"$ref": "#/$defs/timestamp"},
+            "original_timezone": {"type": "string", "minLength": 1},
+            "reason": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        },
+        "contract_version": {"$ref": "contract-vocabulary.json#/$defs/contractVersion"},
+        "schema_version": {"$ref": "contract-vocabulary.json#/$defs/schemaVersion"},
+        "label_map_version": {"$ref": "contract-vocabulary.json#/$defs/labelMapVersion"},
+        "policy_version": {"$ref": "contract-vocabulary.json#/$defs/semanticVersion"},
+        "adapter_versions": {
+          "type": "object",
+          "additionalProperties": {"$ref": "contract-vocabulary.json#/$defs/semanticVersion"}
+        },
+        "source_versions": {
+          "type": "object",
+          "additionalProperties": {"$ref": "contract-vocabulary.json#/$defs/opaqueText"}
+        },
+        "report_status": {"$ref": "contract-vocabulary.json#/$defs/reportStatus"},
+        "report_locale": {"type": "string", "minLength": 2},
+        "handling_marking": {"type": "string", "minLength": 1},
+        "execution_identity": {"type": "string", "minLength": 1},
+        "authorization_purpose": {
+          "$ref": "contract-vocabulary.json#/$defs/authorizationPurpose"
+        },
+        "protected_evidence_store_reference_class": {
+          "$ref": "contract-vocabulary.json#/$defs/protectedEvidenceStoreReferenceClass"
+        },
+        "authorization_scope_ref": {"$ref": "contract-vocabulary.json#/$defs/opaqueText"}
+      },
+      "additionalProperties": false
+    },
+    "incidentSummaryRecord": {
+      "type": "object",
+      "required": [
+        "summary_id",
+        "original_status",
+        "original_classification",
+        "auditor_judgment",
+        "likelihood",
+        "analytic_confidence",
+        "report_status",
+        "claim_ids",
+        "evidence_ids",
+        "gap_ids",
+        "error_ids",
+        "behavior_bases"
+      ],
+      "properties": {
+        "summary_id": {"$ref": "#/$defs/identifier"},
+        "original_status": {"$ref": "contract-vocabulary.json#/$defs/opaqueText"},
+        "original_classification": {"$ref": "contract-vocabulary.json#/$defs/opaqueText"},
+        "auditor_judgment": {"type": "string", "minLength": 1},
+        "likelihood": {"$ref": "contract-vocabulary.json#/$defs/likelihood"},
+        "analytic_confidence": {"$ref": "contract-vocabulary.json#/$defs/analyticConfidence"},
+        "report_status": {"$ref": "contract-vocabulary.json#/$defs/reportStatus"},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "evidenceRecord": {
+      "type": "object",
+      "required": [
+        "material_claim_id",
+        "evidence_class",
+        "source_id",
+        "source_type",
+        "provenance",
+        "raw_ref",
+        "normalized_value",
+        "transformation",
+        "transformation_version",
+        "source_confidence",
+        "baseline_confidence",
+        "upstream_evidence_ids",
+        "limitations",
+        "handling_marking",
+        "claim_ids",
+        "behavior_bases"
+      ],
+      "properties": {
+        "evidence_id": {"$ref": "#/$defs/identifier"},
+        "analytic_record_id": {"$ref": "#/$defs/identifier"},
+        "material_claim_id": {"$ref": "#/$defs/identifier"},
+        "evidence_class": {"$ref": "contract-vocabulary.json#/$defs/evidenceClass"},
+        "source_id": {"$ref": "#/$defs/identifier"},
+        "source_type": {"$ref": "contract-vocabulary.json#/$defs/opaqueText"},
+        "provenance": {"type": "string", "minLength": 1},
+        "raw_ref": {"$ref": "contract-vocabulary.json#/$defs/opaqueText"},
+        "normalized_value": {
+          "description": "Required normalized representation. Impossible normalization is represented by an explicit object status and gap reference, never JSON null.",
+          "not": {"type": "null"}
+        },
+        "normalization_gap_id": {"$ref": "#/$defs/identifier"},
+        "transformation": {"type": "string", "minLength": 1},
+        "transformation_version": {"$ref": "contract-vocabulary.json#/$defs/semanticVersion"},
+        "event_time": {"$ref": "#/$defs/timestamp"},
+        "ingestion_time": {"$ref": "#/$defs/timestamp"},
+        "update_time": {"$ref": "#/$defs/timestamp"},
+        "retrieval_time": {"$ref": "#/$defs/timestamp"},
+        "source_confidence": {"$ref": "contract-vocabulary.json#/$defs/analyticConfidence"},
+        "baseline_confidence": {"$ref": "contract-vocabulary.json#/$defs/analyticConfidence"},
+        "upstream_evidence_ids": {"$ref": "#/$defs/idArray"},
+        "source_evidence_ids": {"$ref": "#/$defs/idArray"},
+        "limitations": {"$ref": "#/$defs/stringArray"},
+        "handling_marking": {"type": "string", "minLength": 1},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "required": ["evidence_id"],
+              "properties": {"evidence_class": {"const": "fact"}},
+              "not": {"required": ["analytic_record_id"]}
+            },
+            {
+              "required": ["analytic_record_id", "source_evidence_ids"],
+              "properties": {
+                "evidence_class": {
+                  "enum": ["inference", "assumption", "recommendation"]
+                },
+                "source_evidence_ids": {"minItems": 1}
+              },
+              "not": {"required": ["evidence_id"]}
+            }
+          ]
+        },
+        {
+          "if": {
+            "properties": {
+              "normalized_value": {
+                "type": "object",
+                "properties": {
+                  "normalization_status": {"const": "impossible"}
+                },
+                "required": ["normalization_status"]
+              }
+            },
+            "required": ["normalized_value"]
+          },
+          "then": {"required": ["normalization_gap_id"]}
+        }
+      ],
+      "additionalProperties": true
+    },
+    "coverageReceipt": {
+      "type": "object",
+      "required": [
+        "coverage_id",
+        "source_id",
+        "source_identity",
+        "coverage_state",
+        "configured_state",
+        "observed_state",
+        "scope",
+        "health_state",
+        "freshness_state",
+        "delay_state",
+        "retention_state",
+        "effective_window",
+        "permission_state",
+        "licensing_state",
+        "capability_state",
+        "parser_health",
+        "schema_health",
+        "connector_health",
+        "transformation_health",
+        "time_bounds",
+        "completeness",
+        "limitations",
+        "claim_ids",
+        "evidence_ids",
+        "gap_ids",
+        "error_ids",
+        "behavior_bases"
+      ],
+      "properties": {
+        "coverage_id": {"$ref": "#/$defs/identifier"},
+        "source_id": {"$ref": "#/$defs/identifier"},
+        "source_identity": {"type": "string", "minLength": 1},
+        "coverage_state": {"$ref": "contract-vocabulary.json#/$defs/coverageState"},
+        "configured_state": {"$ref": "#/$defs/explicitState"},
+        "observed_state": {"$ref": "#/$defs/explicitState"},
+        "scope": {"type": "string", "minLength": 1},
+        "health_state": {"$ref": "#/$defs/explicitState"},
+        "freshness_state": {"$ref": "#/$defs/explicitState"},
+        "delay_state": {"$ref": "#/$defs/explicitState"},
+        "retention_state": {"$ref": "#/$defs/explicitState"},
+        "effective_window": {"$ref": "#/$defs/boundedWindow"},
+        "permission_state": {"$ref": "#/$defs/explicitState"},
+        "licensing_state": {"$ref": "#/$defs/explicitState"},
+        "capability_state": {"$ref": "#/$defs/explicitState"},
+        "parser_health": {"$ref": "#/$defs/explicitState"},
+        "schema_health": {"$ref": "#/$defs/explicitState"},
+        "connector_health": {"$ref": "#/$defs/explicitState"},
+        "transformation_health": {"$ref": "#/$defs/explicitState"},
+        "time_bounds": {"$ref": "#/$defs/boundedWindow"},
+        "completeness": {"$ref": "contract-vocabulary.json#/$defs/evidenceCompleteness"},
+        "gap_id": {"$ref": "#/$defs/identifier"},
+        "limitations": {"$ref": "#/$defs/stringArray"},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "queryRecord": {
+      "type": "object",
+      "required": [
+        "operation_id",
+        "source_id",
+        "target",
+        "canonical_request_ref",
+        "time_bounds",
+        "entity_bounds",
+        "scope_bounds",
+        "result_bounds",
+        "adapter_version",
+        "started_at",
+        "ended_at",
+        "authorized_purpose",
+        "response_classification",
+        "pagination_state",
+        "continuation_state",
+        "result_count",
+        "truncation_state",
+        "partial_state",
+        "throttling_state",
+        "retry_state",
+        "status_or_error_ref",
+        "protected_payload_ref",
+        "claim_ids",
+        "evidence_ids",
+        "gap_ids",
+        "error_ids",
+        "behavior_bases"
+      ],
+      "properties": {
+        "request_id": {"$ref": "#/$defs/identifier"},
+        "operation_id": {"$ref": "#/$defs/identifier"},
+        "source_id": {"$ref": "#/$defs/identifier"},
+        "target": {"type": "string", "minLength": 1},
+        "canonical_request_ref": {"$ref": "#/$defs/canonicalRequestReference"},
+        "time_bounds": {"$ref": "#/$defs/boundedWindow"},
+        "entity_bounds": {"type": "string", "minLength": 1},
+        "scope_bounds": {"type": "string", "minLength": 1},
+        "result_bounds": {"type": "string", "minLength": 1},
+        "runtime_bounds": {"type": "string", "minLength": 1},
+        "adapter_version": {"$ref": "contract-vocabulary.json#/$defs/semanticVersion"},
+        "started_at": {"$ref": "#/$defs/timestamp"},
+        "ended_at": {"$ref": "#/$defs/timestamp"},
+        "retrieval_at": {"$ref": "#/$defs/timestamp"},
+        "authorized_purpose": {"type": "string", "minLength": 1},
+        "response_classification": {"$ref": "contract-vocabulary.json#/$defs/queryResponseClassification"},
+        "pagination_state": {"$ref": "#/$defs/explicitState"},
+        "continuation_state": {"$ref": "#/$defs/explicitState"},
+        "result_count": {"type": "integer", "minimum": 0},
+        "row_count": {"type": "integer", "minimum": 0},
+        "byte_count": {"type": "integer", "minimum": 0},
+        "correlation_ids": {"$ref": "#/$defs/stringArray"},
+        "status": {"type": "string", "enum": ["success", "partial", "failed", "denied", "unsupported"]},
+        "error_ref": {"type": "string", "minLength": 1},
+        "truncation_state": {"$ref": "#/$defs/explicitState"},
+        "partial_state": {"$ref": "#/$defs/explicitState"},
+        "throttling_state": {"$ref": "#/$defs/explicitState"},
+        "retry_state": {"$ref": "#/$defs/explicitState"},
+        "status_or_error_ref": {"type": "string", "minLength": 1},
+        "protected_payload_ref": {"$ref": "#/$defs/protectedReference"},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "entityRecord": {
+      "type": "object",
+      "required": ["entity_id", "entity_type", "aliases", "lifecycle_summary", "attribution_boundary", "claim_ids", "evidence_ids", "gap_ids", "error_ids", "behavior_bases"],
+      "properties": {
+        "entity_id": {"$ref": "#/$defs/identifier"},
+        "entity_type": {"$ref": "contract-vocabulary.json#/$defs/opaqueText"},
+        "aliases": {"$ref": "#/$defs/stringArray"},
+        "lifecycle_summary": {"type": "string", "minLength": 1},
+        "attribution_boundary": {"type": "string", "minLength": 1},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "timelineRecord": {
+      "type": "object",
+      "required": ["timeline_id", "event_ref", "time_kind", "time_value", "uncertainty", "claim_ids", "evidence_ids", "gap_ids", "error_ids", "behavior_bases"],
+      "properties": {
+        "timeline_id": {"$ref": "#/$defs/identifier"},
+        "event_ref": {"$ref": "#/$defs/identifier"},
+        "time_kind": {"$ref": "contract-vocabulary.json#/$defs/opaqueText"},
+        "time_value": {"$ref": "#/$defs/timestamp"},
+        "uncertainty": {"type": "string", "minLength": 1},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "hypothesisRecord": {
+      "type": "object",
+      "required": ["hypothesis_id", "statement", "likelihood", "analytic_confidence", "supporting_evidence_ids", "contradicting_evidence_ids", "information_needed", "claim_ids", "gap_ids", "error_ids", "behavior_bases"],
+      "properties": {
+        "hypothesis_id": {"$ref": "#/$defs/identifier"},
+        "statement": {"type": "string", "minLength": 1},
+        "likelihood": {"$ref": "contract-vocabulary.json#/$defs/likelihood"},
+        "analytic_confidence": {"$ref": "contract-vocabulary.json#/$defs/analyticConfidence"},
+        "supporting_evidence_ids": {"$ref": "#/$defs/idArray"},
+        "contradicting_evidence_ids": {"$ref": "#/$defs/idArray"},
+        "information_needed": {"$ref": "#/$defs/stringArray"},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "causalRecord": {
+      "type": "object",
+      "required": ["causal_id", "from_ref", "to_ref", "relationship_basis", "statement", "claim_ids", "evidence_ids", "gap_ids", "error_ids", "behavior_bases"],
+      "properties": {
+        "causal_id": {"$ref": "#/$defs/identifier"},
+        "from_ref": {"$ref": "#/$defs/identifier"},
+        "to_ref": {"$ref": "#/$defs/identifier"},
+        "relationship_basis": {"$ref": "contract-vocabulary.json#/$defs/relationshipBasis"},
+        "statement": {"type": "string", "minLength": 1},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "decisionRecord": {
+      "type": "object",
+      "required": ["decision_id", "decision_time", "soc_assessment_label", "available_evidence_ids", "later_evidence_ids", "claim_ids", "gap_ids", "error_ids", "behavior_bases"],
+      "properties": {
+        "decision_id": {"$ref": "#/$defs/identifier"},
+        "decision_time": {"$ref": "#/$defs/timestamp"},
+        "soc_assessment_label": {"$ref": "contract-vocabulary.json#/$defs/socAssessmentLabel"},
+        "available_evidence_ids": {"$ref": "#/$defs/idArray"},
+        "later_evidence_ids": {"$ref": "#/$defs/idArray"},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "automationRecord": {
+      "type": "object",
+      "required": ["automation_id", "actor", "version", "execution_state", "input_evidence_ids", "output_summary", "human_action", "claim_ids", "gap_ids", "error_ids", "behavior_bases"],
+      "properties": {
+        "automation_id": {"$ref": "#/$defs/identifier"},
+        "actor": {"$ref": "contract-vocabulary.json#/$defs/opaqueText"},
+        "version": {"$ref": "contract-vocabulary.json#/$defs/opaqueText"},
+        "execution_state": {"$ref": "contract-vocabulary.json#/$defs/automationExecutionState"},
+        "input_evidence_ids": {"$ref": "#/$defs/idArray"},
+        "output_summary": {"type": "string", "minLength": 1},
+        "human_action": {"type": "string", "minLength": 1},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "recurrenceRecord": {
+      "type": "object",
+      "required": ["recurrence_id", "related_record_ref", "relation_basis", "relation_limitations", "claim_ids", "evidence_ids", "gap_ids", "error_ids", "behavior_bases"],
+      "properties": {
+        "recurrence_id": {"$ref": "#/$defs/identifier"},
+        "related_record_ref": {"$ref": "#/$defs/identifier"},
+        "relation_basis": {"type": "string", "minLength": 1},
+        "relation_limitations": {"$ref": "#/$defs/stringArray"},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "recoveryRecord": {
+      "type": "object",
+      "required": ["recovery_id", "observed_action", "action_state", "authority_state", "claim_ids", "evidence_ids", "gap_ids", "error_ids", "behavior_bases"],
+      "properties": {
+        "recovery_id": {"$ref": "#/$defs/identifier"},
+        "observed_action": {"type": "string", "minLength": 1},
+        "action_state": {"$ref": "contract-vocabulary.json#/$defs/opaqueText"},
+        "authority_state": {"$ref": "contract-vocabulary.json#/$defs/opaqueText"},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "privacyRecord": {
+      "type": "object",
+      "required": ["privacy_id", "purpose", "minimization", "pseudonymization_state", "protected_store_use", "export_state", "claim_ids", "evidence_ids", "gap_ids", "error_ids", "behavior_bases"],
+      "properties": {
+        "privacy_id": {"$ref": "#/$defs/identifier"},
+        "purpose": {"type": "string", "minLength": 1},
+        "minimization": {"type": "string", "minLength": 1},
+        "pseudonymization_state": {"type": "string", "minLength": 1},
+        "protected_store_use": {"type": "string", "minLength": 1},
+        "export_state": {"$ref": "contract-vocabulary.json#/$defs/opaqueText"},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "businessFactRecord": {
+      "type": "object",
+      "required": ["business_fact_id", "fact", "determination_boundary", "claim_ids", "evidence_ids", "gap_ids", "error_ids", "behavior_bases"],
+      "properties": {
+        "business_fact_id": {"$ref": "#/$defs/identifier"},
+        "fact": {"type": "string", "minLength": 1},
+        "determination_boundary": {"type": "string", "minLength": 1},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "legalFactRecord": {
+      "type": "object",
+      "required": ["legal_fact_id", "fact", "human_route", "determination_boundary", "claim_ids", "evidence_ids", "gap_ids", "error_ids", "behavior_bases"],
+      "properties": {
+        "legal_fact_id": {"$ref": "#/$defs/identifier"},
+        "fact": {"type": "string", "minLength": 1},
+        "human_route": {"type": "string", "minLength": 1},
+        "determination_boundary": {"type": "string", "minLength": 1},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "qaRecord": {
+      "type": "object",
+      "required": ["qa_id", "rubric_version", "reviewer_verdict", "adjudication_state", "checks", "limitations", "claim_ids", "evidence_ids", "gap_ids", "error_ids", "behavior_bases"],
+      "properties": {
+        "qa_id": {"$ref": "#/$defs/identifier"},
+        "rubric_version": {"$ref": "contract-vocabulary.json#/$defs/semanticVersion"},
+        "reviewer_verdict": {"$ref": "contract-vocabulary.json#/$defs/qaReviewerVerdict"},
+        "adjudication_state": {"$ref": "contract-vocabulary.json#/$defs/adjudicationState"},
+        "checks": {"type": "object", "additionalProperties": {"type": "boolean"}},
+        "limitations": {"$ref": "#/$defs/stringArray"},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "stopReceipt": {
+      "type": "object",
+      "required": [
+        "stop_receipt_id",
+        "stop_cause",
+        "stopped_at",
+        "actor",
+        "policy_version",
+        "configured_values",
+        "consumption",
+        "coverage_summary",
+        "unresolved_material_frontier",
+        "duplicate_lineage_groups",
+        "novel_evidence_summary",
+        "hypothesis_stability",
+        "circuit_breaker_state",
+        "last_successful_operation",
+        "gap_ids",
+        "error_ids",
+        "restart_conditions",
+        "gap_records",
+        "behavior_bases"
+      ],
+      "properties": {
+        "stop_receipt_id": {"$ref": "#/$defs/identifier"},
+        "stop_cause": {"$ref": "contract-vocabulary.json#/$defs/stopCause"},
+        "stopped_at": {"$ref": "#/$defs/timestamp"},
+        "actor": {"type": "string", "minLength": 1},
+        "policy_version": {"$ref": "contract-vocabulary.json#/$defs/semanticVersion"},
+        "configured_values": {"type": "object"},
+        "consumption": {"type": "object"},
+        "coverage_summary": {"type": "string", "minLength": 1},
+        "unresolved_material_frontier": {"$ref": "#/$defs/stringArray"},
+        "duplicate_lineage_groups": {"type": "array", "items": {"$ref": "#/$defs/idArray"}},
+        "novel_evidence_summary": {"type": "string", "minLength": 1},
+        "hypothesis_stability": {"type": "string", "minLength": 1},
+        "circuit_breaker_state": {"type": "string", "minLength": 1},
+        "last_successful_operation": {"type": "string", "minLength": 1},
+        "gap_ids": {"$ref": "#/$defs/idArray"},
+        "error_ids": {"$ref": "#/$defs/idArray"},
+        "restart_conditions": {"$ref": "#/$defs/stringArray"},
+        "gap_records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "gap_id",
+              "gap_type",
+              "description",
+              "basis",
+              "evidence_ids",
+              "affected_claim_ids",
+              "affected_section_ids",
+              "follow_up",
+              "frontier",
+              "behavior_bases"
+            ],
+            "properties": {
+              "gap_id": {"$ref": "#/$defs/identifier"},
+              "gap_type": {"type": "string", "minLength": 1},
+              "description": {"type": "string", "minLength": 1},
+              "basis": {"type": "string", "minLength": 1},
+              "evidence_ids": {"$ref": "#/$defs/idArray"},
+              "affected_claim_ids": {"$ref": "#/$defs/idArray"},
+              "affected_section_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {"$ref": "contract-vocabulary.json#/$defs/sectionId"}
+              },
+              "follow_up": {"type": "string", "minLength": 1},
+              "frontier": {"type": "string", "minLength": 1},
+              "frontier_mapping_rationale": {"type": "string", "minLength": 1},
+              "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": true
+    },
+    "errorRecord": {
+      "type": "object",
+      "required": [
+        "error_id",
+        "error_category",
+        "source_id",
+        "retryable",
+        "partial_data_available",
+        "coverage_effect",
+        "safe_message",
+        "occurred_at",
+        "behavior_bases"
+      ],
+      "properties": {
+        "error_id": {"$ref": "#/$defs/identifier"},
+        "error_category": {"$ref": "contract-vocabulary.json#/$defs/errorCategory"},
+        "error_code": {"type": "string", "minLength": 1},
+        "message": {"type": "string", "minLength": 1},
+        "details_ref": {"$ref": "#/$defs/protectedReference"},
+        "operation_id": {"$ref": "#/$defs/identifier"},
+        "source_id": {"$ref": "#/$defs/identifier"},
+        "retryable": {"type": "boolean"},
+        "partial_data_available": {"type": "boolean"},
+        "coverage_effect": {"type": "string", "minLength": 1},
+        "safe_message": {"type": "string", "minLength": 1},
+        "protected_detail_ref": {"$ref": "#/$defs/protectedReference"},
+        "occurred_at": {"$ref": "#/$defs/timestamp"},
+        "adapter_version": {"$ref": "contract-vocabulary.json#/$defs/semanticVersion"},
+        "source_version": {"$ref": "contract-vocabulary.json#/$defs/opaqueText"},
+        "behavior_bases": {"$ref": "#/$defs/behaviorBases"}
+      },
+      "additionalProperties": false
+    }
+  }
+}
